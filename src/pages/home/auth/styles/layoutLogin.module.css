@@ -1,0 +1,13 @@
+.main {
+  height: calc(100vh - 80px - 20px - 1px);
+  background: linear-gradient(90deg, #be1b86, #2b306c);
+  position: relative;
+  overflow: hidden;
+}
+
+.bigLogo {
+  position: absolute;
+  margin-left: 40%;
+  margin-top: 10%;
+  z-index: 0;
+}

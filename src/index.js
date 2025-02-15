@@ -1,25 +1,69 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import Home from './pages/home';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import Home from "./pages/home";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/home/auth/login";
+import { Container, Row, Col } from "react-bootstrap";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <div style={{color: 'red'}}>
-        {/* header */}
+      <div>
+        {/* Navbar заменишь на свой компонент */}
+        <div
+          style={{
+            height: "80px",
+            width: "100%",
+            background: "linear-gradient(90deg, #be1b86, #2b306c)",
+            zIndex: "1",
+            marginBottom: "-2px",
+          }} // Так стили не пишем) не засоряем код
+        >
+          <Container
+            fluid="xxl"
+            style={{ paddingTop: "29px", color: "white" }}
+          >
+            <Row>
+              <Col>This is sparta. А нет. просто нав бар</Col>
+            </Row>
+          </Container>
+        </div>
+        {/* Navbar end */}
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="dashboard" element={<Home />} />
-          <Route path='registration' element={<>registration</>} />
-          <Route path='login' element={<>login</>} />
+          <Route
+            index
+            path="/"
+            element={<Home />}
+          />
+          <Route
+            path="dashboard"
+            element={<Home />}
+          />
+          <Route
+            path="registration"
+            element={<>registration</>}
+          />
+          <Route
+            path="login"
+            element={<Login />}
+          />
         </Routes>
         {/* footer */}
+        <div
+          style={{
+            marginTop: "-2px",
+            minHeight: "314px",
+            background: "#2B306C",
+            color: "white",
+            zIndex: "2",
+          }}
+        >
+          Это очень маленький футер. Почти не на пол экрана
+        </div>
       </div>
     </BrowserRouter>
   </React.StrictMode>
-
 );

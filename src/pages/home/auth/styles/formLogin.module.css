@@ -1,0 +1,73 @@
+.containerForm {
+  position: relative;
+  display: flex;
+  margin-top: 16vh;
+  justify-content: center;
+  min-height: 300px;
+  z-index: 99;
+}
+
+.form {
+  border-radius: 24px;
+  background: white;
+  width: 688px;
+  height: 488px;
+  display: flexbox;
+  justify-items: center;
+  padding-top: 7vh;
+}
+
+.isNoAccount {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 32px;
+}
+
+.linkRegister {
+  color: #6c3f99;
+  text-decoration: none;
+}
+
+.inputGroup {
+  margin-top: 32px;
+  width: auto;
+}
+
+.loginInput {
+  width: 447px !important;
+  height: 40px;
+  border: 2px solid #b899d6 !important;
+  outline: none;
+  border-radius: 6px;
+  padding: 12px 36px 12px 16px;
+}
+
+.showPassword {
+  position: absolute;
+  top: 21px;
+  right: 6px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.enterButton {
+  margin-top: 32px;
+  background-color: #2b306c;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 16px 32px;
+  outline: none;
+  border: 1px solid #2b306c;
+  color: white;
+}
+
+
+@media screen and (max-width: 520px) {
+  .loginInput {
+    width: 60vw !important;
+  }
+  .form {
+    width: 100vw !important;
+  }
+}
