@@ -1,10 +1,10 @@
 import { Container } from "react-bootstrap";
 import LayoutLogin from "./layoutLogin";
-
-import styles from "./styles/formLogin.module.css";
 import { Link } from "react-router-dom";
 import ShowPassword from "./images/showPassword";
 import { useState } from "react";
+
+import styles from "./styles/formLogin.module.css";
 
 export default function Login() {
   const [isShowPassword, setIsShowPassword] = useState(false);

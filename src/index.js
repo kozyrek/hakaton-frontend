@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/home/auth/login";
 import { Container, Row, Col } from "react-bootstrap";
+import Registration from "./pages/home/auth/registration";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -44,7 +45,7 @@ root.render(
           />
           <Route
             path="registration"
-            element={<>registration</>}
+            element={<Registration />}
           />
           <Route
             path="login"

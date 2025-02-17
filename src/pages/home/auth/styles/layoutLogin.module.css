@@ -1,5 +1,5 @@
 .main {
-  height: calc(100vh - 80px - 20px - 1px);
+  min-height: calc(100vh - 80px - 20px - 1px);
   background: linear-gradient(90deg, #be1b86, #2b306c);
   position: relative;
   overflow: hidden;
