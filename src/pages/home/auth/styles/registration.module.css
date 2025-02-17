@@ -1,0 +1,67 @@
+.consent {
+  width: 447px;
+  display: flex;
+  gap: 10px;
+}
+
+.choosingRoleText {
+  width: 447px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.consentCheckBox {
+  margin-top: 4px;
+  border: 1px solid #b899d6 !important;
+  outline: none;
+  width: 12px;
+  height: 12px;
+  /* border-radius: 4px; */
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.consentCheckBox:checked {
+  background-color: #b899d6;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z'/%3e%3c/svg%3e");
+}
+
+.requred {
+  position: relative;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.requredOptinsCOntainer {
+  width: 447px;
+  min-height: 88px;
+  margin-top: -24px;
+  margin-bottom: 20px;
+  border: 2px solid #b899d6 !important;
+  border-top: 0px solid black !important;
+  border-radius: 0px 0px 4px 4px;
+}
+
+.option {
+  height: 40px;
+  padding: 12px 16px 6px 16px;
+  margin: 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.arrow {
+  position: absolute;
+  top: 7px;
+  right: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.hr {
+  margin: 4px 16px -4px 16px;
+  border: 1px solid #8447c0;
+}
