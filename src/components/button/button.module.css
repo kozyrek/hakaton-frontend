@@ -1,0 +1,22 @@
+.button {
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+.buttonSmall {
+    padding: 10px 20px;
+}
+
+.buttonLarge {
+    padding: 16px 40px;
+}
+
+.buttonWhite {
+    background-color: #ffffff;
+    color: #1a1f1f;
+}
+
+.buttonBlue {
+    background-color: #2b306c;
+    color: #ffffff;
+}
