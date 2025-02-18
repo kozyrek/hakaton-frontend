@@ -1,0 +1,35 @@
+.footerWrapper {
+    margin-top: auto;
+    padding: 40px 0;
+    color: #ffffff;
+    background-color: #2b306c;
+
+    p {
+        color: #efefef;
+    }
+}
+
+.footerContacts {
+    display: flex;
+    flex-direction: column;
+
+    a {
+        margin-top: 8px;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 27px;
+        color: #ffffff;
+        text-decoration: none;
+    }
+}
+
+.navLink {
+    column-count: 2;
+}
+
+.politics {
+    a {
+        color: #efefef;
+        text-decoration: none;
+    }
+}

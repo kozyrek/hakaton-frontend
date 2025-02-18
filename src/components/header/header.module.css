@@ -1,0 +1,22 @@
+.header {
+    padding: 20px 0;
+    width: 100%;
+    z-index: 1;
+    margin-bottom: -2px;
+    background: linear-gradient(90deg, #BE1B86 0%, #2B306C 100%);
+}
+
+.headerWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.navLinkList {
+    margin: 0 40px;
+    align-self: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 40px ;
+}
+

@@ -6,3 +6,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.bodyContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.titleH2 {
+  font-size: 52px;
+  color: #1a1f1f;
+}
