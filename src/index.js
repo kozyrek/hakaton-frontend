@@ -14,15 +14,11 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <div className="bodyContainer">
-        <Header></Header>
+        <Header/>
         <Routes>
           <Route
             index
             path="/"
-            element={<Home />}
-          />
-          <Route
-            path="dashboard"
             element={<Home />}
           />
           <Route
@@ -34,7 +30,7 @@ root.render(
             element={<Login />}
           />
         </Routes>
-        <Footer></Footer>
+        <Footer/>
       </div>
     </BrowserRouter>
   </React.StrictMode>

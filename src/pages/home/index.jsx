@@ -17,11 +17,11 @@ export default function Home() {
             </Container>      
         </LayoutLogin>
         <Container>
-            <AboutUs></AboutUs>
-            <Hackathon></Hackathon>
-            <HowHackathonGoes></HowHackathonGoes>
+            <AboutUs/>
+            <Hackathon/>
+            <HowHackathonGoes/>
             {/* <div>Наши менторы</div> */}
-            <Gallery></Gallery>
+            <Gallery/>
             {/* <div>Отзывы участников</div> */}
             {/* <div>Обратная связь</div> */}
             {/* <div>Наши партнеры</div> */}

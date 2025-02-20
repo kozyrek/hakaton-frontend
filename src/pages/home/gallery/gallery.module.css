@@ -1,5 +1,12 @@
-.imageWrapper {
+.galleryList {
     padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    list-style-type: none;
+}
+
+.galleryItem {
     border-radius: 8px;
     overflow: hidden;
 
@@ -10,4 +17,12 @@
         object-fit: cover;
         object-position: center;
     }
+}
+
+.galleryPhotoWide {
+    grid-column: span 2;
+}
+
+.buttonTop {
+    margin-top: 48px;
 }
