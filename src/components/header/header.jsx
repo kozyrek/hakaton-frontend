@@ -9,26 +9,32 @@ import styles from "./header.module.css";
 export default function Header() {
     const navLinks = [
         {
+            id: 1,
             title: "О\u00A0нас",
             path: '/',
         },
         {
+            id: 2,
             title: "Для кого",
             path: '/',
         },
         {
+            id: 3,
             title: "Команда",
             path: '/',
         },
         {
+            id: 4,
             title: "Галерея",
             path: '/',
         },
         {
+            id: 5,
             title: "Отзывы",
             path: '/',
         },
         {
+            id: 6,
             title: "Вопросы",
             path: '/',
         },

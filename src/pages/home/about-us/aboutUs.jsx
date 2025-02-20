@@ -43,7 +43,7 @@ export default function AboutUs() {
     ]
 
     return (
-        <section className={styles.wrapper}>
+        <section className={`${styles.wrapper} contentBox`}>
             <div>
                 <h2 className="titleH2">О&nbsp;нас</h2>
                 <p>
