@@ -1,0 +1,39 @@
+.contentBox .row {
+    margin-right: 0;
+}
+
+.blockWrapper {
+    padding: 28px !important;
+}
+
+.imageWrapper {
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+}
+
+.hackathonList {
+    padding-left: 20px;
+    /* list-style-type: none;
+
+    li {
+        position: relative;
+    
+        &::before {
+            position: absolute;
+            content: url('data:image/svg+xml;charset=UTF-8, <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3.6694 0.677113C3.86935 -0.2081 5.13065 -0.2081 5.3306 0.677113C5.4602 1.25082 6.11856 1.52352 6.61586 1.20949C7.38319 0.724936 8.27506 1.61681 7.79051 2.38414C7.47648 2.88144 7.74918 3.5398 8.32289 3.6694C9.2081 3.86935 9.2081 5.13065 8.32289 5.3306C7.74918 5.4602 7.47648 6.11856 7.79051 6.61586C8.27506 7.38319 7.38319 8.27506 6.61586 7.79051C6.11856 7.47648 5.4602 7.74918 5.3306 8.32289C5.13065 9.2081 3.86935 9.2081 3.6694 8.32289C3.5398 7.74918 2.88144 7.47648 2.38414 7.79051C1.61681 8.27506 0.724936 7.38319 1.20949 6.61586C1.52352 6.11856 1.25082 5.4602 0.677113 5.3306C-0.2081 5.13065 -0.2081 3.86935 0.677113 3.6694C1.25082 3.5398 1.52352 2.88144 1.20949 2.38414C0.724936 1.61681 1.61681 0.724936 2.38414 1.20949C2.88144 1.52352 3.5398 1.25082 3.6694 0.677113Z" fill="#6C3F99"/><script xmlns=""/></svg>');
+            top: 0;
+            left: -20px;
+        }
+    } */
+}
+
+

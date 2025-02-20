@@ -5,7 +5,7 @@ import styles from "./logo.module.css";
 
 export default function Logo() {
     return (
-        <NavLink to="home" className={styles.logo}>
+        <NavLink to="/" className={styles.logo}>
             <SvgLogo/>
         </NavLink>
     )
