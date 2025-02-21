@@ -3,7 +3,7 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
@@ -39,4 +39,10 @@ code {
   font-size: 20px;
   line-height: 27px;
   color: #2b306c;
+}
+
+@media (min-width: 1400px) {
+  .container-xxl {
+    max-width: 1400px !important;
+  }
 }
