@@ -3,6 +3,12 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+@media (min-width: 1400px) {
+  .container-xxl {
+    max-width: 1400px !important;
+  }
 }

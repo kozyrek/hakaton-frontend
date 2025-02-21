@@ -4,9 +4,9 @@ import "./index.css";
 import Home from "./pages/home";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/home/auth/login";
+import Login from "./pages/auth/login";
 import { Container, Row, Col } from "react-bootstrap";
-import Registration from "./pages/home/auth/registration";
+import Registration from "./pages/auth/registration";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -28,7 +28,7 @@ root.render(
             style={{ paddingTop: "29px", color: "white" }}
           >
             <Row>
-              <Col>This is sparta. А нет. просто нав бар</Col>
+              <Col>просто нав бар</Col>
             </Row>
           </Container>
         </div>
@@ -62,7 +62,7 @@ root.render(
             zIndex: "2",
           }}
         >
-          Это очень маленький футер. Почти не на пол экрана
+           
         </div>
       </div>
     </BrowserRouter>
