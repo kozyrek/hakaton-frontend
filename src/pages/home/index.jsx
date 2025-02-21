@@ -1,12 +1,12 @@
 import React from "react";
 import { Container } from "react-bootstrap";
 // import MainContainer from "../../components/container/mainContainer";
-import LayoutLogin from "./auth/layoutLogin";
 import AboutUs from "./about-us/aboutUs";
 import Hackathon from "./hackathon/hackathon";
 import HowHackathonGoes from "./how-hackathon-goes/howHackathonGoes";
 import Promo from "./promo/promo";
 import Gallery from "./gallery/gallery";
+import LayoutLogin from "../auth/layoutLogin";
 
 export default function Home() {
  return (

@@ -4,8 +4,8 @@ import "./index.css";
 import Home from "./pages/home";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/home/auth/login";
-import Registration from "./pages/home/auth/registration";
+import Login from "./pages/auth/login";
+import Registration from "./pages/auth/registration";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 
