@@ -1,0 +1,53 @@
+.container {
+  position: relative;
+  width: 447px;
+  margin-bottom: 20px;
+}
+
+.loginInput {
+  width: 447px !important;
+  height: 40px;
+  border: 2px solid #b899d6 !important;
+  outline: none;
+  border-radius: 6px;
+  padding: 12px 36px 12px 16px;
+}
+
+.loginInput:focus {
+  border-color: #6c3f99 !important;
+}
+
+.label {
+  width: 100%;
+}
+
+.delete {
+  position: absolute;
+  border: none;
+  background: rgba(255, 255, 255, 0);
+  top: 32px;
+  right: 6px;
+}
+
+.errorInput {
+  border-color: red !important;
+}
+
+.helherTextError {
+  font-size: 14px;
+  color: red;
+}
+
+@media screen and (max-width: 576px) {
+  .loginInput {
+    width: 100% !important;
+  }
+  .container {
+    width: 340px;
+  }
+}
+@media screen and (max-width: 470px) {
+  .container {
+    width: 90%;
+  }
+}
