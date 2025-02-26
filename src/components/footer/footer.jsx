@@ -57,13 +57,14 @@ export default function Footer() {
                     </div>
 
                     <Navigation arr={navLinks} addClass={styles.navLinkList}></Navigation>
-                </div>
-                <div className={styles.block}>
+
                     <p>&copy;&nbsp;2025&nbsp;МГУ им. Н.П. ОГАРЁВА</p>
+
                     <div className={styles.politics}>
                         <Link to="/">Политика конфиденциальности</Link>
                         <Link to="/">Пользовательское соглашение</Link>
                     </div>
+                    
                     <div className={styles.logo1T}>
                         <p>Сделано в</p>
                         <Link to="https://club.1t.ru/work" target="_blank">
