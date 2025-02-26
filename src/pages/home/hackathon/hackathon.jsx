@@ -59,7 +59,7 @@ export default function Hackathon() {
                     </ul>
                 </li>
             </ul>
-            <Button link large addClass={styles.buttonTop} text="Положение о хакатоне"></Button>
+            <Button link large path="test" addClass={styles.buttonTop} text="Положение о хакатоне"></Button>
         </section>
     )
 }

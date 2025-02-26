@@ -42,7 +42,7 @@ export default function Gallery() {
                     </li>
                 ))}
             </ul>
-            <Button link large addClass={styles.buttonTop} text="Регистрация"></Button>
+            <Button link large path="/registration" addClass={styles.buttonTop} text="Регистрация"></Button>
         </section>
     )
 }

@@ -1,4 +1,4 @@
-.footerWrapper {
+.wrapper {
     margin-top: auto;
     padding: 40px 0;
     color: #ffffff;
@@ -9,7 +9,17 @@
     }
 }
 
-.footerContacts {
+.block {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 50px;
+
+    &:not(:last-child) {
+        margin-bottom: 15px;
+    }
+}
+
+.contacts {
     display: flex;
     flex-direction: column;
 
@@ -23,13 +33,49 @@
     }
 }
 
-.navLink {
+.navLinkList {
+    margin: 0;
     column-count: 2;
+    column-gap: 50px;
+    grid-column: span 2;
 }
 
 .politics {
+    display: flex;
+    flex-direction: column;
     a {
         color: #efefef;
         text-decoration: none;
+    }
+}
+
+.logo1T {
+    display: flex;
+    align-items: center;
+
+    p {
+        margin: 0 8px 0 0;
+    }
+
+    a {
+        display: flex;
+        color: #ffffff;
+        text-decoration: none;
+        text-transform: uppercase;
+        position: relative;
+
+        img {
+            margin-right: 24px;
+        }
+
+        &::before {
+            position: absolute;
+            content: "";
+            width: 1px;
+            height: 16px;
+            background-color: #ffffff;
+            top: 4px;
+            left: 119px;
+        }
     }
 }

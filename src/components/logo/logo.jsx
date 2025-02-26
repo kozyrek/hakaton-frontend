@@ -1,12 +1,13 @@
 import { NavLink } from "react-router-dom";
-import {ReactComponent as SvgLogo} from "../../assests/images/svg/logo.svg";
+import cn from "classnames";
 
 import styles from "./logo.module.css";
 
-export default function Logo() {
+export default function Logo({ src, addClass }) {
+    const className = cn(styles.logo, addClass);
     return (
-        <NavLink to="/" className={styles.logo}>
-            <SvgLogo/>
+        <NavLink to="/" className={className}>
+            <img src={src} alt="Логотип сайта"></img>
         </NavLink>
     )
 }

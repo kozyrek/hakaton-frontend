@@ -1,0 +1,39 @@
+.blockWrapper {
+    padding: 40px;
+    min-height: 386px;
+    display: flex;
+    flex-direction: column;;
+    border-radius: 8px;
+    background: right no-repeat url("./images/pattern.png"), #fffddc;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(100%);
+}
+
+.contactsList {
+    padding: 0;
+    display: flex;
+    gap: 120px;
+    list-style-type: none;
+
+    span {
+        color: #1a1f1f;
+    }
+}
+
+.contactsVK {
+    margin: auto 0 0;
+    display: flex;
+    gap: 12px;
+    align-items: end;
+}
