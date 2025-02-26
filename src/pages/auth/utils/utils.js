@@ -59,7 +59,7 @@ export const formFields = [
     role: "participant",
   },
   {
-    id: 8,
+    id: 9,
     name: "post",
     label: "Должность",
     type: "text",
@@ -67,7 +67,7 @@ export const formFields = [
     role: "mentor",
   },
   {
-    id: 9,
+    id: 10,
     name: "email",
     label: "Электронная почта",
     type: "email",
