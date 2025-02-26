@@ -3,7 +3,7 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
@@ -51,21 +51,24 @@ code {
   color: #2b306c;
 }
 
-/* ------------------------------------------------- */
-
-.carousel-control-prev {
+/* .carousel-control-prev {
   left: -50px;
-}
+} */
 
-.carousel-control-next {
+/* .carousel-control-next {
   right: -50px;
-}
+} */
 
 /* .carousel-indicators {
   display: none;
 } */
 
-.carousel-inner {
+/* .carousel-inner {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-}
+} */
+
+@media (min-width: 1400px) {
+  .container-xxl {
+    max-width: 1400px !important;
+  }
