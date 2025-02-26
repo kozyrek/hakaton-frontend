@@ -1,0 +1,15 @@
+.submit {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.rememberedPassword {
+  font-size: 14px;
+  margin-top: 32px;
+}
+
+.link {
+  color: #6c3f99;
+  text-decoration: none;
+}

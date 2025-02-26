@@ -8,13 +8,14 @@ import Login from "./pages/auth/login";
 import Registration from "./pages/auth/registration";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
+import PasswordRecovery from "./pages/passwordRecovery";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <div className="bodyContainer">
-        <Header/>
+        <Header />
         <Routes>
           <Route
             index
@@ -29,8 +30,12 @@ root.render(
             path="login"
             element={<Login />}
           />
+          <Route
+            path="recovery"
+            element={<PasswordRecovery />}
+          />
         </Routes>
-        <Footer/>
+        <Footer />
       </div>
     </BrowserRouter>
   </React.StrictMode>

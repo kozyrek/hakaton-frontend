@@ -51,7 +51,7 @@ export default function Login() {
           <div className={styles.isNoAccount}>
             Забыли пароль?{" "}
             <Link
-              to="/registration"
+              to="/recovery"
               className={styles.linkRegister}
             >
               Восстановить

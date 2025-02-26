@@ -1,11 +1,11 @@
 .container {
   position: relative;
-  width: 447px;
+  width: 100%;
   margin-bottom: 20px;
 }
 
 .loginInput {
-  width: 447px !important;
+  width: 100% !important;
   height: 40px;
   border: 2px solid #b899d6 !important;
   outline: none;
@@ -21,6 +21,10 @@
   width: 100%;
 }
 
+.notLabel {
+  top: 29px !important;
+}
+
 .delete {
   position: absolute;
   border: none;
@@ -34,8 +38,11 @@
 }
 
 .helherTextError {
+  position: absolute;
   font-size: 14px;
   color: red;
+  left: 0;
+  top: 66px;
 }
 
 @media screen and (max-width: 576px) {
@@ -43,11 +50,11 @@
     width: 100% !important;
   }
   .container {
-    width: 340px;
+    width: 100%;
   }
 }
 @media screen and (max-width: 470px) {
   .container {
-    width: 90%;
+    width: 100%;
   }
 }
