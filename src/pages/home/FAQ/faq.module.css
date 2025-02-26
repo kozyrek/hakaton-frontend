@@ -1,0 +1,36 @@
+.accordionList{
+    min-height: 272px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 30px;
+}
+
+.accordionItem  {
+    line-height: 22px;
+    color: #1a1f1f;
+    background-color: #f6edff !important;
+    border: none !important;
+    background-color: transparent;
+    border-radius: 8px;
+    overflow: hidden;
+
+    &:not(:last-child) {
+        margin-bottom: 12px;
+    }
+}
+
+.accordionBody {
+    background-color: #f6edff;
+    border: none;
+}
+
+.accordionButton {
+    button {
+        padding: 12px 22px;
+        font-weight: 600;
+        background-color: #f6edff;
+        border-radius: 8px;
+        line-height: 22px;
+        color: #1a1f1f;
+    }
+}

@@ -1,6 +1,6 @@
-import { NavLink, 
-    // useLocation
- } from "react-router-dom";
+import { NavLink,
+    // useLocation 
+} from "react-router-dom";
 import classNames from "classnames";
 
 import styles from "./navigation.module.css";
@@ -11,10 +11,14 @@ export default function Navigation({ arr, addClass }) {
     return (
         // location.pathname === '/' ?
         // <></> :
-        <nav className={classNames(addClass)}>
+        <ul className={classNames(styles.navLinkList, addClass)}>
             {arr.map((item) => (
-                <NavLink key={item.id} to={item.path} className={styles.navLinkItem}>{item.title}</NavLink>
+                <li key={item.id}  >
+                    <NavLink to={item.path} className={styles.navLinkItem}>
+                        {item.title}
+                    </NavLink>
+                </li>
             ))}
-        </nav>
+        </ul>
     )
 }
