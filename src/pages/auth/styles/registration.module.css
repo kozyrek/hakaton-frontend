@@ -18,12 +18,14 @@
 }
 
 .consentCheckBox {
-  margin-top: 4px;
+  margin-top: 8px;
   border: 1px solid #b899d6 !important;
   outline: none;
-  width: 12px;
+  width: 4px !important;
+  padding-left: 0px;
+  padding-top: 4px;
   height: 12px;
-  /* border-radius: 4px; */
+  border-radius: 4px;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
@@ -32,6 +34,7 @@
 
 .consentCheckBox:checked {
   background-color: #b899d6;
+  width: 12px;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z'/%3e%3c/svg%3e");
 }
 
@@ -74,7 +77,7 @@
 
 .policy {
   position: relative;
-  padding-top: 2px;
+  padding-top: 8px;
   font-size: 14px;
   margin-bottom: 20px;
 }
@@ -88,7 +91,7 @@
   font-size: 14px;
   color: red;
   left: 0;
-  top: 24px;
+  top: 32px;
 }
 
 @media screen and (max-width: 576px) {
