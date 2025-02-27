@@ -1,13 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./index.css";
 import Home from "./pages/home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/login";
 import Registration from "./pages/auth/registration";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

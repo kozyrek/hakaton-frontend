@@ -2,6 +2,7 @@ import image1 from "./images/image-1.png";
 import image2 from "./images/image-2.png";
 
 import styles from "./aboutUs.module.css";
+import PersonCard from "../../../components/person-card/personCard";
 
 export default function AboutUs() {
     const management = [
@@ -63,15 +64,10 @@ export default function AboutUs() {
             </div>
             <ul className={styles.managementList}>
                 {management.map((item) => (
-                    <li key={item.id} className={styles.managementItem}>
-                        <div>
-                            <img src={item.url} alt="Фотография руководителя"></img>
-                        </div>
-                        <p className={styles.managementName}>{item.name}</p>
-                        <p>{item.description}</p>
+                    <li key={item.id}>
+                        <PersonCard item={item}/>
                     </li>
                 ))}
-
             </ul>
             <ul className={styles.statisticsList}>
                 {statistics.map((item) => (

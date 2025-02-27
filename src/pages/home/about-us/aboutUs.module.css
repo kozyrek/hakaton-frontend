@@ -27,46 +27,6 @@ b {
     gap: 30px;
 }
 
-.managementItem {
-    div {
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    img {
-        margin-bottom: 20px;
-        display: block;
-        
-        max-width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-    }
-
-    p {
-        padding-left: 12px;
-    }
-}
-
-.managementName {
-    position: relative;
-    margin-bottom: 8px;
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 24px;
-    color: #2b306c;
-    
-    &::before {
-        position: absolute;
-        content: "";
-        width: 1.5px;
-        height: 48px;
-        top: 0;
-        left: 0;
-        background-color: #be1b86;
-    }
-}
-
 .statisticsList {
     grid-column: -1 / 1;
     display: grid;
