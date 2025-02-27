@@ -82,7 +82,7 @@ export default function Header() {
                     </div>
                     { isLogIn
                         ? <UserBlock user={user}/>
-                        : <Button link white text="Войти" path="login" addClass={styles.buttonLogIn}></Button>
+                        : <Button white text="Войти" path="login" addClass={styles.buttonLogIn}></Button>
                     }
                     <button className={classNameButton} onClick={OpenMenu}>
                         {menuIsOpen ? <Close /> : <Burger />}

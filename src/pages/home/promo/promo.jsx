@@ -9,7 +9,7 @@ export default function Promo() {
                 <li>Лицей ФГБОУ ВО&nbsp;&laquo;МГУ им. Н.&nbsp;П.&nbsp;Огарёва&raquo; Республика Мордовия</li>
                 <li>Учащиеся 9&ndash;11 классов образовательных организаций и&nbsp;студенты СПО</li>
             </ul>
-            <Button link large white path="/registration" text='Регистрация'></Button>
+            <Button large white path="/registration" text='Регистрация'></Button>
         </section>
     )
 }

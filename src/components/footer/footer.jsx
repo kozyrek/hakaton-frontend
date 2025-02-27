@@ -58,7 +58,7 @@ export default function Footer() {
 
                     <Navigation arr={navLinks} addClass={styles.navLinkList}></Navigation>
 
-                    <p>&copy;&nbsp;2025&nbsp;МГУ им. Н.П. ОГАРЁВА</p>
+                    <p className={styles.copyright}>&copy;&nbsp;2025&nbsp;МГУ им. Н.П. ОГАРЁВА</p>
 
                     <div className={styles.politics}>
                         <Link to="/">Политика конфиденциальности</Link>
