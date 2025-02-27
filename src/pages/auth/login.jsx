@@ -1,13 +1,71 @@
+import React, { useEffect, useRef, useState } from "react";
 import { Container } from "react-bootstrap";
 import LayoutLogin from "./layoutLogin";
-import { Link } from "react-router-dom";
-import ShowPassword from "./images/showPassword";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { loginFields } from "./utils/utils";
+import Inputs from "../../components/inputs/inputs";
 
 import styles from "./styles/formLogin.module.css";
+import stylesReg from "./styles/registration.module.css";
+
+// import ShowPassword from "./images/showPassword";
+import { validateField, validateForm } from "./utils/validateForm";
 
 export default function Login() {
-  const [isShowPassword, setIsShowPassword] = useState(false);
+  // const [isShowPassword, setIsShowPassword] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [formError, setFormError] = useState({});
+  const timerRef = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const { applicableFields, errorFields } = loginFields.reduce(
+      (acc, field) => {
+        acc.applicableFields[field.name] = {
+          value: "",
+          type: field.type,
+        };
+        acc.errorFields[field.name] = "";
+        return acc;
+      },
+      { applicableFields: {}, errorFields: {} }
+    );
+
+    setFormData((prev) => ({
+      ...prev,
+      ...applicableFields,
+    }));
+
+    setFormError(errorFields);
+  }, []);
+
+  const handleChange = (value, name) => {
+    setFormData({
+      ...formData,
+      [name]: { value: value, type: formData[name].type },
+    });
+
+    if (timerRef.current) {
+      clearTimeout(timerRef);
+    }
+
+    timerRef.current = setTimeout(() => {
+      validateField(value, formData[name].type, name, setFormError);
+    }, 1500);
+  };
+
+  const handleSubmit = () => {
+    const errors = validateForm(formData, formError, setFormError);
+    if (!errors) return;
+    if (
+      formData["email"].value === "an@an.ru" &&
+      formData["retryPassword"].value === "Ayk021188!"
+    ) {
+      navigate("/profile");
+    } else {
+      console.log("false");
+    }
+  };
   return (
     <LayoutLogin>
       <Container
@@ -25,7 +83,7 @@ export default function Login() {
               Зарегистрироваться
             </Link>
           </div>
-          <div className={styles.inputGroup}>
+          {/* <div className={styles.inputGroup}>
             <input
               type="text"
               placeholder="Логин"
@@ -44,9 +102,31 @@ export default function Login() {
             >
               <ShowPassword />
             </button>
-          </div>
+          </div> */}
+
+          {loginFields.map((item) => {
+            return (
+              <div
+                className={`${stylesReg.conInputs}`}
+                key={item.id}
+              >
+                <Inputs
+                  {...item}
+                  formData={formData}
+                  formError={formError}
+                  onChange={handleChange}
+                />
+              </div>
+            );
+          })}
+
           <div>
-            <button className={styles.enterButton}>Вход</button>
+            <button
+              onClick={handleSubmit}
+              className={styles.enterButton}
+            >
+              Вход
+            </button>
           </div>
           <div className={styles.isNoAccount}>
             Забыли пароль?{" "}

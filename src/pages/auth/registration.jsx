@@ -75,7 +75,6 @@ export default function Registration() {
   };
 
   const handleSubmit = () => {
-    setIsShowModal(true);
     const errors = validateForm(formData, formError, setFormError);
     if (!passwordMatchValidation(formData)) {
       const name = "retryPassword";
@@ -86,6 +85,7 @@ export default function Registration() {
       return;
     }
     if (errors) return;
+    setIsShowModal(true);
   };
 
   return (
@@ -134,7 +134,7 @@ export default function Registration() {
             {formFields.map((item) => {
               return (
                 <div
-                  className={stylesReg.conInputs}
+                  className={`${stylesReg.conInputs} mb-4`}
                   key={item.id}
                 >
                   {!item.hasOwnProperty("role") ||

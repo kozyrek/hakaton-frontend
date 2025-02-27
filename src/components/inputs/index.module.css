@@ -1,7 +1,7 @@
 .container {
   position: relative;
   width: 100%;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 
 .loginInput {
@@ -19,6 +19,7 @@
 
 .label {
   width: 100%;
+  padding-bottom: 2px;
 }
 
 .notLabel {
