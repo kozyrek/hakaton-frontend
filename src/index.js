@@ -6,6 +6,9 @@ import Login from "./pages/auth/login";
 import Registration from "./pages/auth/registration";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
+import Profile from "./pages/profile/profile";
+
+import PasswordRecovery from "./pages/passwordRecovery";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
@@ -15,7 +18,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <div className="bodyContainer">
-        <Header/>
+        <Header />
         <Routes>
           <Route
             index
@@ -30,8 +33,14 @@ root.render(
             path="login"
             element={<Login />}
           />
+          <Route path="/profile" element={<Profile />} />
+
+          <Route
+            path="recovery"
+            element={<PasswordRecovery />}
+          />
         </Routes>
-        <Footer/>
+        <Footer />
       </div>
     </BrowserRouter>
   </React.StrictMode>

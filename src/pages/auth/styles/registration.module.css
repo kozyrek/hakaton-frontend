@@ -1,7 +1,13 @@
 .consent {
+  position: relative;
   width: 447px;
   display: flex;
   gap: 10px;
+}
+
+.conInputs {
+  width: 447px;
+  position: relative;
 }
 
 .choosingRoleText {
@@ -67,6 +73,7 @@
 }
 
 .policy {
+  position: relative;
   padding-top: 2px;
   font-size: 14px;
   margin-bottom: 20px;
@@ -74,4 +81,34 @@
 
 .link {
   color: #6c3f99;
+}
+
+.helperTextError {
+  position: absolute;
+  font-size: 14px;
+  color: red;
+  left: 0;
+  top: 24px;
+}
+
+@media screen and (max-width: 576px) {
+  .choosingRoleText,
+  .requred,
+  .requredOptinsCOntainer,
+  .consent,
+  .conInputs {
+    width: 340px !important;
+    position: relative;
+  }
+}
+
+@media screen and (max-width: 470px) {
+  .choosingRoleText,
+  .requred,
+  .requredOptinsCOntainer,
+  .consent,
+  .conInputs {
+    width: 90% !important;
+    position: relative;
+  }
 }

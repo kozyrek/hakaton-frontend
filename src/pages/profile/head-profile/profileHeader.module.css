@@ -1,0 +1,58 @@
+.userInfoBlock {
+  background: transparent;
+  color: #fff;
+  margin-top: 8vh;
+  border-radius: 12px;
+  margin-bottom: 8vh;
+}
+
+.userInfoHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.userInfoHeader p {
+  font-weight: 400;
+  font-size: 16px;
+
+}
+
+.profilePhotoPlaceholder {
+  border-radius: 8px;
+  width: 200px;
+  height: 180px;
+}
+
+.userName {
+  font-weight: 500;
+  font-size: 52px;
+}
+
+.mainInfo {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
+.contactItem {
+  display: flex;
+
+  align-items: center;
+}
+
+
+.icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  margin-top: 10;
+}

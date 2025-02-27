@@ -15,7 +15,6 @@ export default function LayoutLogin({ children }) {
       </div>
       <Container
         fluid="xl"
-        className=""
       >
         {children}
       </Container>
