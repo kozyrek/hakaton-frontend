@@ -8,6 +8,8 @@ import Login from "./pages/auth/login";
 import Registration from "./pages/auth/registration";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
+import Profile from "./pages/profile/profile";
+
 import PasswordRecovery from "./pages/passwordRecovery";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -30,6 +32,8 @@ root.render(
             path="login"
             element={<Login />}
           />
+          <Route path="/profile" element={<Profile />} />
+
           <Route
             path="recovery"
             element={<PasswordRecovery />}
