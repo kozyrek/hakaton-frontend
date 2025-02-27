@@ -1,0 +1,15 @@
+.profileMenu {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+  
+  }
+  .profileMenu p{
+    font-weight: 400;
+  font-size: 14px;
+  margin: 0;
+  }
+
+
+

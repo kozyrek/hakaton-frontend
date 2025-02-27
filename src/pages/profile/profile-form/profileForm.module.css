@@ -1,0 +1,44 @@
+
+.profileTabContent {
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  
+
+.formRow {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  .formGroup label {
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+
+  .passwordHint {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 5px;
+  }
+  
+
+  .profilePhotoSection {
+    margin-bottom: 20px;
+  }
+  
+  .profilePhotoPreview {
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  
+
+
