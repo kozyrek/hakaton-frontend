@@ -10,11 +10,6 @@
     }
 }
 
-.cardImage {
-    grid-column: span 2;
-    position: relative;
-}
-
 .blockWrapper {
     padding: 28px;
     display: flex;
@@ -44,6 +39,8 @@
 }
 
 .imageWrapper {
+    grid-column: span 2;
+    position: relative;
     border-radius: 8px;
     overflow: hidden;
 

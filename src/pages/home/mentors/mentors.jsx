@@ -1,5 +1,9 @@
-import { Carousel } from "react-bootstrap";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import PersonCard from "../../../components/person-card/personCard";
 
+import 'swiper/css';
+import 'swiper/css/navigation';
 import styles from "./mentors.module.css";
 import image1 from "../../home/about-us/images/image-1.png";
 import image2 from "../../home/about-us/images/image-2.png";
@@ -71,18 +75,20 @@ export default function Mentors() {
     return (
         <section className="contentBox">
             <h2 className="titleH2">Наши менторы</h2>
-            <Carousel  indicators={false} interval={null} touch>
+            <div className={styles.slider}>
+                <Swiper
+                    modules={[Navigation]}
+                    spaceBetween={30}
+                    slidesPerView={4}
+                    navigation
+                >
                     {management.map((item) => (
-                        <Carousel.Item key={item.id} className={`col-lg-3 ${styles.managementItem}`}>
-                            <div>
-                                <img src={item.url} alt="Фотография руководителя"></img>
-                            </div>
-                            <p className={styles.managementName}>{item.name}</p>
-                            <p>{item.description}</p>
-                        </Carousel.Item>
+                        <SwiperSlide key={item.id}>
+                            <PersonCard item={item}/>
+                        </SwiperSlide>
                     ))}
-                
-            </Carousel>
+                </Swiper>
+            </div>
         </section>
     )
 }

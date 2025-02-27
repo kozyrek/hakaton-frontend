@@ -5,7 +5,7 @@ import Promo from "./promo/promo";
 import AboutUs from "./about-us/aboutUs";
 import Hackathon from "./hackathon/hackathon";
 import HowHackathonGoes from "./how-hackathon-goes/howHackathonGoes";
-// import Mentors from "./mentors/mentors";
+import Mentors from "./mentors/mentors";
 import Gallery from "./gallery/gallery";
 import Contacts from "./contacts/contacts";
 import Partners from "./partners/partners";
@@ -24,7 +24,7 @@ export default function Home() {
                 <AboutUs/>
                 <Hackathon/>
                 <HowHackathonGoes/>
-                {/* <Mentors/> */}
+                <Mentors/>
                 <Gallery/>
                 {/* <div>Отзывы участников</div> */}
                 <Contacts/>
