@@ -13,11 +13,7 @@ export default function LayoutLogin({ children }) {
       <div className={styles.bigLogo}>
         <SvgBigLogo />
       </div>
-      <Container
-        fluid="xl"
-      >
-        {children}
-      </Container>
+      <Container fluid="xl">{children}</Container>
     </Container>
   );
 }

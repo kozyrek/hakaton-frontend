@@ -15,7 +15,7 @@ export default function Login() {
         className={styles.containerForm}
       >
         <div className={styles.form}>
-          <h3>Вход</h3>
+          <h3 className={styles.h3}>Вход</h3>
           <div className={styles.isNoAccount}>
             Нет аккаунта?{" "}
             <Link

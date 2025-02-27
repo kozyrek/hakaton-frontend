@@ -96,7 +96,7 @@ export default function Registration() {
           className={`${styles.containerForm} mt-5 mb-5`}
         >
           <div className={`${styles.form} pb-5`}>
-            <h3 className="mb-4">Регистрация</h3>
+            <h3 className={`${styles.h3} mb-4`}>Регистрация</h3>
             <div className={stylesReg.choosingRoleText}>
               Все поля обязательны для заполнения.
             </div>

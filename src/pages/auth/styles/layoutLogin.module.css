@@ -3,6 +3,7 @@
   background: linear-gradient(90deg, #be1b86, #2b306c);
   position: relative;
   overflow: hidden !important;
+  margin-top: 82px;
 }
 
 .bigLogo {
@@ -10,6 +11,6 @@
   left: 40%;
   /* margin-top: 10%; */
   bottom: 0;
-  z-index: 0;
   overflow: hidden;
+  z-index: 0;
 }
