@@ -81,6 +81,23 @@ export default function Mentors() {
                     spaceBetween={30}
                     slidesPerView={4}
                     navigation
+                    breakpoints={{
+                        360: {
+                          slidesPerView: 1,
+                        },
+                        768: {
+                          slidesPerView: 2,
+                          spaceBetween: 20,
+                        },
+                        1024: {
+                          slidesPerView: 3,
+                          spaceBetween: 20,
+                        },
+                        1400: {
+                            slidesPerView: 4,
+                            spaceBetween: 30,
+                          },
+                      }}
                 >
                     {management.map((item) => (
                         <SwiperSlide key={item.id}>

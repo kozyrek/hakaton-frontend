@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css";
 import Home from "./pages/home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/login";
@@ -9,9 +11,6 @@ import Footer from "./components/footer/footer";
 import Profile from "./pages/profile/profile";
 
 import PasswordRecovery from "./pages/passwordRecovery";
-
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
