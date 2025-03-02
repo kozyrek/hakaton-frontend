@@ -174,7 +174,7 @@ function validatePassword(password) {
 
   // Проверка прописных букв
   if (!/[a-z]/.test(password)) {
-    errors.message = "авьте минимум одну прописную букву (a-z)";
+    errors.message = "Добавьте минимум одну прописную букву (a-z)";
     return errors;
   }
 
