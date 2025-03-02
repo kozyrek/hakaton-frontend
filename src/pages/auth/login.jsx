@@ -4,19 +4,21 @@ import LayoutLogin from "./layoutLogin";
 import { Link, useNavigate } from "react-router-dom";
 import { loginFields } from "./utils/utils";
 import Inputs from "../../components/inputs/inputs";
+import { validateField, validateForm } from "./utils/validateForm";
+import { useDispatch } from "react-redux";
+import { add_token } from "../../store/user/userSlice";
+import { getToken } from "../../api/getToken";
+import { ROUTES } from "../../utils/constants";
 
 import styles from "./styles/formLogin.module.css";
 import stylesReg from "./styles/registration.module.css";
 
-// import ShowPassword from "./images/showPassword";
-import { validateField, validateForm } from "./utils/validateForm";
-
 export default function Login() {
-  // const [isShowPassword, setIsShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState({});
   const timerRef = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const { applicableFields, errorFields } = loginFields.reduce(
@@ -57,13 +59,13 @@ export default function Login() {
   const handleSubmit = () => {
     const errors = validateForm(formData, formError, setFormError);
     if (!errors) return;
-    if (
-      formData["email"].value === "an@an.ru" &&
-      formData["retryPassword"].value === "Ayk021188!"
-    ) {
-      navigate("/profile");
-    } else {
-      console.log("false");
+    const token = getToken(
+      formData["email"].value,
+      formData["retryPassword"].value
+    );
+    if (token) {
+      dispatch(add_token(token));
+      navigate(ROUTES.PROFILE);
     }
   };
   return (
@@ -77,33 +79,12 @@ export default function Login() {
           <div className={styles.isNoAccount}>
             Нет аккаунта?{" "}
             <Link
-              to="/registration"
+              to={ROUTES.REGISTRATION}
               className={styles.linkRegister}
             >
               Зарегистрироваться
             </Link>
           </div>
-          {/* <div className={styles.inputGroup}>
-            <input
-              type="text"
-              placeholder="Логин"
-              className={styles.loginInput}
-            />
-          </div>
-          <div style={{ position: "relative" }}>
-            <input
-              type={isShowPassword ? "text" : "password"}
-              placeholder="Пароль"
-              className={`${styles.loginInput} mt-3`}
-            />
-            <button
-              className={styles.showPassword}
-              onClick={() => setIsShowPassword(!isShowPassword)}
-            >
-              <ShowPassword />
-            </button>
-          </div> */}
-
           {loginFields.map((item) => {
             return (
               <div
@@ -131,7 +112,7 @@ export default function Login() {
           <div className={styles.isNoAccount}>
             Забыли пароль?{" "}
             <Link
-              to="/recovery"
+              to={ROUTES.RECOVERY}
               className={styles.linkRegister}
             >
               Восстановить
