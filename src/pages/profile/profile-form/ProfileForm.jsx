@@ -4,7 +4,7 @@ import profilePhoto from "../../../assests/images/photo/ivanIvanovProfile.png";
 
 import TextInput from "../ui/input/textInput";
 import TextArea from "../ui/textarea/textArea";
-import BigButton from "../ui/bigBtn/bigButton";
+import Button from "../../../components/button/button";
 import DownloadButton from "../ui/downloadBtn/downloadButton";
 
 
@@ -125,9 +125,8 @@ const ProfileForm = ({
               onChange={handleChange}
               className={styles.inputFieldSmall}
             />
-            <BigButton onClick={() => alert("Сменить пароль")}>
-              Сменить пароль
-            </BigButton>
+            <Button large text="Сменить пароль" onClick={() => alert("Сменить пароль")}/>
+
           </div>
           <small className={styles.passwordHint}>
             Пароль должен содержать не менее 8 символов...
@@ -229,9 +228,7 @@ const ProfileForm = ({
         />
       </div>
 
-      <BigButton onClick={handleSaveProfile}>
-        Сохранить
-      </BigButton>
+      <Button large text="Сохранить" onClick={() => alert("Сменить пароль")}/>
     </div>
   );
 };

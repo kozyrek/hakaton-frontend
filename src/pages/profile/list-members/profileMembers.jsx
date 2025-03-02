@@ -131,11 +131,8 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
         <div className={styles.modalOverlay}>
           <ModalWindow 
             title="Действительно хотите удалить данного участника из команды?"
-            description={
-              <span className={styles.descriptionText}>
-                {selectedParticipant?.participant.full_name}
-              </span>
-            }
+            description={selectedParticipant?.participant.full_name}
+            descriptionLg={false}
             setIsShow={cancelRemoval}
           >
             <div className={styles.buttonContainer}>
