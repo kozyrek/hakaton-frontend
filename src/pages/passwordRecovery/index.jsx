@@ -33,10 +33,9 @@ export default function PasswordRecovery() {
     }, 1500);
   };
 
-
   return (
     <LayoutLogin>
-      <ModalWindow {...MODAL.PASSWORD_RECOVERY_FORM}>
+      <ModalWindow {...MODAL.PASSWORD_RECOVERY_FORM} descriptionLg>
         <Inputs
           name="login"
           placeholder="Введите электронную почту"

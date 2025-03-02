@@ -1,0 +1,21 @@
+.main {
+  margin-top: 84px;
+  display: flex;
+  min-height: calc(100vh - 241px);
+  color: white;
+}
+
+.inner {
+  margin: auto 0;
+}
+
+.notFound {
+  font-size: 160px;
+  margin-bottom: 20px;
+}
+
+.text {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px !important;
+}
