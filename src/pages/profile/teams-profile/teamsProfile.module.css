@@ -36,3 +36,9 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
   }
+
+  .secondMenuButton {
+    padding: 8px 40px;
+    width: 447px;
+    height: 38px;
+  }

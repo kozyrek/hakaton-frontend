@@ -1,28 +1,29 @@
 import React from "react";
 import styles from "./profileMenu.module.css";
-import logoutIcon from "../../../assests/images/icon/logout.svg";
-import MenuButton from "../ui/menuBtn/menuButton"; // Импортируем новую кнопку
-
-
+import Button from "../../../components/button/button"; 
+import LogoutButton from "../../../components/logoutButton/logoutButton";
 
 const ProfileMenu = ({ activeTab, onTabChange, onLogout }) => {
+  const menuItems = [
+    { key: "profile", label: "Мой профиль" },
+    { key: "users", label: "Участники" },
+    { key: "teams", label: "Команды" },
+    { key: "projects", label: "Проекты" },
+  ];
+
   return (
     <div className={styles.profileMenu}>
-      <MenuButton isActive={activeTab === "profile"} onClick={() => onTabChange("profile")}>
-        Мой профиль
-      </MenuButton>
-      <MenuButton isActive={activeTab === "users"} onClick={() => onTabChange("users")}>
-        Участники
-      </MenuButton>
-      <MenuButton isActive={activeTab === "teams"} onClick={() => onTabChange("teams")}>
-        Команды
-      </MenuButton>
-      <MenuButton isActive={activeTab === "projects"} onClick={() => onTabChange("projects")}>
-        Проекты
-      </MenuButton>
-      <MenuButton variant="logout" onClick={onLogout} icon={logoutIcon}>
-        Выйти из профиля
-      </MenuButton>
+      {menuItems.map(({ key, label }) => (
+        <Button
+          key={key}
+          menu
+          text={label}
+          isActive={activeTab === key}
+          onClick={() => onTabChange(key)}
+        />
+      ))}
+      <LogoutButton onClick={onLogout} text="Выйти из профиля" className={styles.logoutButton} />
+     
     </div>
   );
 };
