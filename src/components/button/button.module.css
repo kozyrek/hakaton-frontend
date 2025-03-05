@@ -1,0 +1,27 @@
+.button {
+    display: block;
+    max-width: fit-content;
+    text-decoration: none;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.buttonSmall {
+    padding: 10px 20px;
+}
+
+.buttonLarge {
+    padding: 16px 40px;
+}
+
+.buttonWhite {
+    background-color: #ffffff;
+    color: #1a1f1f;
+}
+
+.buttonBlue {
+    background-color: #2b306c;
+    color: #ffffff;
+}

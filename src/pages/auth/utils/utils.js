@@ -59,7 +59,7 @@ export const formFields = [
     role: "participant",
   },
   {
-    id: 8,
+    id: 9,
     name: "post",
     label: "Должность",
     type: "text",
@@ -67,7 +67,7 @@ export const formFields = [
     role: "mentor",
   },
   {
-    id: 9,
+    id: 10,
     name: "email",
     label: "Электронная почта",
     type: "email",
@@ -91,6 +91,21 @@ export const formFields = [
     id: 13,
     name: "retryPassword",
     label: "Повтор пароля",
+    type: "password",
+    placeholder: "Введите пароль",
+  },
+];
+
+export const loginFields = [
+  {
+    id: 1,
+    name: "email",
+    type: "email",
+    placeholder: "Введите адрес электронной почты",
+  },
+  {
+    id: 2,
+    name: "retryPassword",
     type: "password",
     placeholder: "Введите пароль",
   },

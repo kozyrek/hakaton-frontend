@@ -1,0 +1,56 @@
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px - 1px);
+  /* padding: 20px; */
+
+  /* position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; */
+}
+
+.modal {
+  position: relative;
+  width: 680px;
+  min-height: 248px;
+  background: white;
+  border-radius: 24px;
+  padding: 60px;
+  z-index: 99;
+  text-align: center;
+}
+
+.closeIcon {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 500;
+  padding-bottom: 20px;
+}
+
+.descriptionSmall {
+  font-size: 14px;
+}
+
+.description {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+@media screen and (max-width: 576px) {
+  .main {
+    width: 100%;
+    min-height: min-content;
+  }
+  .modal {
+    width: 100%;
+    padding: 40px;
+  }
+}

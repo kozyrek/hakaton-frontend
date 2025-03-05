@@ -1,0 +1,61 @@
+.cards {
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    list-style-type: none;
+    
+    ul {
+        list-style-type: none;
+    }
+}
+
+.blockWrapper {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    background: right no-repeat url("./images/pattern-violet.png"), #f6edff;
+
+    li {
+        position: relative;
+    
+        &::before {
+            position: absolute;
+            content: url('../../../assests/images/icon/icon-bullet-violet.svg');
+            top: 0;
+            left: -20px;
+        }
+    }
+
+    p:last-child {
+        margin: auto 0 0;
+    }
+}
+
+.cardStages {
+    background: right / 50% 100% no-repeat url("./images/pattern.png"), #fffddc;
+    grid-column: span 2;
+}
+
+.imageWrapper {
+    grid-column: span 2;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+}
+
+.text {
+    color: #ffffff;
+    position: absolute;
+    left: 28px;
+    bottom: 0;
+}

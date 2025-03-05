@@ -1,0 +1,55 @@
+.title {
+    margin-bottom: 28px;
+}
+
+.text {
+    margin-bottom: 48px;
+}
+
+.hackathonCards {
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    list-style-type: none;
+}
+
+.blockWrapper {
+    padding: 28px;
+    border-radius: 8px;
+    background: bottom no-repeat url("./images/pattern.png"), #fffddc;
+}
+
+.imageWrapper {
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+}
+
+.hackathonList {
+    padding-left: 20px;
+    list-style-type: none;
+
+    li {
+        position: relative;
+    
+        &::before {
+            position: absolute;
+            content: url('../../../assests/images/icon/icon-bullet-violet.svg');
+            top: 0;
+            left: -20px;
+        }
+    }
+}
+
+.buttonTop {
+    margin-top: 48px;
+}

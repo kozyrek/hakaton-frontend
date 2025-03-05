@@ -19,6 +19,7 @@ export default function Inputs(props) {
         break;
       case "text":
       case "tel":
+      case "email":
         onChange("", name);
         break;
       default:
@@ -42,7 +43,7 @@ export default function Inputs(props) {
         {...other}
       />
       <button
-        className={styles.delete}
+        className={`${styles.delete} ${!label && styles.notLabel}`}
         onClick={() => handelClick(type)}
       >
         {type === "password" ? <ShowPassword /> : <SvgDelete />}
