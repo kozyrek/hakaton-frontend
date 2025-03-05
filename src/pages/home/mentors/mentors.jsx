@@ -1,10 +1,7 @@
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
+import Slider from "../../../components/slider/slider";
 import PersonCard from "../../../components/person-card/personCard";
 
-import 'swiper/css';
-import 'swiper/css/navigation';
-import styles from "./mentors.module.css";
+// import styles from "./mentors.module.css";
 import image1 from "../../home/about-us/images/image-1.png";
 import image2 from "../../home/about-us/images/image-2.png";
 
@@ -75,37 +72,7 @@ export default function Mentors() {
     return (
         <section className="contentBox">
             <h2 className="titleH2">Наши менторы</h2>
-            <div className={styles.slider}>
-                <Swiper
-                    modules={[Navigation]}
-                    spaceBetween={30}
-                    slidesPerView={4}
-                    navigation
-                    breakpoints={{
-                        360: {
-                          slidesPerView: 1,
-                        },
-                        768: {
-                          slidesPerView: 2,
-                          spaceBetween: 20,
-                        },
-                        1024: {
-                          slidesPerView: 3,
-                          spaceBetween: 20,
-                        },
-                        1400: {
-                            slidesPerView: 4,
-                            spaceBetween: 30,
-                          },
-                      }}
-                >
-                    {management.map((item) => (
-                        <SwiperSlide key={item.id}>
-                            <PersonCard item={item}/>
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
-            </div>
+            <Slider items={management} Component={PersonCard}/>
         </section>
     )
 }

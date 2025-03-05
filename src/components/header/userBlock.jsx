@@ -1,4 +1,4 @@
-import Avatar from "./images/icon-avatar.svg";
+import Avatar from "./images/iconAvatar";
 
 import styles from "./styles/userBlock.module.css";
 
