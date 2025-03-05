@@ -5,12 +5,12 @@ import ReviewCard from "./reviewCard";
 import image from "./images/image.png";
 
 export default function Reviews() {
-    const [modalIsOpen, setModalIsOpen] = useState(0);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [id, setId] = useState(null);
 
-    function showModal(index) {
-        setModalIsOpen(index);
-        console.log(index);
-    }
+    // function showModal(index) {
+    //     setModalIsOpen(!modalIsOpen);
+    // }
 
     const reviews = [
         {
@@ -70,10 +70,10 @@ export default function Reviews() {
     return (
         <section>
             <h2 className="titleH2">Отзывы участников</h2>
-            <Slider items={reviews} Component={ReviewCard} action={showModal}/>
+            <Slider items={reviews} Component={ReviewCard} setModalIsOpen={setModalIsOpen} setId={setId}/>
 
-            {modalIsOpen !== 0 && <div onClick={() => {setModalIsOpen(0)}} className="overlay"></div>}
-            {/* {modalIsOpen && <ReviewCard item={reviews[number]}/>} */}
+            {modalIsOpen !== 0 && <div onClick={() => {setModalIsOpen(!modalIsOpen)}} className="overlay"></div>} 
+            {modalIsOpen && <ReviewCard item={reviews[id]}/>}
         </section>
     )
 }
