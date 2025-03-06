@@ -1,0 +1,5 @@
+services:
+  frontend:
+    images: aykisdev/hackaton_frontend
+    ports:
+      - 3000:80
