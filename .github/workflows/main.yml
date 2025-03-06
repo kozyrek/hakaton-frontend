@@ -1,7 +1,7 @@
 name: Dev hackaton workflow
 on:
   push:
-    branch:
+    branches:
       - dev
 jobs:
   build-and-push-to-dockerhub:
