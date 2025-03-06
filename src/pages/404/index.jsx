@@ -29,6 +29,7 @@ export default function ErrorPage() {
               path={ROUTES.MAIN}
               white
             />
+            Test ci\cd
           </div>
         </div>
       </Container>
