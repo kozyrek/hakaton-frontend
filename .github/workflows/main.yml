@@ -36,14 +36,15 @@ jobs:
           username: root
           password: csTuj5OyvGQoGqzD
           source: "docker-compose.production.yml"
-          # target: "~/"
+          target: "hackaton"
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
           host: 89.111.153.222
           username: root
           password: csTuj5OyvGQoGqzD
-          script: 
+          script: |
+            cd hackaton 
             docker compose -f docker-compose.production.yml pull
             docker compose -f docker-compose.production.yml down
             docker compose -f docker-compose.production.yml up -d
