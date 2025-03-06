@@ -36,7 +36,7 @@ jobs:
           username: root
           password: csTuj5OyvGQoGqzD
           source: "docker-compose.production.yml"
-          target: "~/"
+          # target: "~/"
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
@@ -44,7 +44,6 @@ jobs:
           username: root
           password: csTuj5OyvGQoGqzD
           script: 
-            cd ~
             docker compose -f docker-compose.production.yml pull
             docker compose -f docker-compose.production.yml down
             docker compose -f docker-compose.production.yml up -d
