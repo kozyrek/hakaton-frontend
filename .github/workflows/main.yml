@@ -11,3 +11,22 @@ jobs:
         uses: actions/checkout@v3
       - name: Print
         run: tree .
+  build-and-push-to-dockerhub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check repository
+        uses: actions/checkout@v3
+      - name: Setup docker builder
+        uses: docker/setup-buildx-action@v2
+      - name: Login to docker hub
+        uses: docker/login-action@v2
+        with:
+          username: aykisdev
+          password: Ayk021188
+
+      -name: Build and push to docker hub
+        uses: docker/build-push-action@v4
+        with:
+          context: ./
+          push: true
+          tags: aykisdev/hackaton_frontend
