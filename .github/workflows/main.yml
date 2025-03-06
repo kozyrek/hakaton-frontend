@@ -4,13 +4,6 @@ on:
     branch: 
       - aykes-de
 jobs:
-  check-and-print-tree:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check rep
-        uses: actions/checkout@v3
-      - name: Print
-        run: tree .
   build-and-push-to-dockerhub:
     runs-on: ubuntu-latest
     steps:
@@ -28,4 +21,30 @@ jobs:
         with:
           context: ./
           push: true
-          tags: aykisdev/hackaton_frontend
+          tags: aykisdev/hackaton_frontend:latest
+  deploy:
+    runs-on: ubuntu-latest
+    needs: 
+      - build-and-push-to-dockerhub
+    steps:
+      - name: Check repository
+        uses: actions/checkout@v3
+      - name: Copy docker-compose.yml via ssh
+        uses: appleboy/scp-action@master
+        with:
+          host: 89.111.153.222
+          username: root
+          password: csTuj5OyvGQoGqzD
+          source: "docker-compose.production.yml"
+          target: "~/"
+      - name: Executing remote ssh commands to deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: 89.111.153.222
+          username: root
+          password: csTuj5OyvGQoGqzD
+          script:
+            cd ~/
+            docker compose pull
+            docker compose down
+            docker compose up -d
