@@ -8,6 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check rep
-        uses: action/checkout@v3
+        uses: actions/checkout@v3
       - name: Print
         run: tree .
