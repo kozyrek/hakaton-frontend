@@ -2,7 +2,7 @@ name: Dev hackaton workflow
 on:
   push:
     branch:
-      - aykes-de
+      - dev
 jobs:
   build-and-push-to-dockerhub:
     runs-on: ubuntu-latest
