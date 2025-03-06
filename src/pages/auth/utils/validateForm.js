@@ -5,22 +5,34 @@ const PHONE_REGEX = /^\+?(\d{1,3})?[- .]?\(?\d{3}\)?[- .]?\d{3}[- .]?\d{4}$/;
 const PHONE_ERROR = "Некорректный номер телефона.";
 const FORBIDEN_CHARS = /[<>$#@!%^&*=]/;
 const FORBIDEN_ERROR = `Содержит запрещенные спецсимволы: /[<>$#@!%^&*=]/`;
+const APPROVAL = `Дайте согласие на обработку персональных данных и ознакомьтесь с правилами проведения Хакатона.`;
 
 export function validateForm(formData, formError, setFormError) {
+  let errors = false;
   Object.entries(formData).forEach(([key, item]) => {
-    if (item.value.trim().length === 0) {
-      console.log(key)
+    if (item.type === "checkbox" && !item.value) {
+      setFormError((prevError) => ({ ...prevError, [key]: APPROVAL }));
+      errors = true;
+    } else if (item.value.length === 0) {
+      console.log(key);
       setFormError((prevError) => ({ ...prevError, [key]: REQUIRED }));
+      errors = true;
     } else {
-      // console.log(key)
       setFormError((prevError) => ({ ...prevError, [key]: "" }));
+      errors = true;
     }
   });
-
-  // setFormError(formError);
+  return errors;
 }
 
 export function validateField(value, type, name, setFormError) {
+  if (type === "checkbox") {
+    if (!value) {
+      setFormError((prevError) => ({ ...prevError, [name]: APPROVAL }));
+    }
+    return true;
+  }
+
   if (!value.trim()) {
     setFormError((prevError) => ({ ...prevError, [name]: REQUIRED }));
     return false;
@@ -162,7 +174,7 @@ function validatePassword(password) {
 
   // Проверка прописных букв
   if (!/[a-z]/.test(password)) {
-    errors.message = "авьте минимум одну прописную букву (a-z)";
+    errors.message = "Добавьте минимум одну прописную букву (a-z)";
     return errors;
   }
 
@@ -187,5 +199,5 @@ function validatePassword(password) {
 export function passwordMatchValidation(formData) {
   if (formData["password"].value !== formData["retryPassword"].value)
     return false;
-  return true
+  return true;
 }

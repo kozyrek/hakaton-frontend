@@ -1,0 +1,21 @@
+.partnersList {
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+    list-style-type: none;
+}
+
+.partnersItem {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1/1;
+    border-radius: 8px;
+    border: 1.5px solid #ceb2e9;
+
+    img {
+        max-width: 100%;
+    }
+}
