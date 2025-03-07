@@ -15,10 +15,10 @@ export default function Reviews() {
             <h2 className="titleH2">Отзывы участников</h2>
             <Slider items={reviews} Component={ReviewCard} setModalIsOpen={setModalIsOpen}/>
 
-            {modalIsOpen && <div onClick={() => {setModalIsOpen(!modalIsOpen)}} className="overlay"></div>}
-            {modalIsOpen && 
-            <div className={styles.modalWrapper}>
-                <ReviewCard item={modalIsOpen} addClass={stylesCardItem.modal}/>
+            <div onClick={() => {setModalIsOpen(!modalIsOpen)}} className={`overlay ${styles.overlay} ${modalIsOpen ? styles.animationBlock : ''}`}></div>
+            
+            <div className={`${styles.modalWrapper} ${modalIsOpen ? styles.animationBlock : ''}`}>
+                {modalIsOpen && <ReviewCard item={modalIsOpen} addClass={`${stylesCardItem.modal} ${styles.modal}`}/>}
                 <div
                     className={styles.closeIcon}
                     onClick={() => setModalIsOpen(!modalIsOpen)}
@@ -26,7 +26,7 @@ export default function Reviews() {
                 >
                     <CloseIcon />
                 </div>
-            </div>}
+            </div>
         </section>
     )
 }

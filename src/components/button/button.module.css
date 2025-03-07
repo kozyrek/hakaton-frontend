@@ -1,4 +1,6 @@
 .button {
+    display: block;
+    max-width: fit-content;
     text-decoration: none;
     border-radius: 8px;
     border: none;
