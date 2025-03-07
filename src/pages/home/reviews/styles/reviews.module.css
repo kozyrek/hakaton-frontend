@@ -1,0 +1,18 @@
+.modalWrapper {
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 102;
+}
+
+.closeIcon {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+}

@@ -16,6 +16,8 @@ import { persistor, store } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import ErrorPage from "./pages/404";
 import { ROUTES } from "./utils/constants";
+import "./swiper.css";
+import "./bootstrap.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

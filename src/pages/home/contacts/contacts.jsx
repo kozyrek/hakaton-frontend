@@ -1,28 +1,10 @@
 import { Link } from "react-router-dom";
+import { contacts } from "../utils/utils";
 
 import styles from "./contacts.module.css";
 import { ReactComponent as IconVK } from "./images/icon-VK.svg";
 
 export default function Contacts() {
-    const contacts = [
-        {
-            id: 1,
-            title: 'График работы: ',
-            text: '11:00-18:00',
-        },
-        {
-            id: 2,
-            title: 'Телефон: ',
-            text: '8 (8342) 22-32-50',
-            link: true,
-        },
-        {
-            id: 3,
-            title: 'Почта: ',
-            text: 'licey-mrsu@yandex.ru',
-            link: true,
-        },
-    ]
     return (
         <section className="contentBox">
             <div className={styles.blockWrapper}>
