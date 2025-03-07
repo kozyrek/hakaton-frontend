@@ -1,29 +1,29 @@
 /* Стили для слайдера */
 .swiper {
-    position: static;
-  }
+  position: static;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #f6edff;
   
-  .swiper-button-prev,
-  .swiper-button-next {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #f6edff;
-    
-    &::after {
-      color: #2b306c;
-      margin: 0 3px 0 0;
-    }
+  &::after {
+    color: #2b306c;
+    margin: 0 3px 0 0;
   }
-  
-  .swiper-button-prev {
-    left: -80px;
+}
+
+.swiper-button-prev {
+  left: -80px;
+}
+
+.swiper-button-next {
+  right: -80px;
+
+  &::after {
+    margin: 0 0 0 3px;
   }
-  
-  .swiper-button-next {
-    right: -80px;
-  
-    &::after {
-      margin: 0 0 0 3px;
-    }
-  }
+}

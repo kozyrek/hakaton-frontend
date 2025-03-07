@@ -8,7 +8,7 @@ import styles from "./slider.module.css";
 export default function Slider({
   items,
   Component,
-  action,
+  setModalIsOpen,
   swiperParams = {},
   className,
   setId,
@@ -43,7 +43,7 @@ export default function Slider({
           <SwiperSlide key={item.id}>
             <Component
               item={item}
-              action={action}
+              setModalIsOpen={setModalIsOpen}
               index={item.id}
               setId={setId}
             />

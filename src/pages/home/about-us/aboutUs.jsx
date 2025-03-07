@@ -1,48 +1,9 @@
-import image1 from "./images/image-1.png";
-import image2 from "./images/image-2.png";
+import { management, statistics } from "../utils/utils";
 
 import styles from "./aboutUs.module.css";
 import PersonCard from "../../../components/person-card/personCard";
 
 export default function AboutUs() {
-    const management = [
-        {
-            id: 1,
-            url: image1,
-            name: "Бачкова Ирина Александровна",
-            description: "директор Лицея МГУ им. Н.\u00A0П.\u00A0Огарева, учитель информатики высшей квалификационной категории, Лауреат Премии Президента\u00A0РФ",
-        },
-        {
-            id: 2,
-            url: image2,
-            name: "Зарубин Олег Александрович ",
-            description: "кандидат географических наук, директор Центра проектирования научно-образовательного пространства университета МГУ им. Н.\u00A0П.\u00A0Огарева, Председатель совета молодых ученых МГУ им. Н.\u00A0П.\u00A0Огарева"
-        },
-    ]
-
-    const statistics = [
-        {
-            id: 1,
-            value: "100+",
-            text: "общее количество участников",
-        },
-        {
-            id: 2,
-            value: "7",
-            text: "общее количество мероприятий",
-        },
-        {
-            id: 3,
-            value: "10+",
-            text: "количество разработано кейсов",
-        },
-        {
-            id: 4,
-            value: "500 000+",
-            text: "количество просмотров в\u00A0социальных сетях и\u00A0СМИ",
-        },
-    ]
-
     return (
         <section className={`${styles.wrapper} contentBox`}>
             <div>

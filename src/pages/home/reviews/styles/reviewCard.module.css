@@ -6,6 +6,7 @@
     gap: 8px 12px;
     background-color: #f6edff;
     border-radius: 8px;
+    position: relative;
 }
 
 .imageWrapper {
@@ -43,8 +44,6 @@
 }
 
 /* .text {
-    grid-column: span 2;
-
     overflow: hidden;
     display: -webkit-box;
     text-overflow: ellipsis;
@@ -61,11 +60,29 @@
 }
 
 .button {
-    /* grid-column: span 2; */
     margin-top: 12px;
     width: fit-content;
     text-decoration: underline;
     background-color: transparent;
     border: none;
     color: #6c3f99;
+}
+
+.modal {
+    padding: 60px;
+    max-width: 493px;
+
+    .textWrapper {
+        height: unset;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .isCutText {
+        overflow: visible;
+        display: block;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: unset;
+        -webkit-box-orient: unset;
+    }
 }

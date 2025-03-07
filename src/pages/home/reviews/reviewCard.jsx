@@ -1,26 +1,24 @@
 import { useEffect, createRef, useState } from "react";
+import cn from "classnames";
 
 import styles from "./styles/reviewCard.module.css";
 import Avatar from "./images/iconAvatar";
 
-export default function ReviewCard({ item, action, ...other }) {
+export default function ReviewCard({ item, setModalIsOpen, addClass }) {
   const [isVisibleButton, setIsVisibleButton] = useState(false);
   const refText = createRef();
-//   console.log(item);
+
   useEffect(() => {
     const height = refText.current.getBoundingClientRect().height;
-    setIsVisibleButton(height > 191);
+    setIsVisibleButton(setModalIsOpen && height > 191);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handelClick = (id) => {
-    action(id);
-    other.setId(id);
-  };
+  const className = cn(styles.reviewWrapper, addClass)
 
   return (
     <>
-      <div className={styles.reviewWrapper}>
+      <div className={className}>
         <div className={styles.imageWrapper}>
           {item.user.image ? (
             <img
@@ -53,7 +51,7 @@ export default function ReviewCard({ item, action, ...other }) {
           {isVisibleButton && (
             <button
               className={`text2 ${styles.button}`}
-              onClick={() => handelClick(item.id)}
+              onClick={() => setModalIsOpen(item)}
             >
               Читать полностью
             </button>
