@@ -16,7 +16,7 @@ import Burger from "./images/Burger";
 import Close from "./images/Close";
 
 export default function Header() {
-    const [isLogIn, setIsLogIn] = useState(false);
+    const [isLogIn, setIsLogIn] = useState(true);
     const [menuIsOpen, setMenuIsOpen] = useState(false);
 
     function OpenMenu() {

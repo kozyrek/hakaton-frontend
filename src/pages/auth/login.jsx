@@ -16,6 +16,7 @@ import stylesReg from "./styles/registration.module.css";
 export default function Login() {
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState({});
+  const [loading, setLoading] = useState(false);
   const timerRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -56,18 +57,21 @@ export default function Login() {
     }, 1500);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errors = validateForm(formData, formError, setFormError);
     if (!errors) return;
-    const token = getToken(
+    setLoading(true);
+    const token = await getToken(
       formData["email"].value,
       formData["retryPassword"].value
     );
+    setLoading(false);
     if (token) {
       dispatch(add_token(token));
       navigate(ROUTES.PROFILE);
     }
   };
+
   return (
     <LayoutLogin>
       <Container
@@ -75,49 +79,57 @@ export default function Login() {
         className={styles.containerForm}
       >
         <div className={styles.form}>
-          <h3 className={styles.h3}>Вход</h3>
-          <div className={styles.isNoAccount}>
-            Нет аккаунта?{" "}
-            <Link
-              to={ROUTES.REGISTRATION}
-              className={styles.linkRegister}
-            >
-              Зарегистрироваться
-            </Link>
-          </div>
-          {loginFields.map((item) => {
-            return (
-              <div
-                className={`${stylesReg.conInputs}`}
-                key={item.id}
-              >
-                <Inputs
-                  {...item}
-                  formData={formData}
-                  formError={formError}
-                  onChange={handleChange}
-                />
+          {loading ? (
+            <h2 style={{ position: "absolute", top: "50%", left: "43%" }}>
+              Loading...
+            </h2>
+          ) : (
+            <>
+              <h3 className={styles.h3}>Вход</h3>
+              <div className={styles.isNoAccount}>
+                Нет аккаунта?{" "}
+                <Link
+                  to={ROUTES.REGISTRATION}
+                  className={styles.linkRegister}
+                >
+                  Зарегистрироваться
+                </Link>
               </div>
-            );
-          })}
+              {loginFields.map((item) => {
+                return (
+                  <div
+                    className={`${stylesReg.conInputs}`}
+                    key={item.id}
+                  >
+                    <Inputs
+                      {...item}
+                      formData={formData}
+                      formError={formError}
+                      onChange={handleChange}
+                    />
+                  </div>
+                );
+              })}
 
-          <div>
-            <button
-              onClick={handleSubmit}
-              className={styles.enterButton}
-            >
-              Вход
-            </button>
-          </div>
-          <div className={styles.isNoAccount}>
-            Забыли пароль?{" "}
-            <Link
-              to={ROUTES.RECOVERY}
-              className={styles.linkRegister}
-            >
-              Восстановить
-            </Link>
-          </div>
+              <div>
+                <button
+                  onClick={handleSubmit}
+                  className={styles.enterButton}
+                >
+                  Вход
+                </button>
+              </div>
+              <div className={styles.isNoAccount}>
+                Забыли пароль?{" "}
+                <Link
+                  to={ROUTES.RECOVERY}
+                  className={styles.linkRegister}
+                >
+                  Восстановить
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </Container>
     </LayoutLogin>
