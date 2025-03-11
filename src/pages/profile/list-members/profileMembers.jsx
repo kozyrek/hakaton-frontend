@@ -92,7 +92,7 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
 
   return (
     <div className={styles.participantsList}>
-      <h3>Участники</h3>
+      <h2 className={styles.profileTabTitle}>Участники</h2>
       <SearchInput
         value={searchQuery}
         onChange={(e) => {
@@ -138,11 +138,13 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
             <div className={styles.buttonContainer}>
               <Button
                 text="Да"
+                large
                 onClick={confirmRemoval}
                 addClass={styles.confirmButton}
               />
               <Button
                 text="Нет"
+                large
                 onClick={cancelRemoval}
                 addClass={styles.cancelButton}
               />
