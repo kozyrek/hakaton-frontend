@@ -18,61 +18,9 @@
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 447px; /* Фиксированная ширина для больших экранов */
+  height: 240px;
 }
-
-
-
-
-.profileMenu {
-  display: flex;
-  flex-wrap: wrap; /* Позволяет кнопкам переноситься на новую строку при необходимости */
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.secondMenuButton {
-  padding: 8px 20px; /* Уменьшение отступов для лучшего отображения на мобильных устройствах */
-}
-
-.createButton {
-  margin-top: 56px;
-}
-
-
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-
-.buttonContainer {
-   margin-top:24px;
-   display:flex;
-   justify-content:center;
-   gap:20px;
-
-}
-
-.buttonConfirm {
-  background-color: #2B306C;
-  color: #ffffff;
-}
-
-.buttonCancel {
-  color: #ffffff;
-  background-color: #6C3F99;
-}
-
-
-
 
 /* Для экранов до 768px карточка становится меньшей */
 @media (max-width: 768px) {
@@ -96,3 +44,66 @@
 
 
 
+
+.profileMenu {
+  display: flex;
+  flex-wrap: wrap; /* Позволяет кнопкам переноситься на новую строку при необходимости */
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.secondMenuButton {
+  padding: 8px 20px; /* Уменьшение отступов для лучшего отображения на мобильных устройствах */
+}
+
+.createButton {
+  margin-top: 56px;
+}
+
+/* Модальное окно и кнопки в нем */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonContainer {
+   margin-top:24px;
+   display:flex;
+   justify-content:center;
+   gap:20px;
+
+}
+
+.confirmButton {
+   background-color:#2B306C;
+   color:#ffffff;
+
+}
+
+.cancelButton {
+   color:#ffffff;
+   background-color:#6C3F99;
+
+}
+
+/* Адаптивные стили для кнопок в модальном окне */
+@media (max-width:768px) {
+   .buttonContainer {
+      flex-direction: column; /* Вертикальное расположение кнопок в модальном окне на мобильных устройствах */
+      gap:10px; /* Увеличение отступа между кнопками */
+   }
+
+   .confirmButton,
+   .cancelButton {
+      width:auto; /* Автоматическая ширина для кнопок в модальном окне */
+      padding:10px; /* Увеличение отступов для лучшего нажатия на мобильных устройствах */
+      text-align:center; /* Центрирование текста внутри кнопок */
+   }
+}

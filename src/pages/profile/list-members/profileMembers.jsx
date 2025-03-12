@@ -140,11 +140,13 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
             <div className={styles.buttonContainer}>
               <Button
                 text="Да"
+                large
                 onClick={confirmRemoval}
                 addClass={styles.confirmButton}
               />
               <Button
                 text="Нет"
+                large
                 onClick={cancelRemoval}
                 addClass={styles.cancelButton}
               />

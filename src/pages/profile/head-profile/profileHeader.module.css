@@ -74,7 +74,7 @@
 
 
 
-@media (max-width: 910px) {
+@media (max-width: 868px) {
   .userInfoBlock {
     max-height: 300px;
     padding: 15px;
@@ -93,28 +93,16 @@
 }
 
 
-@media (max-width: 610px) {
- 
-.textContent{
-  gap: 8px;
-}
-
+@media (max-width: 608px) {
   .userInfoBlock {
     flex-direction: column;
     max-height: 417px;
     margin-top: 80px;
   }
   .contact{
-    margin-top: 8px;
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
     justify-content: left;
-    font-size: 16px;
-  }
-
-  .userBirthDate,
-  .userDetails {
-    font-size: 16px;
   }
   
   .userName {
@@ -139,21 +127,11 @@
   .profilePhotoPlaceholder {
     width: 152px;
     height: 132px;
+    max-height: 180px;
   }
   
   .icon {
     width: 14px;
     height: 14px;
-  }
-}
-
-@media (max-width: 360px) {
-  .userBirthDate,
-  .userDetails {
-    font-size: 14px;
-  }
-
-  .contact{
-    font-size: 14px;
   }
 }
