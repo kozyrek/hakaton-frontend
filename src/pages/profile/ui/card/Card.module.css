@@ -1,0 +1,116 @@
+
+
+.teamCard {
+  position: relative; /* Добавлено для позиционирования фонового SVG */
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 240px;
+  width: 100%;
+  transition: all 0.3s ease;
+  overflow: hidden; /* Для обрезки фонового SVG, если оно выходит за рамки */
+}
+
+
+/* Альтернативные цвета карточек */
+.teamCard.default {
+  background-color: #F6EDFF;
+}
+
+.teamCard.alternative {
+  background-color: #FFFDDC;
+}
+
+
+.teamTitle.default {
+  font-weight: 500;
+  font-size: 32px;
+}
+
+.teamTitle.alternative {
+  font-weight: 600;
+  font-size: 20px;
+}
+
+
+
+.bigLogo {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  height: 100%;
+  width: auto;
+  z-index: 0;
+}
+
+
+
+.teamTitle {
+  margin: 0;
+  position: relative; /* Обеспечивает, что текст находится поверх SVG */
+  z-index: 1;
+}
+
+.deleteButton {
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: underline;
+  text-decoration-skip-ink: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #2B306C;
+  margin-top: 16px;
+  position: relative; /* Обеспечивает, что кнопка находится поверх SVG */
+  z-index: 1;
+}
+
+
+/* Для экранов до 1024px – 2 карточки в ряд */
+@media (max-width: 1024px) {
+  .cardsContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Для экранов до 768px – 1 карточка в ряд */
+@media (max-width: 768px) {
+  .cardsContainer {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .teamCard {
+    width: 100%;
+    min-width: 120px;
+max-height: 172px;
+  }
+}
+/* Добавить этот медиа-запрос */
+@media (max-width: 400px) {
+
+  .teamCard {
+    width: calc(100% - 40px); /* Компенсируем внутренние отступы */
+    transform: scale(0.95); /* Дополнительное масштабирование */
+  }
+
+  .teamTitle.default {
+    font-size: 22px;
+    max-width: 65%;
+  }
+
+  .bigLogo {
+    height: 75%;
+    right: -20px;
+    opacity: 0.8; /* Уменьшаем визуальный акцент */
+  }
+
+  .cardsContainer {
+    grid-gap: 15px; /* Уменьшаем расстояние между карточками */
+    padding: 0 5px; /* Добавляем отступы по краям контейнера */
+  }
+}

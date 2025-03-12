@@ -11,6 +11,7 @@ import ProfileMembers from "./list-members/profileMembers";
 import TeamsProfile from "./teams-profile/teamsProfile";
 import ProjectsProfile from "./projects-profile/projectsProfile";
 
+
 export default function Profile() {
   // Данные из JSON (без функционала редактирования)
   const [user] = useState(data.user);
@@ -32,10 +33,11 @@ export default function Profile() {
 
   return (
     <>
+    <div className={styles.userHeader}>
       <LayoutProfileBg>
         <ProfileHeader user={user} />
       </LayoutProfileBg>
-
+      </div>
       <div className={styles.profileWrapper}>
         <Container fluid="xl">
           <ProfileMenu

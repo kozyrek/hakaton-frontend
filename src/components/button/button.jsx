@@ -4,7 +4,7 @@ import cn from "classnames";
 import styles from "./button.module.css";
 
 export default function Button(props) {
-    const { text, path, large, white, addClass, bigmenu, menu, onClick, isActive } = props;
+    const { text, path, large, white, addClass, bigmenu, menu, onClick, isActive, disabled } = props;
 
     const className = cn(addClass, {
         [styles.button]: !bigmenu && !menu, 
@@ -17,12 +17,13 @@ export default function Button(props) {
           [styles.buttonSmall]: !large,
           [styles.buttonWhite]: white,
           [styles.buttonBlue]: !white,
+          [styles.disabled]: path && disabled,
         })
     });
 
     return path ? (
         <Link to={path} className={className}>{text}</Link>
     ) : (
-        <button className={className} onClick={onClick}>{text}</button>
+        <button className={className} onClick={onClick} disabled={disabled}>{text}</button>
     );
 }

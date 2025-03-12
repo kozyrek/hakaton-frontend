@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: {
-    name: "",
-  },
+  user: {},
   activeUser: {},
   token: {
     accessToken: "",
@@ -15,11 +13,9 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    add_user: (state, action) => {
-      const { name } = action.payload;
-      state.user = {
-        name,
-      };
+    set_user: (state, action) => {
+      // const { name } = action.payload;
+      state.user = { ...action.payload };
     },
     add_token: (state, action) => {
       state.token = {
@@ -27,9 +23,16 @@ export const userSlice = createSlice({
         refreshToken: action.payload.refreshToken,
       };
     },
+    logout: (state) => {
+      state.token = {
+        accessToken: "",
+        refreshToken: "",
+      };
+      state.user = {};
+    },
   },
 });
 
-export const { add_user, add_token } = userSlice.actions;
+export const { set_user, add_token, logout } = userSlice.actions;
 
 export default userSlice.reducer;

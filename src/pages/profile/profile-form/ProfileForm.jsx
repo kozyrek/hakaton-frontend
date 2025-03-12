@@ -17,7 +17,7 @@ const ProfileForm = ({
 }) => {
   return (
     <div className={styles.profileTabContent}>
-      <h3>Регистрационные данные</h3>
+      <h2 className={styles.profileTabTitle}>Регистрационные данные</h2>
       <div className={styles.userRegDataChange}>
         <div className={styles.formRow}>
           <div className={styles.formGroup}>
@@ -27,7 +27,6 @@ const ProfileForm = ({
               name="last_name"
               value={formData.last_name}
               onChange={handleChange}
-              className={styles.inputFieldSmall}
             />
           </div>
           <div className={styles.formGroup}>
@@ -37,7 +36,6 @@ const ProfileForm = ({
               name="first_name"
               value={formData.first_name}
               onChange={handleChange}
-              className={styles.inputFieldSmall}
             />
           </div>
           <div className={styles.formGroup}>
@@ -47,7 +45,6 @@ const ProfileForm = ({
               name="middle_name"
               value={formData.middle_name}
               onChange={handleChange}
-              className={styles.inputFieldSmall}
             />
           </div>
           <div className={styles.formGroup}>
@@ -57,7 +54,6 @@ const ProfileForm = ({
               name="birth_date"
               value={formData.birth_date}
               onChange={handleChange}
-              className={styles.inputFieldSmall}
             />
           </div>
         </div>
@@ -70,7 +66,6 @@ const ProfileForm = ({
               name="organization"
               value={formData.organization}
               onChange={handleChange}
-              className={styles.inputFieldSmall}
             />
           </div>
           <div className={styles.formGroup}>
@@ -80,7 +75,6 @@ const ProfileForm = ({
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className={styles.inputFieldSmall}
             />
           </div>
           <div className={styles.formGroup}>
@@ -90,7 +84,6 @@ const ProfileForm = ({
               name="position"
               value={formData.position}
               onChange={handleChange}
-              className={styles.inputFieldSmall}
             />
           </div>
           <div className={styles.formGroup}>
@@ -100,7 +93,6 @@ const ProfileForm = ({
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={styles.inputFieldSmall}
             />
           </div>
           <div className={styles.formGroup}>
@@ -110,7 +102,6 @@ const ProfileForm = ({
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className={styles.inputFieldSmall}
             />
           </div>
         </div>
@@ -143,7 +134,7 @@ const ProfileForm = ({
             className={styles.profilePhotoPreview}
           />
         </div>
-        <div className={styles.fileUploadContainer}>
+        <div>
           <label htmlFor="photoInput">
             {formData.photo_url ? "Файл загружен" : "Загрузите файл"}
           </label>
@@ -161,7 +152,7 @@ const ProfileForm = ({
       </div>
 
       <h3>Персональные данные</h3>
-      <div className={styles.userDataChange}>
+      <div>
        
           <div className={styles.formGroup}>
             <label>Статьи</label>
@@ -171,7 +162,6 @@ const ProfileForm = ({
               onChange={handleChange}
               className={styles.inputFieldLarge}
               rows={5}
-              style={{ padding: "12px 16px" }}
             />
           </div>
           <div className={styles.formGroup}>
@@ -193,7 +183,6 @@ const ProfileForm = ({
               name="subjects"
               value={formData.subjects}
               onChange={handleChange}
-              className={styles.inputFieldLarge}
             />
           </div>
           <div className={styles.formGroup}>
@@ -203,7 +192,6 @@ const ProfileForm = ({
               name="research"
               value={formData.research}
               onChange={handleChange}
-              className={styles.inputFieldLarge}
             />
           </div>
 
@@ -211,8 +199,8 @@ const ProfileForm = ({
 
       <div className={styles.formGroup}>
         <label>Загрузить PDF (сертификаты.pdf)</label>
-        <div className={styles.fileUploadContainer}>
-          <label htmlFor="pdfInput" className={styles.uploadButton}>
+        <div>
+          <label htmlFor="pdfInput">
             {formData.certificatesPdf || "Загрузите файл"}
           </label>
           <DownloadButton onClick={() => document.getElementById("pdfInput").click()}>

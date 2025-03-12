@@ -1,4 +1,12 @@
 
+.profileTabTitle{
+  font-weight: 500;
+  font-size: 52px;
+  margin-top: 8vh;
+  margin-bottom: 5vh;
+}
+
+
 .profileTabContent {
     border-radius: 8px;
     background-color: #fff;
@@ -19,6 +27,8 @@
     font-weight: 600;
     margin-bottom: 5px;
   }
+
+
 
 
   .passwordHint {
