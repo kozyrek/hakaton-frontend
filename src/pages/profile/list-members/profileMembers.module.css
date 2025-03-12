@@ -1,100 +1,134 @@
 .participantsListContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 8vh;
-    padding: 0;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8vh;
+  padding: 0;
+}
 
-  
 
+.profileTabTitle{
+  font-weight: 500;
+  font-size: 52px;
+  margin-top: 8vh;
+  margin-bottom: 5vh;
+}
+
+
+
+.participantItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid #cbc3e3;
+  width: 100%;
+  border-radius: 8px;
+  height: 43px; 
+  box-sizing: border-box; 
+}
+
+
+
+
+
+.participantRole {
+  color: #666;
+}
+
+
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.buttonContainer{
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+
+.confirmButton {
+  padding: 16px 40px;
+  background-color: #2B306C;
+  color: #ffffff;
   
-  
+}
+
+.cancelButton {
+  padding: 16px 40px;
+  color: #ffffff;
+  background-color: #6C3F99;
+}
+
+
+.descriptionText{
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.rightZone {
+  display: flex;
+  align-items: center;
+  gap: 5vw; 
+}
+
+
+
+
+@media (max-width: 600px) {
+
 
   .inputFieldSmall {
-    border: 1px solid #6600cc;
-    border-radius: 6px;
-    padding: 12px 16px;
-    padding-right: 40px; /* Отступ справа для иконки */
-    width: 447px;
-    height: 43px;
-    font-size: 16px;
-    box-sizing: border-box;
+      max-width: calc(100% - 20px); 
+      font-size:14px; 
   }
-
 
   .participantItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #cbc3e3;
-    padding: 20px 10px;
-    width: 100%;
-    border-radius: 8px;
-    height: 43px; 
-    box-sizing: border-box; 
+      padding:10px; 
+      height:auto; 
   }
 
-  @media (max-width: 600px) {
-    .participantItem {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 5px;
-    }
+  .participantName, .participantRole {
+      font-size:14px; 
   }
 
 
+}
 
-  .participantInfo {
-    display: flex;
-    justify-content: space-between;
-    flex: 1;
-    gap: 20px; 
+
+@media (max-width: 480px) {
+
+.participantItem{
+  height: 72px;
+  max-width: 320px;
+
+}
+
+  .rightZone {
+    flex-direction: column; 
+    align-items: flex-end; 
+    gap: 0;
   }
-  
+
+
   .participantRole {
+    font-size: 14px; 
     color: #666;
-    margin-right: 5%; 
   }
 
 
-
-  .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .buttonContainer{
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
+}
 
 
-  .confirmButton {
-    padding: 16px 40px;
-    background-color: #2B306C;
-    color: #ffffff;
-    
-  }
-  
-  .cancelButton {
-    padding: 16px 40px;
-    color: #ffffff;
-    background-color: #6C3F99;
-  }
-
-
-  .descriptionText{
-    font-size: 20px;
-    font-weight: 600;
-  }
