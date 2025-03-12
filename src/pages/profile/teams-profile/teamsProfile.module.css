@@ -17,6 +17,27 @@
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 447px; 
+  height: 240px;
+}
+
+
+@media (max-width: 768px) {
+  .teamCard {
+    width: 320px; 
+    height: auto; 
+    margin: 0 auto; 
+  }
+}
+
+
+@media (max-width: 720px) {
+  .teamCard {
+    width: auto; 
+    height: auto; 
+    max-width: 320px; 
+    margin: 0 auto; 
+  }
 }
 
 
@@ -48,9 +69,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
 }
-
 
 .buttonContainer {
    margin-top:24px;
@@ -60,37 +79,32 @@
 
 }
 
-.buttonConfirm {
-  background-color: #2B306C;
-  color: #ffffff;
+.confirmButton {
+   background-color:#2B306C;
+   color:#ffffff;
+
 }
 
-.buttonCancel {
-  color: #ffffff;
-  background-color: #6C3F99;
+.cancelButton {
+   color:#ffffff;
+   background-color:#6C3F99;
+
+
+@media (max-width:768px) {
+   .teamCard {
+     width: 320px;
+     height: auto; 
+     margin: 0 auto; 
+   }
+   .buttonContainer {
+      flex-direction: column; 
+      gap:10px; 
+   }
+
+   .confirmButton,
+   .cancelButton {
+      width:auto;
+      padding:10px; 
+      text-align:center; 
+   }
 }
-
-
-
-
-
-@media (max-width: 768px) {
-  .teamCard {
-    width: 320px;
-    height: auto; 
-    margin: 0 auto; 
-  }
-}
-
-
-@media (max-width: 720px) {
-  .teamCard {
-    width: auto;
-    height: auto; 
-    max-width: 320px;
-    margin: 0 auto; 
-  }
-}
-
-
-

@@ -12,13 +12,10 @@
 .userHeader{
   position:inherit;
 }
-p {
-  margin: 0;
-  margin-top: 0;
-}
 
 .profileWrapper {
   background-color: #fff;
   padding: 20px;
 }
+
 
