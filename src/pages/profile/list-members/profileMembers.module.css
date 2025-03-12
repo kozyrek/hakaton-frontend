@@ -49,8 +49,6 @@ p {
 }
 
 @media (max-width: 480px) {
-
-
 .participantInfo {
     display: flex;
     justify-content: space-between;
@@ -66,6 +64,7 @@ p {
 .participantRole {
     color: #666;
     margin-right: auto; /* Убираем правый отступ */
+}
 }
 
 /* Адаптивные стили для экранов до 360px */
