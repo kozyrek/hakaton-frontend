@@ -99,7 +99,6 @@ const TeamsProfile = ({ myTeams, allTeams }) => {
           <ModalWindow
             title="Действительно хотите удалить данную команду?"
             description={selectedTeam}
-            descriptionLg
             setIsShow={cancelRemoval}
           >
             <div className={styles.buttonContainer}>
