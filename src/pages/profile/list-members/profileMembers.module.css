@@ -48,12 +48,20 @@ p {
     }
 }
 
+@media (max-width: 480px) {
+
+
 .participantInfo {
     display: flex;
     justify-content: space-between;
     flex: 1;
     gap: 20px; 
 }
+.participantName {
+  word-break: break-word;
+  max-width: 160px;;
+}
+
 
 .participantRole {
     color: #666;

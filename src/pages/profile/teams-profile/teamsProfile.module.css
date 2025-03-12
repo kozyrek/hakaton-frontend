@@ -12,7 +12,6 @@
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
-
 .teamCard {
   background-color: #fff;
   border-radius: 8px;
@@ -90,8 +89,13 @@
    color:#ffffff;
    background-color:#6C3F99;
 
-}
+
 @media (max-width:768px) {
+   .teamCard {
+     width: 320px;
+     height: auto; 
+     margin: 0 auto; 
+   }
    .buttonContainer {
       flex-direction: column; 
       gap:10px; 
