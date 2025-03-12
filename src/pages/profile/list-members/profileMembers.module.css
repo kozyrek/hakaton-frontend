@@ -115,6 +115,11 @@
   width: 100%;
 
 }
+.participantName {
+  word-break: break-word;
+  max-width: 160px;;
+}
+
 
   .rightZone {
     flex-direction: column; 
