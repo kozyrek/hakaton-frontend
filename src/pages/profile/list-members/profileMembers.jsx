@@ -92,7 +92,7 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
 
   return (
     <div className={styles.participantsList}>
-      <h3>Участники</h3>
+      <h2 className={styles.profileTabTitle}>Участники</h2>
       <SearchInput
         value={searchQuery}
         onChange={(e) => {
@@ -107,14 +107,16 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
           <li key={index} className={styles.participantItem}>
             <div className={styles.participantInfo}>
               <p className={styles.participantName}>{p.full_name}</p>
-              <p className={styles.participantRole}>{p.role}</p>
             </div>
+            <div className={styles.rightZone}>
+            <p className={styles.participantRole}>{p.role}</p>
             <DeleteButton
               className={styles.removeButton}
               onClick={() => openModal(p, index)}
             >
               Удалить
             </DeleteButton>
+            </div>
           </li>
         ))}
       </ul>
@@ -138,11 +140,13 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
             <div className={styles.buttonContainer}>
               <Button
                 text="Да"
+                large
                 onClick={confirmRemoval}
                 addClass={styles.confirmButton}
               />
               <Button
                 text="Нет"
+                large
                 onClick={cancelRemoval}
                 addClass={styles.cancelButton}
               />

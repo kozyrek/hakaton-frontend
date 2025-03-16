@@ -1,58 +1,138 @@
 .userInfoBlock {
+  display: flex;
+  align-items: center;
+  height: 390px;
   background: transparent;
   color: #fff;
-  margin-top: 8vh;
-  border-radius: 12px;
-  margin-bottom: 8vh;
+  margin-top: 80px; 
+  padding: 20px;
 }
 
 .userInfoHeader {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 20px;
-}
-
-.userInfoHeader p {
-  font-weight: 400;
-  font-size: 16px;
-
+  height: 180px;
+  width: 100%;
 }
 
 .profilePhotoPlaceholder {
   border-radius: 8px;
-  width: 200px;
-  height: 180px;
+  height: 100%;
+  width: auto;
+  max-width: 203px;
 }
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  flex: 1;
+}
+
 
 .userName {
   font-weight: 500;
   font-size: 52px;
+  margin: 0;
 }
 
-.mainInfo {
-  margin-top: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+
+.userNameResponsive {
+  display: none;
+}
+
+.userBirthDate {
+  font-weight: 400;
+  font-size: 16px;
+  margin: 0;
+}
+
+.userDetails {
+  margin: 0;
+  font-size: 16px;
 }
 
 .contact {
   display: flex;
-  align-items: center;
+
   gap: 20px;
-  flex-wrap: nowrap;
 }
 
 .contactItem {
   display: flex;
-
   align-items: center;
 }
-
 
 .icon {
   width: 16px;
   height: 16px;
-  margin-right: 8px;
-  margin-top: 10;
+  margin-right: 5px;
+}
+
+
+
+
+
+@media (max-width: 868px) {
+  .userInfoBlock {
+    max-height: 300px;
+    padding: 15px;
+  }
+  .userName {
+    font-size: 42px;
+  }
+  .userBirthDate,
+  .userDetails {
+    font-size: 14px;
+  }
+  .contact {
+    gap: 10px;
+    font-size: 14px;
+  }
+}
+
+
+@media (max-width: 608px) {
+  .userInfoBlock {
+    flex-direction: column;
+    max-height: 417px;
+    margin-top: 80px;
+  }
+  .contact{
+    flex-direction: column;
+    gap: 0;
+    justify-content: left;
+  }
+  
+  .userName {
+    display: none;
+  }
+  
+  .userNameResponsive {
+    display: flex;
+    justify-content: left;
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0;
+  }
+  
+  .userInfoHeader {
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    gap: 10px;
+  }
+  
+  .profilePhotoPlaceholder {
+    width: 152px;
+    height: 132px;
+    max-height: 180px;
+  }
+  
+  .icon {
+    width: 14px;
+    height: 14px;
+  }
 }
