@@ -2,9 +2,34 @@
     padding: 40px;
     min-height: 386px;
     display: flex;
-    flex-direction: column;;
+    flex-direction: column;
     border-radius: 8px;
-    background: right no-repeat url("./images/pattern.png"), #fffddc;
+    background: right / auto 100% no-repeat url("./images/pattern.png"), #fffddc;
+
+    @media (max-width: 1024px) {
+        min-height: 374px;
+        background-position: 120%;
+    }
+
+    @media (max-width: 768px) {
+        min-height: 365px;
+        background-position: right 150%;
+        /* background-size: 50% auto; */
+    }
+
+    @media (max-width: 360px) {
+        padding: 20px;
+        min-height: 346px;
+    }
+
+    h3 span {
+        display: block;
+        margin-top: 12px;
+        
+        @media (max-width: 768px) {
+            margin-top: 4px;
+        }
+    }
 }
 
 .visually-hidden {
@@ -22,9 +47,20 @@
 
 .contactsList {
     padding: 0;
+    max-width: 900px;
     display: flex;
-    gap: 120px;
+    gap: 60px;
+    justify-content: space-between;
     list-style-type: none;
+
+    @media (max-width: 1024px) {
+        max-width: 778px;
+        gap: 8px;
+    }
+
+    @media (max-width: 850px) {/*768*/
+        flex-direction: column;
+    }
 
     span {
         color: #1a1f1f;
@@ -36,4 +72,11 @@
     display: flex;
     gap: 12px;
     align-items: center;
+
+    svg {
+        @media (max-width: 1024px) {
+            width: 32px;
+            height: 32px;
+        }
+    }
 }

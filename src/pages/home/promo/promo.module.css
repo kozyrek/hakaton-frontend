@@ -1,6 +1,24 @@
 .wrapper {
     padding: 273px 0 160px;
     color: #ffffff;
+    position: relative;
+    z-index: 2;
+
+    @media (max-width: 1584px) {
+        margin: 0 -12px 0;
+    }
+
+    @media (max-width: 1400px) {
+        padding: 120px 0 120px;
+    }
+
+    @media (max-width: 1024px) {
+        padding: 60px 0 80px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 306px 0 60px;
+    }
 }
 
 .promoList {
@@ -10,6 +28,7 @@
 
     li {
         position: relative;
+        color: #ffffff;
 
         &::before {
             position: absolute;

@@ -2,8 +2,20 @@
     margin-bottom: 28px;
 }
 
-.text {
+.subtitle {
     margin-bottom: 48px;
+
+    @media (max-width: 1024px) {
+        margin-bottom: 40px;
+    }
+    
+    @media (max-width: 768px) {
+        margin-bottom: 28px
+    }
+}
+
+.text {
+    margin-bottom: 16px;
 }
 
 .hackathonCards {
@@ -12,6 +24,18 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 30px;
     list-style-type: none;
+
+    @media (max-width: 1400px) {
+        gap: 20px;
+    }
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
 }
 
 .blockWrapper {
@@ -24,6 +48,17 @@
     padding: 0;
     border-radius: 8px;
     overflow: hidden;
+
+    @media (max-width: 1024px) {
+        order: 3;
+        grid-column: span 2;
+        max-height: 460px;
+    }
+
+    @media (max-width: 768px) {
+        grid-column: span 1;
+        min-height: 340px;
+    }
 
     img {
         display: block;
@@ -40,6 +75,7 @@
 
     li {
         position: relative;
+        margin-bottom: 8px;
     
         &::before {
             position: absolute;
@@ -52,4 +88,12 @@
 
 .buttonTop {
     margin-top: 48px;
+
+    @media (max-width: 1024px) {
+        margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+        margin-top: 28px;
+    }
 }

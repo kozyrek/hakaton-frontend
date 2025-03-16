@@ -11,16 +11,16 @@ export default function Faq() {
                 <div>
                     {questionsPartOne.map((item) => (
                         <Accordion.Item eventKey={item.id} key={item.id} className={styles.accordionItem}>
-                            <Accordion.Header className={styles.accordionButton}>{item.title}</Accordion.Header>
-                            <Accordion.Body className={styles.accordionBody}>{item.content}</Accordion.Body>
+                            <Accordion.Header className={`text2 ${styles.accordionButton}`}>{item.title}</Accordion.Header>
+                            <Accordion.Body className={`text1 ${styles.accordionBody}`}>{item.content}</Accordion.Body>
                         </Accordion.Item>
                     ))}
                 </div>
                 <div>
                     {questionsPartTwo.map((item) => (
                         <Accordion.Item eventKey={item.id} key={item.id} className={styles.accordionItem}>
-                            <Accordion.Header className={styles.accordionButton}>{item.title}</Accordion.Header>
-                            <Accordion.Body className={styles.accordionBody}>{item.content}</Accordion.Body>
+                            <Accordion.Header className={`text2 ${styles.accordionButton}`}>{item.title}</Accordion.Header>
+                            <Accordion.Body className={`text1 ${styles.accordionBody}`}>{item.content}</Accordion.Body>
                         </Accordion.Item>
                     ))}
                 </div>

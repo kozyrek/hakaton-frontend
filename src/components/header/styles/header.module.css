@@ -1,16 +1,46 @@
 .header {
-    padding: 20px 0;
+    padding: 19px 0;
     width: 100%;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
     position: fixed;
     z-index: 100;
-    margin-bottom: -2px;
     background: linear-gradient(90deg, #BE1B86 0%, #2B306C 100%);
+    /* -webkit-backface-visibility: hidden; */
+
+    @media (max-width: 1024px) {
+        padding: 14px 0;
+        min-height: 70px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 5px 0;
+        min-height: 60px;
+    }
 }
 
 .wrapper {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
+    display: grid;
+    grid-template-columns: 160px 1fr 91px;
+    column-gap: 20px;
+
+    &.isLogIn {
+        @media (min-width: 1025px) {
+            grid-template-columns: 160px 1fr 150px;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 160px 1fr 50px;
+        gap: 48px;
+    }
+
+    @media (max-width: 768px) {
+        grid-template-columns: 95px 1fr min-content;
+        gap: 8px;
+    }
 }
 
 .navBlock {
@@ -26,6 +56,15 @@
         flex-direction: column;
         background-color: #ffffff;
         border-radius: 8px;
+        z-index: 102;
+
+        @media (max-width: 768px) {
+            max-width: 450px;
+        }
+
+        @media (max-width: 360px) {
+            max-width: 320px;
+        }
 
         a {
             color: #1a1f1f;
@@ -35,6 +74,18 @@
 
 .navBlockOpen {
     display: block;
+
+    .logoNavMenu {
+        width: 95px;
+        height: 24px;
+    }
+}
+
+.logo {
+    @media (max-width: 768px) {
+        width: 95px;
+        height: 24px;
+    }
 }
 
 .logoNavMenu {
@@ -47,11 +98,14 @@
 }
 
 .navLinkList {
-    margin: 0 40px;
-    align-self: center;
+    margin: 0;
+    max-width: 588px;
+    width: 100%;
+    justify-self: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 20px 40px ;
+    justify-content: space-between;
+    gap: 20px;
 
     @media (max-width: 1024px) {
         margin: 0;
@@ -67,7 +121,6 @@
 }
 
 .buttonMenu {
-    margin-left: 48px;
     padding: 0;
     display: none;
     width: 50px;
@@ -77,8 +130,16 @@
 
     @media (max-width: 1024px) {
         display: flex;
-        
-        right: 12px;
+    }
+
+    @media (max-width: 768px) {
+        margin-left: 34px;
+    }
+
+    &.isLogIn {
+        @media (max-width: 360px) {
+            margin-left: 18px;
+        }
     }
 }
 
@@ -86,15 +147,15 @@
     width: 20px;
     height: 20px;
     position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 102;
 }
 
 .overlay {
+    display: none;
+
     @media (max-width: 1024px) {
-        position: fixed;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        background-color: rgba(157, 157, 157, 0.8);
+        display: block;
     }
 }

@@ -18,10 +18,22 @@
 
 .swiper-button-prev {
   left: -80px;
+
+  @media (max-width: 1024px) {
+    top: auto;
+    left: calc(50% - 70px);
+    bottom: 0;
+  }
 }
 
 .swiper-button-next {
   right: -80px;
+
+  @media (max-width: 1024px) {
+    top: auto;
+    right: calc(50% - 70px);;
+    bottom: 0;
+  }
 
   &::after {
     margin: 0 0 0 3px;

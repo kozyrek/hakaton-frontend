@@ -1,3 +1,27 @@
+@font-face {
+  font-family: "Gotham";
+  font-style: normal;
+  font-weight: 500;
+  src: url("./assests/fonts/Gotham-Medium.woff2") format("woff2"), url("./assests/fonts/Gotham-Medium.woff") format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Open Sans Semibold";
+  font-style: normal;
+  font-weight: 600;
+  src: url("./assests/fonts/open_sans_semibold.woff2") format("woff2"), url("./assests/fonts/open_sans_semibold.woff") format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Open Sans Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./assests/fonts/open_sans_regular.woff2") format("woff2"), url("./assests/fonts/open_sans_regular.woff") format("woff");
+  font-display: swap;
+}
+
 body {
   margin: 0;
 }
@@ -6,10 +30,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-
-/* .container {
-
-} */
 
 .bodyContainer {
   display: flex;
@@ -21,44 +41,114 @@ code {
 
 .contentBox {
   padding: 80px 0;
+
+  @media (max-width: 1400px) {
+    padding: 60px 0;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 60px 0;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 40px 0;
+  } 
 }
 
 .titleH1 {
   margin-bottom: 40px;
+  font-family: "Gotham";
   font-size: 64px;
   color: #ffffff;
+
+  @media (max-width: 1024px) {
+    font-size: 48px;
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 20px;
+    font-size: 42px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 28px;
+  }
 }
 
 .titleH2 {
   margin-bottom: 48px;
+  font-family: "Gotham";
   font-size: 52px;
   color: #1a1f1f;
+
+  @media (max-width: 1024px) {
+    margin-bottom: 40px;
+    font-size: 40px;
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 28px;
+    font-size: 36px;
+  }
+
+  @media (max-width: 360px) {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
 }
 
 .titleH3 {
   margin-bottom: 60px;
+  font-family: "Gotham";
+  font-size: 32px;
   color: #2b306c;
+
+  @media (max-width: 1024px) {
+    font-size: 28px;
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 40px;
+    font-size: 24px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 20px;
+  }
 }
 
 .text1 {
+  font-family: "Open Sans Regular", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
   line-height: 22px;
   color: #1a1f1f;
 }
 
 .text2 {
+  font-family: "Open Sans Semibold", sans-serif;
   font-weight: 600;
+  font-size: 16px;
   line-height: 22px;
   color: #2b306c;
 }
 
 .text3 {
+  font-family: "Open Sans Semibold", sans-serif;
   font-weight: 600;
   font-size: 20px;
   line-height: 27px;
   color: #2b306c;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+    line-height: 22px;
+  }
 }
 
 .text4 {
+  font-family: "Open Sans Regular", sans-serif;
+  font-weight: 400;
   font-size: 14px;
   line-height: 19px;
   color: #1a1f1f;
@@ -68,6 +158,11 @@ code {
   .container-xxl {
     max-width: 1400px !important;
   }
+}
+
+.container-xl {
+  padding: 0;
+  max-width: unset;
 }
 
 .overlay {

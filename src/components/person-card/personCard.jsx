@@ -6,8 +6,8 @@ export default function PersonCard({ item }) {
             <div className={styles.imageWrapper}>
                 <img src={item.url} alt="Фотография руководителя"></img>
             </div>
-            <p className={styles.name}>{item.name}</p>
-            <p className={styles.description}>{item.description}</p>
+            <p className={`text3 ${styles.name}`}>{item.name}</p>
+            <p className={`text1 ${styles.description}`}>{item.description}</p>
         </>
     )
 }

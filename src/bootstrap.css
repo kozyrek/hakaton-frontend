@@ -1,7 +1,30 @@
-@media (min-width: 1580px) {
-    .container {
-      max-width: 1400px;
-      padding-left: 0;
-      padding-right: 0;
-    }
+.container {
+  max-width: 1580px;
+  padding-left: 90px;
+  padding-right: 90px;
+
+  /* max-width: 1480px;
+  padding-left: 40px;
+  padding-right: 40px; */
+
+  @media (max-width: 1024px) {
+    max-width: calc(100% - 80px);
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  @media (max-width: 768px) {
+    max-width: calc(100% - 40px);
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
 }
