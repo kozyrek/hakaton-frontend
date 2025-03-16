@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Container } from "react-bootstrap";
 
-// import MainContainer from "../container/mainContainer";
+// import { getToken } from "../../api/getToken";
 import Logo from "../logo/logo";
 import Navigation from "../navigation/navigation";
 import Button from "../button/button";
@@ -16,6 +16,13 @@ import Burger from "./images/Burger";
 import Close from "./images/Close";
 
 export default function Header() {
+    
+    // getToken()
+    // .then(
+    //     result => console.log(result),
+    //     error => console.log(error),
+    // )
+
     const [isLogIn, setIsLogIn] = useState(false);
     const [menuIsOpen, setMenuIsOpen] = useState(false);
 
@@ -63,19 +70,24 @@ export default function Header() {
     ]
 
     const classNameButton = cn(styles.buttonMenu, {
-        [styles.buttonMenuOpen]: menuIsOpen
+        [styles.buttonMenuOpen]: menuIsOpen,
+        [styles.isLogIn]: isLogIn,
     });
 
     const classNameNavBlock = cn(styles.navBlock, {
         [styles.navBlockOpen]: menuIsOpen
     });
 
+    const classNameWrapper = cn(styles.wrapper, {
+        [styles.isLogIn]: isLogIn,
+    });
+
     return (
         <div className={styles.header}>
             <Container>
-                <div className={styles.wrapper}>
-                    <Logo src={SvgLogo} />
-                    {menuIsOpen ? <div onClick={OpenMenu} className={styles.overlay}></div> : null}
+                <div className={classNameWrapper}>
+                    <Logo src={SvgLogo} addClass={styles.logo} />
+                    {menuIsOpen ? <div onClick={OpenMenu} className={`overlay ${styles.overlay}`}></div> : null}
                     <div className={classNameNavBlock}>
                         <Logo src={LogoBlack} addClass={styles.logoNavMenu}/>
                         <Navigation arr={navLinks} addClass={styles.navLinkList}></Navigation>

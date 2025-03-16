@@ -1,6 +1,5 @@
 import React from "react";
 import { Container } from "react-bootstrap";
-// import MainContainer from "../../components/container/mainContainer";
 import Promo from "./promo/promo";
 import AboutUs from "./about-us/aboutUs";
 import Hackathon from "./hackathon/hackathon";

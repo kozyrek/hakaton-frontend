@@ -9,6 +9,57 @@
     position: relative;
 }
 
+.videoWrapper {
+    border-radius: 8px;
+    background-color: #f6edff;
+    overflow: hidden;
+    position: relative;
+
+    video {
+        display: block;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    &.isPlaying .buttonPlay {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.buttonPlay {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.25s;
+
+    &::before {
+        content: ''; 
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #f6edff;
+    }
+
+    &::after {
+        content: ''; 
+        position: absolute;
+        top: 50%;
+        left: calc(50% + 9px);
+        transform: translate(-50%, -50%);
+        border: 12.5px solid transparent;
+        border-left: 20px solid #6c3f99;
+       }
+}
+
 .imageWrapper {
     width: 100px;
     height: 100px;
@@ -30,9 +81,12 @@
 
 .userName {
     margin-bottom: 4px;
+    color: #1a1f1f;
 }
 
 .userPosition {
+    font-family: "Open Sans Regular", sans-serif;
+    font-weight: 400;
     font-size: 12px;
     line-height: 16px;
     color: #1a1f1f;
@@ -42,14 +96,6 @@
     grid-column: span 2;
     height: 224px;
 }
-
-/* .text {
-    overflow: hidden;
-    display: -webkit-box;
-    text-overflow: ellipsis;
-    -webkit-line-clamp: 10;
-    -webkit-box-orient: vertical;
-} */
 
 .isCutText {
     overflow: hidden;

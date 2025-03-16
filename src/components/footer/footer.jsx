@@ -51,22 +51,22 @@ export default function Footer() {
             <Container>
                 <div className={styles.block}>
                     <div className={styles.contacts}>
-                        <Logo src={SvgLogo} />
-                        <Link>8 (8342) 22-32-50</Link>
-                        <Link>licey-mrsu@yandex.ru</Link>
+                        <Logo src={SvgLogo} addClass={styles.logo}/>
+                        <Link className="text3">8 (8342) 22-32-50</Link>
+                        <Link className="text3">licey-mrsu@yandex.ru</Link>
                     </div>
 
                     <Navigation arr={navLinks} addClass={styles.navLinkList}></Navigation>
 
-                    <p className={styles.copyright}>&copy;&nbsp;2025&nbsp;МГУ им. Н.П. ОГАРЁВА</p>
+                    <p className={`text4 ${styles.copyright}`}>&copy;&nbsp;2025&nbsp;МГУ им. Н.П. ОГАРЁВА</p>
 
                     <div className={styles.politics}>
-                        <Link to="/">Политика конфиденциальности</Link>
-                        <Link to="/">Пользовательское соглашение</Link>
+                        <Link to="/" className="text4">Пользовательское соглашение</Link>
+                        <Link to="/" className="text4">Политика конфиденциальности</Link>
                     </div>
                     
                     <div className={styles.logo1T}>
-                        <p>Сделано в</p>
+                        <p>Сделано&nbsp;в</p>
                         <Link to="https://club.1t.ru/work" target="_blank">
                             <img src={Logo1T} width="107" height="24"alt="Логотип команда 1Т Клуб"></img>
                             <span>Teamcode</span>

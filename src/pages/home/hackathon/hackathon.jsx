@@ -8,14 +8,14 @@ export default function Hackathon() {
     return (
         <section className="contentBox">
             <h2 className={`titleH2 ${styles.title}`}>Что такое хакатон?</h2>
-            <p className={`text3 ${styles.text}`}>Хакатон&nbsp;&mdash; это твой шанс создать что-то значимое и&nbsp;сделать первый шаг к&nbsp;будущей карьере в&nbsp;науке или технологиях!</p>
+            <p className={`text3 ${styles.subtitle}`}>Хакатон&nbsp;&mdash; это твой шанс создать что-то значимое и&nbsp;сделать первый шаг к&nbsp;будущей карьере в&nbsp;науке или технологиях!</p>
 
             <ul className={styles.hackathonCards}>
                 <li className={styles.blockWrapper}>
-                    <p className="text2">Хакатон рассчитан для учащихся 9&ndash;11 классов и&nbsp;студентов СПО, которые:</p>
+                    <p className={`text2 ${styles.text}`}>Хакатон рассчитан для учащихся 9&ndash;11 классов и&nbsp;студентов СПО, которые:</p>
                     <ul className={styles.hackathonList}>
                         {forWhom.map((item) => (
-                            <li key={item.id}>{item.text}</li>
+                            <li key={item.id} className="text1">{item.text}</li>
                         ))}
                     </ul>
                 </li>
@@ -23,10 +23,10 @@ export default function Hackathon() {
                     <img src={image} alt="Фотография участников хакатона"></img>
                 </li>
                 <li className={styles.blockWrapper}>
-                    <p className="text2">Почему это важно?</p>
+                    <p className={`text2 ${styles.text}`}>Почему это важно?</p>
                     <ul className={styles.hackathonList}>
                         {advantages.map((item) => (
-                            <li key={item.id}>{item.text}</li>
+                            <li key={item.id} className="text1">{item.text}</li>
                         ))}
                     </ul>
                 </li>
