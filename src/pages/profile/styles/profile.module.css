@@ -1,5 +1,3 @@
-
-
 .profileTabTitle {
   font-weight: 500;
   font-size: 52px;
@@ -7,15 +5,18 @@
   margin-bottom: 5vh;
 }
 
-
-
-.userHeader{
-  position:inherit;
+.userHeader {
+  position: inherit;
 }
 
 .profileWrapper {
   background-color: #fff;
-  padding: 20px;
 }
 
+.mt80 {
+  margin-top: 80px;
+}
 
+.mb160 {
+  margin-bottom: 160px;
+}
