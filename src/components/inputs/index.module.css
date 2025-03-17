@@ -13,6 +13,36 @@
   padding: 12px 36px 12px 16px;
 }
 
+.textarea {
+  width: 100% !important;
+  min-height: 123px;
+  border: 2px solid #b899d6 !important;
+  outline: none;
+  border-radius: 6px;
+  padding: 12px 36px 12px 16px;
+}
+
+.length {
+  text-align: end;
+  font-size: 14px;
+  font-weight: 400;
+  color: #9d9d9d;
+}
+
+.fileInfo {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fileName {
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2b306c;
+}
+
 .loginInput:focus {
   border-color: #6c3f99 !important;
 }
@@ -44,6 +74,16 @@
   color: red;
   left: 0;
   top: 66px;
+}
+
+.fileUploadContainer{
+  margin-top: 20px;
+  display: flex;
+}
+
+.btn {
+  right: 0;
+  justify-items: end;
 }
 
 @media screen and (max-width: 576px) {

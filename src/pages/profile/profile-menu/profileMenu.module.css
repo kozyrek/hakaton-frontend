@@ -1,37 +1,35 @@
 .profileMenu {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-    align-items: center;
-  
-  }
-  .profileMenu p{
-    font-weight: 400;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.profileMenu p {
+  font-weight: 400;
   font-size: 14px;
   margin: 0;
-  }
+}
 
-  .profileMenu button {
-    padding: 10px 15px;
-  }
+.profileMenu button {
+  padding: 10px 15px;
+}
 
 /* Адаптивные стили */
 @media (max-width: 768px) {
   .profileMenu {
-    flex-direction: column; 
-    align-items: flex-start; 
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .profileMenu button {
-    width: 100%; 
-    margin-bottom: 10px; 
+    width: 100%;
+    margin-bottom: 10px;
   }
 }
 
 @media (max-width: 480px) {
   .profileMenu button {
-    padding: 8px; 
-    font-size: 14px; 
+    padding: 8px;
+    font-size: 14px;
   }
 }
 
