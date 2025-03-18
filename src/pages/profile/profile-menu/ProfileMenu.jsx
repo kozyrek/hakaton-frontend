@@ -12,6 +12,8 @@ const ProfileMenu = ({ activeTab, onTabChange, onLogout }) => {
   ];
 
   return (
+    <>
+    <LogoutButton onClick={onLogout} text="Выйти из профиля" className={styles.logoutButtonUp} />
     <div className={styles.profileMenu}>
       {menuItems.map(({ key, label }) => (
         <Button
@@ -25,6 +27,7 @@ const ProfileMenu = ({ activeTab, onTabChange, onLogout }) => {
       <LogoutButton onClick={onLogout} text="Выйти из профиля" className={styles.logoutButton} />
      
     </div>
+    </>
   );
 };
 
