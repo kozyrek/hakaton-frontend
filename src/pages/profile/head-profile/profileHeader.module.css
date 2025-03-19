@@ -131,3 +131,10 @@
     height: 14px;
   }
 }
+@media (max-width: 428px){
+  .profilePhotoPlaceholder {
+    width: 152px;
+    height: 132px;
+    max-height: 180px;
+  }
+}
