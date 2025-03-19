@@ -2,7 +2,8 @@
   font-family: "Gotham";
   font-style: normal;
   font-weight: 500;
-  src: url("./assests/fonts/Gotham-Medium.woff2") format("woff2"), url("./assests/fonts/Gotham-Medium.woff") format("woff");
+  src: url("./assests/fonts/Gotham-Medium.woff2") format("woff2"),
+    url("./assests/fonts/Gotham-Medium.woff") format("woff");
   font-display: swap;
 }
 
@@ -10,7 +11,8 @@
   font-family: "Open Sans Semibold";
   font-style: normal;
   font-weight: 600;
-  src: url("./assests/fonts/open_sans_semibold.woff2") format("woff2"), url("./assests/fonts/open_sans_semibold.woff") format("woff");
+  src: url("./assests/fonts/open_sans_semibold.woff2") format("woff2"),
+    url("./assests/fonts/open_sans_semibold.woff") format("woff");
   font-display: swap;
 }
 
@@ -18,7 +20,8 @@
   font-family: "Open Sans Regular";
   font-style: normal;
   font-weight: 400;
-  src: url("./assests/fonts/open_sans_regular.woff2") format("woff2"), url("./assests/fonts/open_sans_regular.woff") format("woff");
+  src: url("./assests/fonts/open_sans_regular.woff2") format("woff2"),
+    url("./assests/fonts/open_sans_regular.woff") format("woff");
   font-display: swap;
 }
 
@@ -49,10 +52,10 @@ code {
   @media (max-width: 1024px) {
     padding: 60px 0;
   }
-  
+
   @media (max-width: 768px) {
     padding: 40px 0;
-  } 
+  }
 }
 
 .titleH1 {
@@ -154,11 +157,45 @@ code {
   color: #1a1f1f;
 }
 
-@media (min-width: 1400px) {
+/* @media (min-width: 1400px) {
   .container-xxl {
     max-width: 1400px !important;
+    padding: 0 90px;
+  }
+} */
+@media (max-width: 1400px) {
+  .container-xxl {
+    max-width: 1400px !important;
+    padding: 0 90px !important;
   }
 }
+
+@media (max-width: 1024px) {
+  .container-xxl {
+    max-width: 1400px !important;
+    padding: 0 40px !important;
+  }
+}
+@media (max-width: 768px) {
+  .container-xxl {
+    max-width: 1400px !important;
+    padding: 0 20px !important;
+  }
+}
+
+.container-xxl {
+  max-width: 1400px;
+  padding: 0;
+}
+
+.container-fluid {
+  padding: 0;
+}
+
+/* .container {
+  padding: 0;
+  max-width: 1400px;
+} */
 
 .container-xl {
   padding: 0;

@@ -4,7 +4,8 @@
   height: 390px;
   background: transparent;
   color: #fff;
-  margin-top: 80px; 
+  margin-top: 80px;
+  width: 100%;
   /* padding: 20px; */
 }
 
@@ -31,13 +32,12 @@
   flex: 1;
 }
 
-
 .userName {
   font-weight: 500;
   font-size: 52px;
-  margin: 0;
+  /* margin: 0; */
+  margin-top: -12px !important;
 }
-
 
 .userNameResponsive {
   display: none;
@@ -71,14 +71,10 @@
   margin-right: 5px;
 }
 
-
-
-
-
 @media (max-width: 868px) {
   .userInfoBlock {
     max-height: 300px;
-    padding: 15px;
+    /* padding: 15px; */
   }
   .userName {
     font-size: 42px;
@@ -93,23 +89,22 @@
   }
 }
 
-
 @media (max-width: 608px) {
   .userInfoBlock {
     flex-direction: column;
     max-height: 417px;
     margin-top: 80px;
   }
-  .contact{
+  .contact {
     flex-direction: column;
     gap: 0;
     justify-content: left;
   }
-  
+
   .userName {
     display: none;
   }
-  
+
   .userNameResponsive {
     display: flex;
     justify-content: left;
@@ -117,20 +112,20 @@
     font-weight: 500;
     margin: 0;
   }
-  
+
   .userInfoHeader {
     flex-direction: column;
     justify-content: center;
     height: auto;
     gap: 10px;
   }
-  
+
   .profilePhotoPlaceholder {
     width: 152px;
     height: 132px;
     max-height: 180px;
   }
-  
+
   .icon {
     width: 14px;
     height: 14px;
