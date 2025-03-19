@@ -24,7 +24,6 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     set_user: (state, action) => {
-      // const { name } = action.payload;
       state.user = { ...action.payload };
     },
     add_token: (state, action) => {
@@ -64,6 +63,7 @@ export const userSlice = createSlice({
         progress: [],
         download: [],
       };
+      
     },
   },
 });

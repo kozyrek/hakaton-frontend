@@ -4,7 +4,7 @@ import SearchInput from "../ui/searchInput/searchInput";
 import Pagination from "../ui/pagination/pagination";
 import DeleteButton from "../ui/deleteBtn/deleteButton";
 import ModalWindow from "../../../components/modalWindow/index";
-import Button from "../../../components/button/button"; 
+import Button from "../../../components/button/button";
 
 const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
   // Состояния для поиска, пагинации и модального окна
@@ -24,7 +24,9 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
     );
   });
 
-  const totalPages = Math.ceil(filteredParticipants.length / participantsPerPage);
+  const totalPages = Math.ceil(
+    filteredParticipants.length / participantsPerPage
+  );
   const startIndex = (currentPage - 1) * participantsPerPage;
   const currentParticipants = filteredParticipants.slice(
     startIndex,
@@ -103,19 +105,22 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
       />
 
       <ul className={styles.participantsListContainer}>
-        {currentParticipants.map((p, index) => (
-          <li key={index} className={styles.participantItem}>
+        {currentParticipants.map((participant, index) => (
+          <li
+            key={index}
+            className={styles.participantItem}
+          >
             <div className={styles.participantInfo}>
-              <p className={styles.participantName}>{p.full_name}</p>
+              {participant.full_name}
             </div>
-            <div className={styles.rightZone}>
-            <p className={styles.participantRole}>{p.role}</p>
-            <DeleteButton
-              className={styles.removeButton}
-              onClick={() => openModal(p, index)}
-            >
-              Удалить
-            </DeleteButton>
+            <div className={styles.rightZone}>{participant.role}</div>
+            <div>
+              <DeleteButton
+                className={styles.removeButton}
+                onClick={() => openModal(participant, index)}
+              >
+                Удалить
+              </DeleteButton>
             </div>
           </li>
         ))}
@@ -131,7 +136,7 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
 
       {showModal && (
         <div className={styles.modalOverlay}>
-          <ModalWindow 
+          <ModalWindow
             title="Действительно хотите удалить данного участника из команды?"
             description={selectedParticipant?.participant.full_name}
             descriptionLg={false}

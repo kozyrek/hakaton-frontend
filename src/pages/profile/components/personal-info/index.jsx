@@ -34,8 +34,8 @@ export default function PersonalInfo() {
             aria-label="Редактировать персональные данные"
           >
             <Pencil
-              width={width < 769 ? 12 : 28}
-              height={width < 769 ? 12 : 28}
+              width={width < 769 ? 18 : 28}
+              height={width < 769 ? 18 : 28}
               aria-hidden="true"
             />
           </button>

@@ -12,23 +12,29 @@ import TeamsProfile from "./teams-profile/teamsProfile";
 import ProjectsProfile from "./projects-profile/projectsProfile";
 import PersonalInfo from "./components/personal-info";
 import cn from "classnames";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   // Данные из JSON (без функционала редактирования)
-  const [user] = useState(data.user);
+  // const [user] = useState(data.user);
+  const user = useSelector((state) => state.user);
   const [participants, setParticipants] = useState(data.participants);
   const [myTeams] = useState(data.my_teams);
   const [allTeams] = useState(data.all_teams);
   const [projects] = useState(data.projects);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Управление вкладками
   const [activeTab, setActiveTab] = useState("profile");
   const handleTabChange = (tab) => setActiveTab(tab);
 
-  const handleLogout = () => dispatch(logout());
+  const handleLogout = () => {
+    navigate("/");
+    dispatch(logout());
+  };
 
   const handleRemoveParticipant = (index) => {
     setParticipants((prev) => prev.filter((_, i) => i !== index));
@@ -38,7 +44,7 @@ export default function Profile() {
     <>
       <div className={styles.userHeader}>
         <LayoutProfileBg>
-          <ProfileHeader user={user} />
+          <ProfileHeader user={user.user} />
         </LayoutProfileBg>
       </div>
       <div className={styles.profileWrapper}>
