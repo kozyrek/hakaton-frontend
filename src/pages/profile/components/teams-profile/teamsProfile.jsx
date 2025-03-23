@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styles from "./teamsProfile.module.css";
-import Button from "../../../components/button/button";
-import ModalWindow from "../../../components/modalWindow";
-import Card from "../ui/card/Card";
+import Button from "../../../../components/button/button";
+import ModalWindow from "../../../../components/modalWindow";
+import Card from "../../ui/card/Card";
 
 
 const TeamsProfile = ({ myTeams, allTeams }) => {

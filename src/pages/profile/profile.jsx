@@ -4,12 +4,12 @@ import { Container } from "react-bootstrap";
 import LayoutProfileBg from "./styles/layoutProfileBg";
 import styles from "./styles/profile.module.css";
 import searchIcon from "../../assests/images/svg/search.svg";
-import ProfileForm from "./profile-form/ProfileForm";
-import ProfileHeader from "./head-profile/profileHeader";
-import ProfileMenu from "./profile-menu/ProfileMenu";
-import ProfileMembers from "./list-members/profileMembers";
-import TeamsProfile from "./teams-profile/teamsProfile";
-import ProjectsProfile from "./projects-profile/projectsProfile";
+// import ProfileForm from "./profile-form/ProfileForm";
+import ProfileHeader from "./components/head-profile/profileHeader";
+import ProfileMenu from "./components/profile-menu/ProfileMenu";
+import ProfileMembers from "./components/list-members/profileMembers";
+import TeamsProfile from "./components/teams-profile/teamsProfile";
+import ProjectsProfile from "./components/projects-profile/projectsProfile";
 import PersonalInfo from "./components/personal-info";
 import cn from "classnames";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,8 +32,8 @@ export default function Profile() {
   const handleTabChange = (tab) => setActiveTab(tab);
 
   const handleLogout = () => {
-    navigate("/");
     dispatch(logout());
+    navigate("/");
   };
 
   const handleRemoveParticipant = (index) => {
@@ -51,6 +51,7 @@ export default function Profile() {
         <Container fluid="xxl">
           <div className={styles.mt80}>
             <ProfileMenu
+              user={user.user}
               activeTab={activeTab}
               onTabChange={handleTabChange}
               onLogout={handleLogout}
@@ -61,6 +62,7 @@ export default function Profile() {
             {activeTab === "profile" && <PersonalInfo />}
             {activeTab === "users" && (
               <ProfileMembers
+                user={user.user}
                 participants={participants}
                 searchIcon={searchIcon}
                 onRemoveParticipant={handleRemoveParticipant}

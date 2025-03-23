@@ -41,7 +41,7 @@ export default function getUser(token) {
         });
       } else {
         reg({
-          error: "Invalid token.",
+          error: "Invalid response.",
         });
       }
     }, 500);

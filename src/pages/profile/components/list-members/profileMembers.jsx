@@ -1,20 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./profileMembers.module.css";
-import SearchInput from "../ui/searchInput/searchInput";
-import Pagination from "../ui/pagination/pagination";
-import DeleteButton from "../ui/deleteBtn/deleteButton";
-import ModalWindow from "../../../components/modalWindow/index";
-import Button from "../../../components/button/button";
+import SearchInput from "../../ui/searchInput/searchInput";
+import Pagination from "../../ui/pagination/pagination";
+import DeleteButton from "../../ui/deleteBtn/deleteButton";
+import ModalWindow from "../../../../components/modalWindow/index";
+import Button from "../../../../components/button/button";
+import getAllUser from "../../../../api/getAllUsers";
+import { getRole } from "../head-profile/profileHeader";
 
-const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
+const ProfileMembers = ({
+  user,
+  participants,
+  searchIcon,
+  onRemoveParticipant,
+}) => {
   // Состояния для поиска, пагинации и модального окна
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  const [usersList, setUserList] = useState({});
+  const [loading, setLoading] = useState(false);
   // Храним выбранного участника и его индекс (индекс в currentParticipants)
   const [selectedParticipant, setSelectedParticipant] = useState(null);
   const participantsPerPage = 10;
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const users = await getAllUser();
+        setUserList(users);
+      } catch (err) {
+        console.log(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
   // Фильтрация участников по поисковому запросу
   const filteredParticipants = participants.filter((p) => {
     const query = searchQuery.toLowerCase();
@@ -92,6 +116,9 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
     setSelectedParticipant(null);
   };
 
+  // Нужно добавить прелоадер
+  if (loading) return <>Loading</>;
+
   return (
     <div className={styles.participantsList}>
       <h2 className={styles.profileTabTitle}>Участники</h2>
@@ -105,25 +132,39 @@ const ProfileMembers = ({ participants, searchIcon, onRemoveParticipant }) => {
       />
 
       <ul className={styles.participantsListContainer}>
-        {currentParticipants.map((participant, index) => (
-          <li
-            key={index}
-            className={styles.participantItem}
-          >
-            <div className={styles.participantInfo}>
-              {participant.full_name}
-            </div>
-            <div className={styles.rightZone}>{participant.role}</div>
-            <div>
-              <DeleteButton
-                className={styles.removeButton}
-                onClick={() => openModal(participant, index)}
+        {(usersList.items || []).length > 0 ? (
+          (usersList.items || [])
+            .filter((participant) => {
+              const isAdmin = user.mentor?.isAdmin ?? false;
+              const isVerified = participant.verified ?? false;
+              return isAdmin || isVerified;
+            })
+            .map((participant) => (
+              <li
+                key={participant.id}
+                className={`${styles.participantItem} ${
+                  !participant.verified && styles.notVerified
+                }`}
               >
-                Удалить
-              </DeleteButton>
-            </div>
-          </li>
-        ))}
+                <div className={`${styles.participantInfo}`}>
+                  {participant.lastName} &nbsp;
+                  {participant.firstName} &nbsp;
+                  {participant.patronymic}
+                </div>
+                <div className={styles.rightZone}>{getRole(participant)}</div>
+                <div>
+                  <DeleteButton
+                    className={styles.removeButton}
+                    onClick={() => openModal(participant)}
+                  >
+                    Удалить
+                  </DeleteButton>
+                </div>
+              </li>
+            ))
+        ) : (
+          <div className={styles.emptyList}>Список участников пуст</div>
+        )}
       </ul>
 
       {totalPages > 1 && (
