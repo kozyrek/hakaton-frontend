@@ -2,30 +2,29 @@ import React from "react";
 
 import styles from "./profileHeader.module.css";
 
-import profilePhoto from "../../../assests/images/photo/ivanIvanovProfile.png";
-import phoneSvg from "../../../assests/images/svg/phone.svg";
-import emailSvg from "../../../assests/images/svg/email.svg";
+import profilePhoto from "../../../../assests/images/photo/ivanIvanovProfile.png";
+import phoneSvg from "../../../../assests/images/svg/phone.svg";
+import emailSvg from "../../../../assests/images/svg/email.svg";
+
+export const getRole = (user) => {
+  if (user.isMentor === false) {
+    return "Участник";
+  }
+
+  if (user.mentor?.isAdmin) {
+    return "Администратор";
+  }
+
+  if (user.isMentor) {
+    return "Ментор";
+  }
+
+  return "Роль не определена";
+};
 
 const ProfileHeader = ({ user }) => {
-  const getRole = (user) => {
-    if (user.isMentor === false) {
-      return "Участник";
-    }
-
-    if (user.mentor?.isAdmin) {
-      return "Администратор";
-    }
-
-    if (user.isMentor) {
-      return "Ментор";
-    }
-
-    return "Роль не определена";
-  };
-
   const role = getRole(user);
 
-  // console.log(user);
   return (
     <div className={styles.userInfoBlock}>
       <div className={styles.userInfoHeader}>

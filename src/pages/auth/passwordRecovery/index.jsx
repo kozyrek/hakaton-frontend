@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
-import Inputs from "../../components/inputs/inputs";
-import ModalWindow from "../../components/modalWindow";
-import { MODAL } from "../../components/modalWindow/utils/constants";
-import LayoutLogin from "../auth/layoutLogin";
-import Button from "../../components/button/button";
+import Inputs from "../../../components/inputs/inputs";
+import ModalWindow from "../../../components/modalWindow";
+import { MODAL } from "../../../components/modalWindow/utils/constants";
+import LayoutLogin from "../layoutLogin";
+import Button from "../../../components/button/button";
 
 import styles from "./index.module.css";
 import { Link } from "react-router-dom";
-import { validateField } from "../auth/utils/validateForm";
+import { validateField } from "../utils/validateForm";
 
 export default function PasswordRecovery() {
   const [formData, setFormData] = useState({
