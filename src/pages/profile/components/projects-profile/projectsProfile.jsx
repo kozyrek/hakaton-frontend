@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styles from "./projectsProfile.module.css";
-import Card from "../ui/card/Card";
-import ModalWindow from "../../../components/modalWindow";
-import Button from "../../../components/button/button";
+import Card from "../../ui/card/Card";
+import ModalWindow from "../../../../components/modalWindow";
+import Button from "../../../../components/button/button";
 
 const ProjectsProfile = ({ projects }) => {
   const [projectsState, setProjectsState] = useState(projects);

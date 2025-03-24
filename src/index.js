@@ -11,7 +11,7 @@ import Footer from "./components/footer/footer";
 import Profile from "./pages/profile/profile";
 import ProjectStages from "./pages/projectStages";
 
-import PasswordRecovery from "./pages/passwordRecovery";
+import PasswordRecovery from "./pages/auth/passwordRecovery";
 import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";

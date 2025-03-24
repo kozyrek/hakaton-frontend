@@ -69,6 +69,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 999;
 }
 
 .buttonContainer {
@@ -96,15 +97,5 @@
      height: auto; 
      margin: 0 auto; 
    }
-   .buttonContainer {
-      flex-direction: column; 
-      gap:10px; 
-   }
 
-   .confirmButton,
-   .cancelButton {
-      width:auto;
-      padding:10px; 
-      text-align:center; 
-   }
 }

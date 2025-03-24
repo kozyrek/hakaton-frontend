@@ -6,12 +6,13 @@ import { loginFields } from "./utils/utils";
 import Inputs from "../../components/inputs/inputs";
 import { validateField, validateForm } from "./utils/validateForm";
 import { useDispatch } from "react-redux";
-import { add_token } from "../../store/user/userSlice";
+import { add_token, set_user } from "../../store/user/userSlice";
 import { getToken } from "../../api/getToken";
 import { ROUTES } from "../../utils/constants";
 
 import styles from "./styles/formLogin.module.css";
 import stylesReg from "./styles/registration.module.css";
+import getUser from "../../api/getUser";
 
 export default function Login() {
   const [formData, setFormData] = useState({});
@@ -65,11 +66,14 @@ export default function Login() {
       formData["email"].value,
       formData["retryPassword"].value
     );
-    setLoading(false);
     if (token) {
       dispatch(add_token(token));
+      const user = await getUser(token.accessToken)
+      dispatch(set_user(user))
+      setLoading(false);
       navigate(ROUTES.PROFILE);
     }
+    setLoading(false);
   };
 
   return (
