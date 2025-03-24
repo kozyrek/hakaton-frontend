@@ -1,0 +1,53 @@
+.subtitle {
+    margin-bottom: 48px;
+    color: #1a1f1f;
+
+    @media (max-width: 1400px) {
+        margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+        margin-bottom: 28px;
+    }
+}
+
+.stepsList {
+    margin: 0;
+    padding: 0 0 80px;
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px 30px;
+    align-items: center;
+
+    @media (max-width: 1400px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+.stepsItem {
+    min-height: 103px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: #f6edff;
+
+    @media (max-width: 1400px) {
+        grid-column: 2 / 3;
+    }
+
+    @media (max-width: 1024px) {
+        grid-column: auto;
+    }
+}

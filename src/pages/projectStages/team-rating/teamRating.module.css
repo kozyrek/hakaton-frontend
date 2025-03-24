@@ -1,0 +1,28 @@
+.wrapper {
+    width: 221px;
+    height: 221px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 50%;
+    background-color: #f6edff;
+    font-family: "Open Sans Regular", sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 26px;
+    color: #1a1f1f;
+
+    @media (max-width: 1024px) {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+.rating {
+    color: #be1b86;
+    font-size: 46px;
+    line-height: 64px;
+}
+

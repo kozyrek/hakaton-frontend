@@ -1,0 +1,49 @@
+.stepWrapper {
+    text-decoration: none;
+    min-height: 103px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(270deg, #ceb2e9 34px, #f6edff 34px);
+    position: relative;
+
+    svg {
+        position: absolute;
+        right: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+.stepInProgress {
+    background: linear-gradient(270deg, #fffddc 34px, #f6edff 34px);
+
+    svg {
+        path {
+            fill: #1a1f1f;
+        }
+    }
+}
+
+.stepIsComplete {
+    background: linear-gradient(270deg, #be1b86 34px, #efefef 34px);
+
+    svg {
+        path {
+            fill: #ffffff;
+        }
+    }
+}
+
+.textBlock {
+    max-width: calc(100% - 34px);
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 2px;
+
+    p {
+        color: #1a1f1f;
+    };
+}

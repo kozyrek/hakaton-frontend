@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Container } from "react-bootstrap";
-
-// import { getToken } from "../../api/getToken";
+import { useSelector, useDispatch } from "react-redux";
+// import { useNavigate } from "react-router-dom";
+import getUser from "../../api/getUser";
+import { 
+    set_user, 
+    // logout 
+} from "../../store/user/userSlice";
 import Logo from "../logo/logo";
 import Navigation from "../navigation/navigation";
 import Button from "../button/button";
@@ -11,31 +16,43 @@ import cn from "classnames";
 import styles from "./styles/header.module.css";
 import SvgLogo from "../../assests/images/svg/logo.svg";
 import LogoBlack from "../../assests/images/svg/logo-black.svg";
-import userImage from "./images/image.jpg";
 import Burger from "./images/Burger";
 import Close from "./images/Close";
 
 export default function Header() {
-    
-    // getToken()
-    // .then(
-    //     result => console.log(result),
-    //     error => console.log(error),
-    // )
+    const dispatch = useDispatch();
+    // const navigate = useNavigate();
 
-    const [isLogIn, setIsLogIn] = useState(false);
+    let isLogIn = false;
+    let user = {};
+
+    const state = useSelector((state)=>state);//скорректировать
+
+    const token = state.user.token.accessToken;
+
+    const setUser = async () => {
+        if (token) {
+            const user = await getUser(token);
+            if (user) {
+                dispatch(set_user(user))
+            };
+        }
+    }
+    setUser();
+
+    user = state.user.user;
+    if (Object.keys(user).length !== 0) {
+        isLogIn = true;
+    } else {
+        isLogIn = false
+    }
+
     const [menuIsOpen, setMenuIsOpen] = useState(false);
 
     function OpenMenu() {
         setMenuIsOpen(!menuIsOpen);
     }
 
-    const user = {
-        id: 1,
-        firstName: 'Иван',
-        lastName: 'Иванов',
-        image: userImage,
-    }
     const navLinks = [
         {
             id: 1,

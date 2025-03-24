@@ -9,6 +9,7 @@ import Registration from "./pages/auth/registration";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import Profile from "./pages/profile/profile";
+import ProjectStages from "./pages/projectStages";
 
 import PasswordRecovery from "./pages/auth/passwordRecovery";
 import { Provider } from "react-redux";
@@ -55,6 +56,10 @@ root.render(
               <Route
                 path="*"
                 element={<ErrorPage />}
+              />
+              <Route
+                path={ROUTES.STAGES}
+                element={<ProjectStages />}
               />
             </Routes>
             <Footer />

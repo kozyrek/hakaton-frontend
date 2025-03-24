@@ -4,4 +4,5 @@ export const ROUTES = {
   LOGIN: "/login",
   PROFILE: "/profile",
   RECOVERY: "/recovery",
+  STAGES: "/stages",
 };
