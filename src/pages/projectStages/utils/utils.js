@@ -9,8 +9,8 @@ export const projectExample = {
         ],
         // projectFiles: [],
         stages: [],
-        // isComplete: false,
-        isComplete: true,
+        isComplete: false,
+        // isComplete: true,
     },
     team: {
         title: "КодФорсаж",
