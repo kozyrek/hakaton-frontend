@@ -159,3 +159,9 @@
         display: block;
     }
 }
+
+.exit {/*временный код*/
+    position: absolute;
+    bottom: -100%;
+    right: 0;
+}

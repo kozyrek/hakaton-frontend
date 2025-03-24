@@ -1,0 +1,17 @@
+.textBlock {
+    max-width: calc(100% - 34px);
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 2px;
+
+    p {
+        color: #1a1f1f;
+    };
+}
+
+.icon {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+}
