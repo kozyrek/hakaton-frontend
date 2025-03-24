@@ -1,0 +1,24 @@
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr min-content;
+    column-gap: 136px;
+
+    @media (max-width: 1024px) {
+        column-gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        display: flex;
+        flex-direction: column-reverse;
+        row-gap: 20px;
+        align-items: center;
+    }
+}
+
+.title {
+    margin-bottom: 48px;
+
+    @media (max-width: 1400px) {
+        margin-bottom: 20px;
+    }
+}

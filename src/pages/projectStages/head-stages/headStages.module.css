@@ -4,10 +4,6 @@
     position: relative;
     z-index: 2;
 
-    @media (max-width: 1584px) {
-        margin: 0 -12px 0;
-    }
-
     @media (max-width: 1400px) {
         padding: 140px 0 60px;
     }
@@ -24,7 +20,7 @@
 .title {
     margin-bottom: 28px;
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1400px) {
         margin-bottom: 20px;
     }
 }
@@ -32,7 +28,7 @@
 .text {
     margin: 0 0 48px;
     max-width: 923px;
-    color: white;
+    color: #ffffff;
 
     @media (max-width: 1400px) {
         margin-bottom: 40px;

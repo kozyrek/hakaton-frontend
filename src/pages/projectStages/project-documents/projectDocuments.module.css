@@ -1,0 +1,32 @@
+.title {
+    color: #1a1f1f;
+    margin-bottom: 48px;
+
+    @media (max-width: 1400px) {
+        margin-bottom: 20px;
+    }
+}
+
+.documentsList {
+    padding-left: 20px;
+    list-style-type: decimal;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 16px;
+
+    a {
+        color: #2b306c;
+    }
+}
+
+.buttonTop {
+    margin-top: 48px;
+
+    @media (max-width: 1400px) {
+        margin-top: 40px;
+    }
+
+    @media (max-width: 1024px) {
+        margin-top: 28px;
+    }
+}
