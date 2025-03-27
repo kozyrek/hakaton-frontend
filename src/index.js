@@ -19,6 +19,7 @@ import ErrorPage from "./pages/404";
 import { ROUTES } from "./utils/constants";
 import "./swiper.css";
 import "./bootstrap.css";
+import UserId from "./pages/profile/user-by-id/id";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -48,6 +49,10 @@ root.render(
               <Route
                 path={ROUTES.PROFILE}
                 element={<Profile />}
+              />
+              <Route
+                path={ROUTES.USER_ID}
+                element={<UserId />}
               />
               <Route
                 path={ROUTES.RECOVERY}
