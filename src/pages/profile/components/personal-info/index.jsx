@@ -16,7 +16,7 @@ export const LABELS = {
   download: "",
 };
 
-export default function PersonalInfo() {
+export default function PersonalInfo({ isViewied = false }) {
   const personalInfo = useSelector((state) => state.user.personalInfo ?? {});
   const [isEdit, setIsEdit] = useState(false);
   const width = useResize();
@@ -28,17 +28,19 @@ export default function PersonalInfo() {
       <Row className={styles.mb48}>
         <Col className={styles.personalInfoContainer}>
           <h2 className={styles.sectionTitle}>Персональные данные</h2>{" "}
-          <button
-            className={styles.editButton}
-            onClick={() => setIsEdit(true)}
-            aria-label="Редактировать персональные данные"
-          >
-            <Pencil
-              width={width < 769 ? 18 : 28}
-              height={width < 769 ? 18 : 28}
-              aria-hidden="true"
-            />
-          </button>
+          {isViewied && (
+            <button
+              className={styles.editButton}
+              onClick={() => setIsEdit(true)}
+              aria-label="Редактировать персональные данные"
+            >
+              <Pencil
+                width={width < 769 ? 18 : 28}
+                height={width < 769 ? 18 : 28}
+                aria-hidden="true"
+              />
+            </button>
+          )}
         </Col>
       </Row>
       {isEdit ? (
