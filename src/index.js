@@ -9,7 +9,8 @@ import Registration from "./pages/auth/registration";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import Profile from "./pages/profile/profile";
-
+import TeamPage from "./pages/profile/components/teams-profile/teamPage/teamPage"
+import ProjectsPage from "./pages/profile/components/projects-profile/projectsPage/projectsPage";
 import PasswordRecovery from "./pages/auth/passwordRecovery";
 import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
@@ -48,6 +49,10 @@ root.render(
                 path={ROUTES.PROFILE}
                 element={<Profile />}
               />
+              <Route path={ROUTES.TEAMSPAGE} 
+              element={<TeamPage />} />
+               <Route path={ROUTES.PROJECTSPAGE} 
+              element={<ProjectsPage />} />
               <Route
                 path={ROUTES.RECOVERY}
                 element={<PasswordRecovery />}

@@ -1,20 +1,18 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../../../utils/constants";
 import styles from "./teamsProfile.module.css";
 import Button from "../../../../components/button/button";
 import ModalWindow from "../../../../components/modalWindow";
 import Card from "../../ui/card/Card";
 
-
 const TeamsProfile = ({ myTeams, allTeams }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("myTeams");
-
-  // Локальные состояния для хранения списков команд (чтобы можно было удалять)
   const [myTeamsState, setMyTeamsState] = useState(myTeams);
   const [allTeamsState, setAllTeamsState] = useState(allTeams);
-
-  // Состояния для модального окна
   const [showModal, setShowModal] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedTeamForDeletion, setSelectedTeamForDeletion] = useState(null);
 
   const menuItems = [
     { key: "myTeams", label: "Мои команды" },
@@ -22,26 +20,32 @@ const TeamsProfile = ({ myTeams, allTeams }) => {
   ];
 
   const openModal = (teamName) => {
-    setSelectedTeam(teamName);
+    setSelectedTeamForDeletion(teamName);
     setShowModal(true);
   };
 
-
   const cancelRemoval = () => {
     setShowModal(false);
-    setSelectedTeam(null);
+    setSelectedTeamForDeletion(null);
   };
 
-
   const confirmRemoval = () => {
-    if (selectedTeam) {
+    if (selectedTeamForDeletion) {
       if (activeTab === "myTeams") {
-        setMyTeamsState((prev) => prev.filter((t) => t !== selectedTeam));
+        setMyTeamsState((prev) =>
+          prev.filter((t) => t !== selectedTeamForDeletion)
+        );
       } else {
-        setAllTeamsState((prev) => prev.filter((t) => t !== selectedTeam));
+        setAllTeamsState((prev) =>
+          prev.filter((t) => t !== selectedTeamForDeletion)
+        );
       }
     }
     cancelRemoval();
+  };
+
+  const handleTeamClick = (team) => {
+    navigate(ROUTES.TEAMSPAGE.replace(":teamId", team));
   };
 
   return (
@@ -62,47 +66,45 @@ const TeamsProfile = ({ myTeams, allTeams }) => {
       {activeTab === "myTeams" && (
         <div className={styles.cardsContainer}>
           {myTeamsState.map((team, index) => (
-            <Card 
-              key={index} 
-              team={team} 
-              onDelete={() => openModal(team)} 
+            <Card
+              key={index}
+              team={team}
+              onDelete={() => openModal(team)}
+              onClick={() => handleTeamClick(team)}
             />
           ))}
         </div>
       )}
-
       {activeTab === "allTeams" && (
         <div className={styles.cardsContainer}>
           {allTeamsState.map((team, index) => (
             <Card
-            key={index} 
-            team={team} 
-            onDelete={() => openModal(team)} 
-  logoVariant="default"
-/>
-
-         
+              key={index}
+              team={team}
+              onDelete={() => openModal(team)}
+              logoVariant="default"
+              onClick={() => handleTeamClick(team)}
+            />
           ))}
         </div>
       )}
-<div  className={styles.createButton}>
-     <Button
-     large
-        text="Создать команду"
-        onClick={() => alert("Создать команду")}
-      />
+      <div className={styles.createButton}>
+        <Button
+          large
+          text="Создать команду"
+          onClick={() => alert("Создать команду")}
+        />
+      </div>
 
-</div>
- 
       {showModal && (
         <div className={styles.modalOverlay}>
           <ModalWindow
             title="Действительно хотите удалить данную команду?"
-            description={selectedTeam}
+            description={selectedTeamForDeletion}
             setIsShow={cancelRemoval}
           >
             <div className={styles.buttonContainer}>
-            <Button
+              <Button
                 text="Да"
                 large
                 onClick={confirmRemoval}

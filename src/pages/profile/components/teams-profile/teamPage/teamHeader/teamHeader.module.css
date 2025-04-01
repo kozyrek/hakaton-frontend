@@ -1,0 +1,121 @@
+.userInfoBlock {
+  display: flex;
+
+  height: 390px;
+  flex-direction: column;
+  background: transparent;
+  color: #fff;
+  margin-top: 160px;
+  width: 100%;
+}
+
+.userInfoHeader {
+  margin-top: 40px;
+  display: flex;
+  gap: 20px;
+  height: 180px;
+  width: 100%;
+}
+
+.profilePhotoPlaceholder {
+  border-radius: 8px;
+  height: 100%;
+  max-height: 180px;
+  width: auto;
+  max-width: 208px;
+}
+
+.textContent {
+  display: flex;
+  gap: 8px;
+  justify-content: end;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+}
+
+.userName {
+  font-weight: 500;
+  font-size: 64px;
+  margin-top: -12px !important;
+}
+
+.userNameResponsive {
+  display: none;
+}
+
+.details {
+  font-weight: 600;
+  font-size: 20px;
+}
+.nameMentor {
+  font-weight: 400;
+  font-size: 16px;
+}
+
+@media (max-width: 868px) {
+  .userInfoBlock {
+    max-height: 300px;
+  }
+  .userName {
+    font-size: 42px;
+  }
+  .userBirthDate,
+  .userDetails {
+    font-size: 14px;
+  }
+  .contact {
+    gap: 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 608px) {
+  .userInfoBlock {
+    flex-direction: column;
+    max-height: 417px;
+    margin-top: 80px;
+  }
+  .contact {
+    flex-direction: column;
+    gap: 0;
+    justify-content: left;
+  }
+
+  .userName {
+    display: none;
+  }
+
+  .userNameResponsive {
+    display: flex;
+    justify-content: left;
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .userInfoHeader {
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    gap: 20px;
+  }
+
+  .profilePhotoPlaceholder {
+    width: 152px;
+    height: 132px;
+    max-height: 180px;
+  }
+
+  .icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+@media (max-width: 428px) {
+  .profilePhotoPlaceholder {
+    width: 152px;
+    height: 132px;
+    max-height: 180px;
+  }
+}

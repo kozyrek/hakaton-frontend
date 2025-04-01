@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../../../utils/constants";
 import styles from "./projectsProfile.module.css";
 import Card from "../../ui/card/Card";
 import ModalWindow from "../../../../components/modalWindow";
 import Button from "../../../../components/button/button";
 
 const ProjectsProfile = ({ projects }) => {
+    const navigate = useNavigate();
   const [projectsState, setProjectsState] = useState(projects);
   const [showModal, setShowModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -29,19 +32,24 @@ const ProjectsProfile = ({ projects }) => {
     cancelRemoval();
   };
 
+  const handleProjectClick = (project) => {
+    navigate(ROUTES.PROJECTSPAGE.replace(":projectId", project));
+  };
+
   return (
     <div className={styles.projectsGrid}>
       <h2 className={styles.profileTabTitle}>Проекты</h2>
       <div className={styles.cardsContainer}>
-        {projectsState.map((proj, index) => (
+        {projectsState.map((project, index) => (
           <Card
             key={index}
-            team={proj}
-            onDelete={() => openModal(proj)}
+            team={project}
+            onDelete={() => openModal(project)}
             colorCard="alternative"
             logoVariant="alternative"
             buttonText="Удалить проект"
             titleSize = "alternative"
+            onClick={() => handleProjectClick(index)}
           />
         ))}
       </div>
