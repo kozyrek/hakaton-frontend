@@ -35,10 +35,11 @@ const TeamPage = () => {
 
   return (
     <>
-      <div className={cn(styles.mt80, styles.mb160)}>
+  
         <LayoutProfileBg>
           <TeamHeader />
         </LayoutProfileBg>
+        <div className={cn(styles.mt80, styles.mb160)}>
         <div className={styles.teamPage}>
           <Container className={styles.content}>
             <DeleteButton onClick={handleBack}>← Назад</DeleteButton>

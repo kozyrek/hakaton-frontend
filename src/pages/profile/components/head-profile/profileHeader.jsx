@@ -26,7 +26,10 @@ const ProfileHeader = ({ user }) => {
   const role = getRole(user);
 
   return (
-    <div className={styles.userInfoBlock}>
+    <div className={styles.userInfoBlock}>    
+    <h2 className={styles.userNameResponsive}>
+    {user.lastName} {user.firstName} {user.patronymic}
+  </h2>
       <div className={styles.userInfoHeader}>
         <img
           src={profilePhoto}
