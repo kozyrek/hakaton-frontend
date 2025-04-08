@@ -9,6 +9,8 @@ import Registration from "./pages/auth/registration";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import Profile from "./pages/profile/profile";
+import ProjectStages from "./pages/projectStages";
+
 import TeamPage from "./pages/profile/components/teams-profile/teamPage/teamPage"
 import ProjectsPage from "./pages/profile/components/projects-profile/projectsPage/projectsPage";
 import PasswordRecovery from "./pages/auth/passwordRecovery";
@@ -19,6 +21,7 @@ import ErrorPage from "./pages/404";
 import { ROUTES } from "./utils/constants";
 import "./swiper.css";
 import "./bootstrap.css";
+import UserId from "./pages/profile/user-by-id/id";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -54,12 +57,20 @@ root.render(
                <Route path={ROUTES.PROJECTSPAGE} 
               element={<ProjectsPage />} />
               <Route
+                path={ROUTES.USER_ID}
+                element={<UserId />}
+              />
+              <Route
                 path={ROUTES.RECOVERY}
                 element={<PasswordRecovery />}
               />
               <Route
                 path="*"
                 element={<ErrorPage />}
+              />
+              <Route
+                path={ROUTES.STAGES}
+                element={<ProjectStages />}
               />
             </Routes>
             <Footer />

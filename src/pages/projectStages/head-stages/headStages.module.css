@@ -1,0 +1,36 @@
+.wrapper {
+    padding: 200px 0 80px;
+    color: #ffffff;
+    position: relative;
+    z-index: 2;
+
+    @media (max-width: 1400px) {
+        padding: 140px 0 60px;
+    }
+
+    @media (max-width: 1024px) {
+        padding: 130px 0 60px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 100px 0 60px;
+    }
+}
+
+.title {
+    margin-bottom: 28px;
+
+    @media (max-width: 1400px) {
+        margin-bottom: 20px;
+    }
+}
+
+.text {
+    margin: 0 0 48px;
+    max-width: 923px;
+    color: #ffffff;
+
+    @media (max-width: 1400px) {
+        margin-bottom: 40px;
+    }
+}

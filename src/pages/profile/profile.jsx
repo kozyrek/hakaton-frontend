@@ -57,7 +57,8 @@ export default function Profile() {
             />
           </div>
           <div className={cn(styles.mt80, styles.mb160)}>
-            {activeTab === "profile" && <PersonalInfo />}
+            {/* {activeTab === "profile" && <ProfileForm formData={user} />} */}
+            {activeTab === "profile" && <PersonalInfo isViewied />}
             {activeTab === "users" && (
               <ProfileMembers
                 user={user.user}

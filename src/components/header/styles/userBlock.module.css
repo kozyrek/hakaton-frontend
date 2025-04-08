@@ -4,6 +4,7 @@
     grid-template-columns: 1fr min-content;
     align-items: center;
     column-gap: 16px;
+    text-decoration: none;
 
     @media (max-width: 360px) {
         column-gap: 4px;

@@ -6,6 +6,8 @@ import DeleteButton from "../../ui/deleteBtn/deleteButton";
 import getAllUser from "../../../../api/getAllUsers";
 import { getRole } from "../head-profile/profileHeader";
 import { ConfirmDeleteModal } from "../profileModals/ModalsList";
+import { Link } from "react-router-dom";
+import { ROUTES } from "../../../../utils/constants";
 
 const ProfileMembers = ({ user, searchIcon, onRemoveParticipant }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,22 +34,20 @@ const ProfileMembers = ({ user, searchIcon, onRemoveParticipant }) => {
     fetchUsers();
   }, []);
 
+  // Фильтрация по ФИО и роли
   const filteredUsers = (usersList.items || [])
-  .filter((userItem) => {
-    const query = searchQuery.toLowerCase();
-    const fullName = `${userItem.lastName} ${userItem.firstName} ${userItem.patronymic}`.toLowerCase();
-    const roleString = getRole(userItem).toLowerCase();
-    return (
-      fullName.includes(query) ||
-      roleString.includes(query)
-    );
-  })
-  .filter((userItem) => {
-    const isAdmin = user.mentor?.isAdmin ?? false;
-    const isVerified = userItem.verified ?? false;
-    return isAdmin || isVerified;
-  });
-  
+    .filter((userItem) => {
+      const query = searchQuery.toLowerCase();
+      const fullName = `${userItem.lastName} ${userItem.firstName} ${userItem.patronymic}`.toLowerCase();
+      const roleString = getRole(userItem).toLowerCase();
+      return fullName.includes(query) || roleString.includes(query);
+    })
+    .filter((userItem) => {
+      const isAdmin = user.mentor?.isAdmin ?? false;
+      const isVerified = userItem.verified ?? false;
+      return isAdmin || isVerified;
+    });
+
   const totalPages = Math.ceil(filteredUsers.length / participantsPerPage);
   const startIndex = (currentPage - 1) * participantsPerPage;
   const currentUsers = filteredUsers.slice(
@@ -109,7 +109,7 @@ const ProfileMembers = ({ user, searchIcon, onRemoveParticipant }) => {
     setShowModal(false);
     setSelectedParticipant(null);
   };
-  // Прелоадер  добавить
+
   if (loading) return <>Loading</>;
 
   return (
@@ -134,8 +134,13 @@ const ProfileMembers = ({ user, searchIcon, onRemoveParticipant }) => {
               }`}
             >
               <div className={styles.participantInfo}>
-                {participant.lastName} {participant.firstName}{" "}
-                {participant.patronymic}
+                <Link
+                  to={`${ROUTES.PROFILE}/${participant.id}`}
+                  className={styles.link}
+                >
+                  {participant.lastName} {participant.firstName}{" "}
+                  {participant.patronymic}
+                </Link>
               </div>
               <div className={styles.rightZone}>{getRole(participant)}</div>
               <div>
