@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
 import styles from "./projectsProfile.module.css";
 import Card from "../../ui/card/Card";
-import ModalWindow from "../../../../components/modalWindow";
+import { ConfirmDeleteModal, Modal7 } from "../profileModals/ModalsList";
 import Button from "../../../../components/button/button";
 
 const ProjectsProfile = ({ projects }) => {
+  const [isModal7Open, setIsModal7Open] = useState(false)
     const navigate = useNavigate();
   const [projectsState, setProjectsState] = useState(projects);
   const [showModal, setShowModal] = useState(false);
@@ -58,26 +59,20 @@ const ProjectsProfile = ({ projects }) => {
      <Button
      large
         text="Создать проект"
-        onClick={() => alert("Создать команду")}
+        onClick={() => setIsModal7Open(true)}
       />
 
 </div>
 
 
-      {showModal && (
-        <div className={styles.modalOverlay}>
-          <ModalWindow
-            title="Удалить проект?"
-            description={selectedProject}
-            setIsShow={cancelRemoval}
-          >
-            <div className={styles.buttonContainer}>
-              <Button text="Да" large onClick={confirmRemoval} addClass={styles.confirmButton} />
-              <Button text="Нет" large onClick={cancelRemoval} addClass={styles.cancelButton} />
-            </div>
-          </ModalWindow>
-        </div>
-      )}
+<ConfirmDeleteModal
+  isOpen={showModal}
+  onCancel={cancelRemoval}
+  onConfirm={confirmRemoval}
+  title="Удалить проект?"
+  description={selectedProject}
+/>
+<Modal7 isOpen={isModal7Open} onClose={() => setIsModal7Open(false)}/>
     </div>
   );
 };

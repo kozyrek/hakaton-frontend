@@ -3,24 +3,16 @@ import styles from "./profileMembers.module.css";
 import SearchInput from "../../ui/searchInput/searchInput";
 import Pagination from "../../ui/pagination/pagination";
 import DeleteButton from "../../ui/deleteBtn/deleteButton";
-import ModalWindow from "../../../../components/modalWindow/index";
-import Button from "../../../../components/button/button";
 import getAllUser from "../../../../api/getAllUsers";
 import { getRole } from "../head-profile/profileHeader";
+import { ConfirmDeleteModal } from "../profileModals/ModalsList";
 
-const ProfileMembers = ({
-  user,
-  participants,
-  searchIcon,
-  onRemoveParticipant,
-}) => {
-  // Состояния для поиска, пагинации и модального окна
+const ProfileMembers = ({ user, searchIcon, onRemoveParticipant }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [usersList, setUserList] = useState({});
   const [loading, setLoading] = useState(false);
-  // Храним выбранного участника и его индекс (индекс в currentParticipants)
   const [selectedParticipant, setSelectedParticipant] = useState(null);
   const participantsPerPage = 10;
 
@@ -39,25 +31,30 @@ const ProfileMembers = ({
 
     fetchUsers();
   }, []);
-  // Фильтрация участников по поисковому запросу
-  const filteredParticipants = participants.filter((p) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      p.full_name.toLowerCase().includes(query) ||
-      (p.role && p.role.toLowerCase().includes(query))
-    );
-  });
 
-  const totalPages = Math.ceil(
-    filteredParticipants.length / participantsPerPage
-  );
+  const filteredUsers = (usersList.items || [])
+  .filter((userItem) => {
+    const query = searchQuery.toLowerCase();
+    const fullName = `${userItem.lastName} ${userItem.firstName} ${userItem.patronymic}`.toLowerCase();
+    const roleString = getRole(userItem).toLowerCase();
+    return (
+      fullName.includes(query) ||
+      roleString.includes(query)
+    );
+  })
+  .filter((userItem) => {
+    const isAdmin = user.mentor?.isAdmin ?? false;
+    const isVerified = userItem.verified ?? false;
+    return isAdmin || isVerified;
+  });
+  
+  const totalPages = Math.ceil(filteredUsers.length / participantsPerPage);
   const startIndex = (currentPage - 1) * participantsPerPage;
-  const currentParticipants = filteredParticipants.slice(
+  const currentUsers = filteredUsers.slice(
     startIndex,
     startIndex + participantsPerPage
   );
 
-  // Функция для генерации номеров страниц с эллипсисами
   const getPageNumbers = (current, total) => {
     const range = new Set();
     const rangeWithDots = [];
@@ -95,13 +92,11 @@ const ProfileMembers = ({
     setCurrentPage(pageNumber);
   };
 
-  // Открытие модального окна с выбранным участником
   const openModal = (participant, index) => {
     setSelectedParticipant({ participant, index });
     setShowModal(true);
   };
 
-  // Подтверждение удаления участника
   const confirmRemoval = () => {
     if (selectedParticipant) {
       onRemoveParticipant(selectedParticipant.index);
@@ -110,13 +105,11 @@ const ProfileMembers = ({
     }
   };
 
-  // Отмена удаления
   const cancelRemoval = () => {
     setShowModal(false);
     setSelectedParticipant(null);
   };
-
-  // Нужно добавить прелоадер
+  // Прелоадер  добавить
   if (loading) return <>Loading</>;
 
   return (
@@ -132,36 +125,29 @@ const ProfileMembers = ({
       />
 
       <ul className={styles.participantsListContainer}>
-        {(usersList.items || []).length > 0 ? (
-          (usersList.items || [])
-            .filter((participant) => {
-              const isAdmin = user.mentor?.isAdmin ?? false;
-              const isVerified = participant.verified ?? false;
-              return isAdmin || isVerified;
-            })
-            .map((participant) => (
-              <li
-                key={participant.id}
-                className={`${styles.participantItem} ${
-                  !participant.verified && styles.notVerified
-                }`}
-              >
-                <div className={`${styles.participantInfo}`}>
-                  {participant.lastName} &nbsp;
-                  {participant.firstName} &nbsp;
-                  {participant.patronymic}
-                </div>
-                <div className={styles.rightZone}>{getRole(participant)}</div>
-                <div>
-                  <DeleteButton
-                    className={styles.removeButton}
-                    onClick={() => openModal(participant)}
-                  >
-                    Удалить
-                  </DeleteButton>
-                </div>
-              </li>
-            ))
+        {currentUsers.length > 0 ? (
+          currentUsers.map((participant, index) => (
+            <li
+              key={participant.id}
+              className={`${styles.participantItem} ${
+                !participant.verified && styles.notVerified
+              }`}
+            >
+              <div className={styles.participantInfo}>
+                {participant.lastName} {participant.firstName}{" "}
+                {participant.patronymic}
+              </div>
+              <div className={styles.rightZone}>{getRole(participant)}</div>
+              <div>
+                <DeleteButton
+                  className={styles.removeButton}
+                  onClick={() => openModal(participant, index)}
+                >
+                  Удалить
+                </DeleteButton>
+              </div>
+            </li>
+          ))
         ) : (
           <div className={styles.emptyList}>Список участников пуст</div>
         )}
@@ -175,31 +161,17 @@ const ProfileMembers = ({
         />
       )}
 
-      {showModal && (
-        <div className={styles.modalOverlay}>
-          <ModalWindow
-            title="Действительно хотите удалить данного участника из команды?"
-            description={selectedParticipant?.participant.full_name}
-            descriptionLg={false}
-            setIsShow={cancelRemoval}
-          >
-            <div className={styles.buttonContainer}>
-              <Button
-                text="Да"
-                large
-                onClick={confirmRemoval}
-                addClass={styles.confirmButton}
-              />
-              <Button
-                text="Нет"
-                large
-                onClick={cancelRemoval}
-                addClass={styles.cancelButton}
-              />
-            </div>
-          </ModalWindow>
-        </div>
-      )}
+      <ConfirmDeleteModal
+        isOpen={showModal}
+        onCancel={cancelRemoval}
+        onConfirm={confirmRemoval}
+        title="Действительно хотите удалить данного участника из команды?"
+        description={
+          selectedParticipant
+            ? `${selectedParticipant.participant.lastName} ${selectedParticipant.participant.firstName} ${selectedParticipant.participant.patronymic}`
+            : ""
+        }
+      />
     </div>
   );
 };

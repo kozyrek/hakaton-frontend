@@ -1,6 +1,5 @@
 .userInfoBlock {
   display: flex;
-
   height: 390px;
   flex-direction: column;
   background: transparent;
@@ -38,8 +37,14 @@
   font-size: 64px;
   margin-top: -12px !important;
 }
+.userNameContainer{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
-.userNameResponsive {
+
+.responsiveUserNameContainer{
   display: none;
 }
 
@@ -85,12 +90,23 @@
     display: none;
   }
 
+  .userNameContainer{
+    display: none;
+  }
+
   .userNameResponsive {
     display: flex;
     justify-content: left;
     font-size: 28px;
     font-weight: 500;
     margin: 0;
+    
+  }
+  .responsiveUserNameContainer{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 20px;
   }
 
   .userInfoHeader {

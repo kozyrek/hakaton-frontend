@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
 import styles from "./teamsProfile.module.css";
 import Button from "../../../../components/button/button";
-import ModalWindow from "../../../../components/modalWindow";
+import { ConfirmDeleteModal, Modal6 } from "../profileModals/ModalsList";
 import Card from "../../ui/card/Card";
 
 const TeamsProfile = ({ myTeams, allTeams }) => {
+  const [isModal6Open, setIsModal6Open] = useState(false);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("myTeams");
   const [myTeamsState, setMyTeamsState] = useState(myTeams);
@@ -92,36 +93,22 @@ const TeamsProfile = ({ myTeams, allTeams }) => {
         <Button
           large
           text="Создать команду"
-          onClick={() => alert("Создать команду")}
+          onClick={() => setIsModal6Open(true)}
         />
       </div>
 
-      {showModal && (
-        <div className={styles.modalOverlay}>
-          <ModalWindow
-            title="Действительно хотите удалить данную команду?"
-            description={selectedTeamForDeletion}
-            setIsShow={cancelRemoval}
-          >
-            <div className={styles.buttonContainer}>
-              <Button
-                text="Да"
-                large
-                onClick={confirmRemoval}
-                addClass={styles.confirmButton}
-              />
-              <Button
-                text="Нет"
-                large
-                onClick={cancelRemoval}
-                addClass={styles.cancelButton}
-              />
-            </div>
-          </ModalWindow>
-        </div>
-      )}
+     
+      <ConfirmDeleteModal
+  isOpen={showModal}
+  onCancel={cancelRemoval}
+  onConfirm={confirmRemoval}
+  title="Удалить команду?"
+  description={selectedTeamForDeletion}
+/>
+<Modal6  isOpen={isModal6Open} onClose={() => setIsModal6Open(false)}/>
     </div>
   );
 };
 
 export default TeamsProfile;
+
