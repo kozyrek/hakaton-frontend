@@ -40,8 +40,10 @@
 
     a {
         margin-top: 8px;
+        width: fit-content;
         color: #ffffff;
         text-decoration: none;
+        position: relative;
 
         @media (max-width: 1024px) {
             font-size: 20px;
@@ -57,6 +59,27 @@
             height: 38px;
         }
     }
+}
+
+.contactsItem {
+    &::after {
+        position: absolute;
+        content: "";
+        top: 100%;
+        left: 51%;
+        right: 51%;
+        width: 0;
+        height: 1px;
+        background-color: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    &:hover::after {
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
+
 }
 
 .navLinkList {
@@ -106,8 +129,28 @@
     }
 
     a {
+        width: fit-content;
         color: #efefef;
         text-decoration: none;
+        position: relative;
+
+        &::after {
+            position: absolute;
+            content: "";
+            top: 100%;
+            left: 51%;
+            right: 51%;
+            width: 0;
+            height: 1px;
+            background-color: #efefef;
+            transition: all 0.3s ease;
+        }
+    
+        &:hover::after {
+            width: 100%;
+            left: 0;
+            right: 0;
+        }
     }
 }
 
@@ -138,10 +181,6 @@
         text-transform: uppercase;
         position: relative;
 
-        img {
-            margin-right: 24px;
-        }
-
         &::before {
             position: absolute;
             content: "";
@@ -150,6 +189,28 @@
             background-color: #ffffff;
             top: 4px;
             left: 119px;
+        }
+
+        &::after {
+            position: absolute;
+            content: "";
+            top: 120%;
+            left: 51%;
+            right: 51%;
+            width: 0;
+            height: 1px;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+        }
+    
+        &:hover::after {
+            width: 100%;
+            left: 0;
+            right: 0;
+        }
+
+        img {
+            margin-right: 24px;
         }
     }
 

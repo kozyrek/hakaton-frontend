@@ -15,7 +15,7 @@ const HELPER_TEXT_PASSWORD =
 
 export default function Inputs(props) {
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const { name, label, type, formData, formError, onChange, ...other } = props;
+  const { name, label, type, formData, formError, onChange, maxLength = 600, ...other } = props;
   const isError = formError[name] || null;
 
   const handelClick = (type) => {
@@ -61,9 +61,10 @@ export default function Inputs(props) {
                 value={formData[name]?.value || ""}
                 onChange={(e) => onChange(e.target.value, name)}
                 {...other}
+                maxLength={maxLength}
               ></textarea>
               <div className={styles.length}>
-                {formData[name].value.length}/600
+                {formData[name]?.value.length || 0}/{maxLength}
               </div>
             </>
           ) : (

@@ -12,12 +12,14 @@
   
   &::after {
     color: #2b306c;
-    margin: 0 3px 0 0;
+    font-size: 35px;
   }
 }
 
 .swiper-button-prev {
-  left: -80px;
+  top: -80px;
+  left: auto;
+  right: 90px;
 
   @media (max-width: 1024px) {
     top: auto;
@@ -27,7 +29,7 @@
 }
 
 .swiper-button-next {
-  right: -80px;
+  top: -80px;
 
   @media (max-width: 1024px) {
     top: auto;

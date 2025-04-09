@@ -1,4 +1,3 @@
-import React from "react";
 import { Container } from "react-bootstrap";
 import LayoutLogin from "../auth/layoutLogin";
 import HeadStages from "./head-stages/headStages";
@@ -18,7 +17,7 @@ export default function ProjectStages() {
             </LayoutLogin>
             <Container>
                 <TeamInfo obj={projectExample.team}/>
-                <ProjectDocuments arr={projectExample.project.projectFiles}/>
+                <ProjectDocuments arr={projectExample.project.download}/>
                 <StagesList projectIsComplete={projectExample.project.isComplete}/>
             </Container>
         </>

@@ -68,6 +68,10 @@
 
         a {
             color: #1a1f1f;
+
+            &::after {
+                background-color: #1a1f1f;
+            }
         }
     }
 }

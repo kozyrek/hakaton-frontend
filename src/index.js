@@ -10,6 +10,7 @@ import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import Profile from "./pages/profile/profile";
 import ProjectStages from "./pages/projectStages";
+import StepProjectPage from "./pages/stepPage";
 
 import PasswordRecovery from "./pages/auth/passwordRecovery";
 import { Provider } from "react-redux";
@@ -65,6 +66,10 @@ root.render(
               <Route
                 path={ROUTES.STAGES}
                 element={<ProjectStages />}
+              />
+              <Route
+                path={ROUTES.STEP}
+                element={<StepProjectPage />}
               />
             </Routes>
             <Footer />

@@ -5,7 +5,7 @@ import PersonCard from "../../../components/person-card/personCard";
 
 export default function AboutUs() {
     return (
-        <section className={`${styles.wrapper} contentBox`}>
+        <section id="aboutus" className={`${styles.wrapper} contentBox`}>
             <div>
                 <h2 className="titleH2">О&#8239;&#8239;нас</h2>
                 <p className={`text3 ${styles.subtitle}`}>
