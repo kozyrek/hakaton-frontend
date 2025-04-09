@@ -5,7 +5,7 @@ import styles from "./faq.module.css";
 
 export default function Faq() {
     return (
-        <section className="contentBox">
+        <section id="faq" className="contentBox">
             <h2 className="titleH2">Часто задаваемые вопросы</h2>
             <Accordion className={styles.accordionList}>
                 <div>

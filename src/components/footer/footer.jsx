@@ -3,60 +3,23 @@ import Logo from "../logo/logo";
 import Logo1T from "../../assests/images/svg/logo-1T.svg";
 import { Link } from "react-router-dom";
 import Navigation from "../navigation/navigation";
+import { navLinks } from "../utils/utils";
 
 import styles from "./footer.module.css";
 import SvgLogo from "../../assests/images/svg/logo.svg";
 
 export default function Footer() {
-    const navLinks = [
-        {
-            id: 1,
-            title: "О\u00A0нас",
-            path: '/',
-        },
-        {
-            id: 2,
-            title: "Для кого",
-            path: '/',
-        },
-        {
-            id: 3,
-            title: "Команда",
-            path: '/',
-        },
-        {
-            id: 4,
-            title: "Галерея",
-            path: '/',
-        },
-        {
-            id: 5,
-            title: "Отзывы",
-            path: '/',
-        },
-        {
-            id: 6,
-            title: "Вопросы",
-            path: '/',
-        },
-        {
-            id: 7,
-            title: "Положение о\u00A0хакатоне",
-            path: '/',
-        },
-    ]
-
     return (
         <div className={styles.wrapper}>
             <Container>
                 <div className={styles.block}>
                     <div className={styles.contacts}>
                         <Logo src={SvgLogo} addClass={styles.logo}/>
-                        <Link className="text3">8 (8342) 22-32-50</Link>
-                        <Link className="text3">licey-mrsu@yandex.ru</Link>
+                        <Link className={`text3 ${styles.contactsItem}`}>8 (8342) 22-32-50</Link>
+                        <Link className={`text3 ${styles.contactsItem}`}>licey-mrsu@yandex.ru</Link>
                     </div>
 
-                    <Navigation arr={navLinks} addClass={styles.navLinkList}></Navigation>
+                    <Navigation isFooter arr={navLinks} addClass={styles.navLinkList}></Navigation>
 
                     <p className={`text4 ${styles.copyright}`}>&copy;&nbsp;2025&nbsp;МГУ им. Н.П. ОГАРЁВА</p>
 

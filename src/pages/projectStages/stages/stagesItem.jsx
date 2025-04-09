@@ -15,7 +15,11 @@ export default function StagesItem({item}) {
     });
     
     return (
-        <Link to="#" className={className}>
+        <Link 
+            to="/step" 
+            state={{stepNumber: item.stepNumber, stepTitle: item.stepTitle}}
+            className={className} 
+        >
             <div className={styles.textBlock}>
                 <p className="text4">
                     {item.stepNumber}

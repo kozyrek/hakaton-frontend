@@ -5,4 +5,5 @@ export const ROUTES = {
   PROFILE: "/profile",
   RECOVERY: "/recovery",
   STAGES: "/stages",
+  STEP: "/step",
 };

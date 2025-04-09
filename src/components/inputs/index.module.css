@@ -24,7 +24,9 @@
 
 .length {
   text-align: end;
+  font-family: "Open Sans Regular", sans-serif;
   font-size: 14px;
+  line-height: 19px;
   font-weight: 400;
   color: #9d9d9d;
 }
