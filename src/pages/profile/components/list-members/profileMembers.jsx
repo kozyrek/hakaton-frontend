@@ -7,6 +7,8 @@ import ModalWindow from "../../../../components/modalWindow/index";
 import Button from "../../../../components/button/button";
 import getAllUser from "../../../../api/getAllUsers";
 import { getRole } from "../head-profile/profileHeader";
+import { Link } from "react-router-dom";
+import { ROUTES } from "../../../../utils/constants";
 
 const ProfileMembers = ({
   user,
@@ -51,11 +53,11 @@ const ProfileMembers = ({
   const totalPages = Math.ceil(
     filteredParticipants.length / participantsPerPage
   );
-  const startIndex = (currentPage - 1) * participantsPerPage;
-  const currentParticipants = filteredParticipants.slice(
-    startIndex,
-    startIndex + participantsPerPage
-  );
+  // const startIndex = (currentPage - 1) * participantsPerPage;
+  // const currentParticipants = filteredParticipants.slice(
+  //   startIndex,
+  //   startIndex + participantsPerPage
+  // );
 
   // Функция для генерации номеров страниц с эллипсисами
   const getPageNumbers = (current, total) => {
@@ -147,11 +149,20 @@ const ProfileMembers = ({
                 }`}
               >
                 <div className={`${styles.participantInfo}`}>
-                  {participant.lastName} &nbsp;
-                  {participant.firstName} &nbsp;
-                  {participant.patronymic}
+                  <Link
+                    to={`${ROUTES.PROFILE}/${participant.id}`}
+                    className={styles.link}
+                  >
+                    {participant.lastName} &nbsp;
+                    {participant.firstName} &nbsp;
+                    {participant.patronymic}
+                  </Link>
                 </div>
-                <div className={styles.rightZone}>{getRole(participant)}</div>
+                <div className={styles.rightZone}>
+                  <span className={styles.noUnderline}>
+                    {getRole(participant)}
+                  </span>
+                </div>
                 <div>
                   <DeleteButton
                     className={styles.removeButton}

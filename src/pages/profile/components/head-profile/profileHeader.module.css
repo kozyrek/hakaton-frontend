@@ -1,7 +1,7 @@
 .userInfoBlock {
   display: flex;
   align-items: center;
-  height: 390px;
+  height: 360px;
   background: transparent;
   color: #fff;
   margin-top: 80px;
@@ -36,7 +36,7 @@
   font-weight: 500;
   font-size: 52px;
   /* margin: 0; */
-  margin-top: -12px !important;
+  /* margin-top: -12px !important; */
 }
 
 .userNameResponsive {
