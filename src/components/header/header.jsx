@@ -23,20 +23,11 @@ import SvgLogo from "../../assests/images/svg/logo.svg";
 import LogoBlack from "../../assests/images/svg/logo-black.svg";
 import Burger from "./images/Burger";
 import Close from "./images/Close";
-import axios from "axios";
+import { HTTP } from "../../api/http";
 
 export default function Header() {
-
-  const HTTP = axios.create({
-    baseUrl: 'http://194.54.64.227:8000/api/v1',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }
-  })
-
   const setUser = () => {
-    HTTP.get("/regions")/*регионы*/
+    HTTP.get("/users/me")
     .then((response) => {
       console.log(response);
     })
