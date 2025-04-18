@@ -26,6 +26,8 @@ import mentor13 from "../mentors/images/image-13.png";
 import mentor14 from "../mentors/images/image-14.png";
 import mentor15 from "../mentors/images/image-15.png";
 import mentor16 from "../mentors/images/image-16.png";
+import mentor17 from "../mentors/images/image-17.png";
+import mentor18 from "../mentors/images/image-18.png";
 
 //Контент для блока Наши партнеры
 import partner1 from "../partners/images/partner-1.svg";
@@ -361,6 +363,18 @@ export const mentors = [
         url: mentor16,
         name: "Бачкова Ирина Александровна",
         description: "директор Лицея МГУ им. Н.\u00A0П.\u00A0Огарёва, учитель информатики высшей квалификационной категории, Лауреат Премии Президента РФ, Премии Главы Республики Мордовия, Премии Правительства Республики Мордовия",
+    },
+    {
+        id: 17,
+        url: mentor17,
+        name: "Грязнов Сергей Юрьевич",
+        description: "начальник отдела управления интеллектуальной собственностью ФГБОУ ВО\u00A0«МГУ им. Н.\u00A0П.\u00A0Огарёва», стипендиат Президента РФ\u00A0за\u00A0достижения в\u00A0науке",
+    },
+    {
+        id: 18,
+        url: mentor18,
+        name: "Еремеев Виталий Викторович",
+        description: "заместитель директора по\u00A0молодежной политике Медицинского института, старший преподаватель кафедры иммунологии, микробиологии и\u00A0вирусологии с\u00A0курсом клинической иммунологии и\u00A0аллергологии ФГБОУ ВО\u00A0«МГУ им. Н.\u00A0П.\u00A0Огарёва», врач-уролог ГБУЗ РМ\u00A0«РКБ имени С.\u00A0В.\u00A0Каткова»",
     },
 ]
 
