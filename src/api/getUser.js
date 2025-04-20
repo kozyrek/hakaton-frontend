@@ -1,49 +1,36 @@
-export default function getUser(token) {
-  return new Promise((res, reg) => {
-    setTimeout(() => {
-      if (token === "frmlasd98asder") {
-        res({
-          id: 0,
-          createdAt: "2019-08-24T14:15:22Z",
-          updatedAt: "2019-08-24T14:15:22Z",
-          firstName: "Андрей",
-          lastName: "Савостьянов",
-          patronymic: "Анатольевич",
-          phoneNumber: "+79261013895",
-          eduOrganization: "МГУ им М.П. Огарев",
-          email: "an@an.ru",
-          birthDate: "2019-08-24",
-          isMentor: true,
-          participant: {
-            regionId: 0,
-            schoolGrade: "11 б",
-            birthDate: "2019-08-24",
-            city: "string",
-            interests: "string",
-            olympics: "string",
-            achievements: "string",
-            createdAt: "2019-08-24T14:15:22Z",
-            updatedAt: "2019-08-24T14:15:22Z",
-          },
-          mentor: {
-            specialization: "Учитель информатики",
-            jobTitle: "string",
-            researchTopics: "string",
-            articles: "string",
-            scientificInterests: "string",
-            taughtSubjects: "string",
-            createdAt: "2019-08-24T14:15:22Z",
-            updatedAt: "2019-08-24T14:15:22Z",
-            isAdmin: false,
-          },
-          verified: true,
-          photoPath: "",
-        });
-      } else {
-        reg({
-          error: "Invalid response.",
-        });
-      }
-    }, 500);
+import { HTTP } from "./http";
+
+/**
+ * Fetches user data from the API
+ * @async
+ * @function
+ * @param {string} token - Authentication bearer token
+ * @param {?(string|number)} [id=null] - User ID to fetch.
+ *        If `null` or omitted, returns current authenticated user ("me" endpoint)
+ * @returns {Promise<Object>} Promise resolving to user data object
+ * @throws {Error} Throws error with descriptive message if API request fails
+ *
+ * @example
+ * // Get current authenticated user
+ * await getUser('auth_token_123');
+ *
+ * @example
+ * // Get specific user by ID
+ * await getUser('auth_token_123', 456);
+ *
+ * @note
+ * - Automatically encodes user ID for URL safety
+ * - Uses Bearer authentication in Authorization header
+ * - Handles both numeric and string-based user IDs
+ * - Returns parsed response data from API
+ */
+
+export default async function getUser(token, id = null) {
+  let param = id === null ? "me" : id;
+  const response = await HTTP.get(`/users/${encodeURIComponent(param)}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
+  return response.data;
 }

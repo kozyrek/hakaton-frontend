@@ -26,17 +26,17 @@ import Close from "./images/Close";
 import { HTTP } from "../../api/http";
 
 export default function Header() {
-  const setUser = () => {
-    HTTP.get("/users/me")
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
+  // const setUser = () => {
+  //   HTTP.get("/users/me")
+  //   .then((response) => {
+  //     console.log(response);
+  //   })
+  //   .catch((error) => {
+  //     console.log(error)
+  //   })
+  // }
 
-  setUser();
+  // setUser();
 
   const scrollWidth = window.innerWidth - document.documentElement.clientWidth;
   const dispatch = useDispatch();
@@ -48,8 +48,8 @@ export default function Header() {
 
   useEffect(() => {
     const setUser = async () => {
-      if (token) {
-        const user = await getUser(token);
+      if (token.accessToken) {
+        const user = await getUser(token.accessToken);
         if (user) {
           dispatch(set_user(user))
         };
