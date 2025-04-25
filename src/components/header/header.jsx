@@ -1,15 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Container } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useLocation } from 'react-router-dom';
 import { useResize } from "../../hooks/useResize";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../utils/constants";
-import getUser from "../../api/getUser";
-import {
-  set_user,
-  // logout
-} from "../../store/user/userSlice";
 import { scrollPageLock, scrollPageUnlock } from "../../utils/scrollLock";
 import Logo from "../logo/logo";
 import Navigation from "../navigation/navigation";
@@ -23,45 +18,13 @@ import SvgLogo from "../../assests/images/svg/logo.svg";
 import LogoBlack from "../../assests/images/svg/logo-black.svg";
 import Burger from "./images/Burger";
 import Close from "./images/Close";
-import { HTTP } from "../../api/http";
 
 export default function Header() {
-  // const setUser = () => {
-  //   HTTP.get("/users/me")
-  //   .then((response) => {
-  //     console.log(response);
-  //   })
-  //   .catch((error) => {
-  //     console.log(error)
-  //   })
-  // }
-
-  // setUser();
-
   const scrollWidth = window.innerWidth - document.documentElement.clientWidth;
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
   let isLogIn = false;
-  let user = {};
-  const token = useSelector((state)=>state.user.token.accessToken);
-
-  useEffect(() => {
-    const setUser = async () => {
-      if (token.accessToken) {
-        const user = await getUser(token.accessToken);
-        if (user) {
-          dispatch(set_user(user))
-        };
-      } else {
-        navigate(ROUTES.LOGIN)
-      }
-    }
-    setUser();
-    // eslint-disable-next-line
-  }, []);
   
-  user = useSelector((state)=>state.user.user);
+  const user = useSelector((state)=>state.user.user);
   if (Object.keys(user).length !== 0) {
     isLogIn = true;
   } else {
