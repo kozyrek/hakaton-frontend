@@ -14,12 +14,11 @@ export function validateForm(formData, formError, setFormError) {
       setFormError((prevError) => ({ ...prevError, [key]: APPROVAL }));
       errors = true;
     } else if (item.value.length === 0) {
-      console.log(key);
       setFormError((prevError) => ({ ...prevError, [key]: REQUIRED }));
       errors = true;
     } else {
       setFormError((prevError) => ({ ...prevError, [key]: "" }));
-      errors = true;
+      errors = false;
     }
   });
   return errors;

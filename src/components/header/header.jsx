@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import { useResize } from "../../hooks/useResize";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../utils/constants";
@@ -43,29 +43,30 @@ export default function Header() {
   const navigate = useNavigate();
 
   let isLogIn = false;
+  z;
   let user = {};
-  const token = useSelector((state)=>state.user.token.accessToken);
+  const token = useSelector((state) => state.user.token.accessToken);
 
   useEffect(() => {
     const setUser = async () => {
       if (token.accessToken) {
         const user = await getUser(token.accessToken);
         if (user) {
-          dispatch(set_user(user))
-        };
+          dispatch(set_user(user));
+        }
       } else {
-        navigate(ROUTES.LOGIN)
+        navigate(ROUTES.LOGIN);
       }
-    }
+    };
     setUser();
     // eslint-disable-next-line
   }, []);
-  
-  user = useSelector((state)=>state.user.user);
+
+  user = useSelector((state) => state.user.user);
   if (Object.keys(user).length !== 0) {
     isLogIn = true;
   } else {
-    isLogIn = false
+    isLogIn = false;
   }
 
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -76,23 +77,23 @@ export default function Header() {
     } else {
       scrollPageUnlock();
     }
-  })
-  
+  });
+
   const OpenMenu = () => {
-    setMenuIsOpen(!menuIsOpen);       
-  }
+    setMenuIsOpen(!menuIsOpen);
+  };
 
   const handleCLick = () => {
     navigate(ROUTES.MAIN);
     if (menuIsOpen) {
       setMenuIsOpen(!menuIsOpen);
     }
-  }
+  };
 
   const location = useLocation();
-  const lastHash = useRef('');
+  const lastHash = useRef("");
   const width = useResize();
-  const navbarHeight = width > 1024 ? "80" : "70" 
+  const navbarHeight = width > 1024 ? "80" : "70";
   // listen to location change using useEffect with location as dependency
   // https://jasonwatmore.com/react-router-v6-listen-to-location-route-change-without-history-listen
   useEffect(() => {
@@ -104,17 +105,18 @@ export default function Header() {
       const element = document.getElementById(lastHash.current);
       setTimeout(() => {
         if (element) {
-          const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+          const elementPosition =
+            element.getBoundingClientRect().top + window.scrollY;
           window.scrollTo({
             top: elementPosition - navbarHeight,
-            behavior: 'smooth',
-          })
+            behavior: "smooth",
+          });
         }
-        lastHash.current = '';
+        lastHash.current = "";
         if (menuIsOpen) {
           setMenuIsOpen(!menuIsOpen);
         }
-    }, 100);
+      }, 100);
     }
   }, [location]);
 
@@ -171,7 +173,9 @@ export default function Header() {
           <button
             className={classNameButton}
             onClick={OpenMenu}
-            aria-label={menuIsOpen ? "Закрыть мобильное меню" : "Открыть мобильное меню"}
+            aria-label={
+              menuIsOpen ? "Закрыть мобильное меню" : "Открыть мобильное меню"
+            }
           >
             {menuIsOpen ? <Close /> : <Burger />}
           </button>
