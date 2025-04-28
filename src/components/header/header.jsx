@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Container } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from 'react-router-dom';
 import { useResize } from "../../hooks/useResize";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,8 @@ import Button from "../button/button";
 import UserBlock from "./userBlock";
 import cn from "classnames";
 import { navLinks } from "../utils/utils";
+import getUser from "../../api/getUser";
+import { set_user } from "../../store/user/userSlice";
 
 import styles from "./styles/header.module.css";
 import SvgLogo from "../../assests/images/svg/logo.svg";
@@ -21,8 +23,26 @@ import Close from "./images/Close";
 
 export default function Header() {
   const scrollWidth = window.innerWidth - document.documentElement.clientWidth;
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   let isLogIn = false;
+
+  const token = useSelector((state)=>state.user.token?.accessToken);
+
+  useEffect(() => {
+    const setUser = async () => {
+      if (token) {
+        const user = await getUser(token);
+        if (user) {
+          dispatch(set_user(user))
+        };
+      } else {
+        navigate(ROUTES.LOGIN)
+      }
+    }
+    setUser();
+    // eslint-disable-next-line
+  }, []);
   
   const user = useSelector((state)=>state.user.user);
   if (Object.keys(user).length !== 0) {
