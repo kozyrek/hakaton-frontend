@@ -4,4 +4,14 @@ export const ROUTES = {
   LOGIN: "/login",
   PROFILE: "/profile",
   RECOVERY: "/recovery",
+  STAGES: "/stages",
+  STEP: "/step",
+  USER_ID: "/profile/:userId",
 };
+
+export const ROLES = {
+  ADMIN: "Администратор",
+  MENTOR: "Ментор",
+  PARTICIPANT: "Участник",
+  UNDEFINED: "Роль не определена",
+}

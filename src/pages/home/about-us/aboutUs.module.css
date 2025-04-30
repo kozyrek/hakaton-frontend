@@ -1,11 +1,20 @@
 .wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 30px 80px;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 22px;
-    color: #1a1f1f;
+    gap: 80px 30px;
+
+    @media (max-width: 1480px) {
+        gap: 80px 20px;
+    }
+
+    @media (max-width: 1024px) {/*768px*/
+        grid-template-columns: 1fr;
+        row-gap: 40px;
+    }
+    
+    @media (max-width: 360px) {
+        row-gap: 28px;
+    }
 
     ul {
         margin: 0;
@@ -14,45 +23,110 @@
     }
 }
 
-b {
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 27px;
-    color: #2b306c;
+.subtitle {
+    margin-bottom: 28px;
+
+    @media (max-width: 1024px) {
+        margin-bottom: 20px;
+    }
+}
+
+.textWrapper {
+    display: grid;
+    row-gap: 22px;
 }
 
 .managementList {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 30px;
+
+    @media (max-width: 1480px) {/*1024*/
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {/*360px*/
+        grid-template-columns: 1fr;
+    }
 }
 
-.statisticsList {
+ul.statisticsList {
     grid-column: -1 / 1;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 30px;
+
+    @media (max-width: 1480px) {
+        gap: 20px;
+    }
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px 20px;
+    }
+
+    @media (max-width: 768px) {/*360*/
+        grid-template-columns: 1fr;
+        gap: 28px;
+        justify-items: center;
+    }
 }
 
 .statisticsItem {
     display: flex;
     flex-direction: column;
-    margin-bottom: 74px;
     text-align: center;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 27px;
-    color: #1a1f1f;
+
+    @media (max-width: 1024px) {
+        max-width: 261px;
+    }
+
+    &:nth-child(2n - 1) {
+        margin-bottom: 72px;
+
+        @media (max-width: 1480px) {
+            margin-bottom: 56px;
+        }
+
+        @media (max-width: 1024px) {
+            margin-bottom: 0;
+            margin-left: auto;
+        }
+        
+        @media (max-width: 768px) {
+            margin-left: 0;
+        }
+    }
 
     &:nth-child(2n) {
-        margin-top: 74px;
+        margin-top: 72px;
+
+        @media (max-width: 1480px) {
+            margin-top: 56px;
+        }
+
+        @media (max-width: 1024px) {
+            margin-top: 0;
+        }
     }
 
     span:first-child {
+        padding-bottom: 8px;
+        font-family: "Gotham";
         font-weight: 500;
         font-size: 62px;
         line-height: 74px;
         color: #be1b86;
         border-bottom: 1.5px solid #be1b86;
+
+        @media (max-width: 1480px) {
+            font-size: 40px;
+            line-height: 48px;
+        }
     }
+}
+
+.statisticsText {
+    padding-top: 8px;
+    color: #1a1f1f;
 }

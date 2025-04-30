@@ -10,12 +10,12 @@ export default function HowHackathonGoes() {
             <ul className={styles.cards}>
                 <li className={styles.blockWrapper}>
                     <p className="text3">Что включает мероприятие:</p>
-                    <ul>
+                    <ul className={styles.cardList}>
                         {consist.map((item) => (
-                            <li key={item.id}>{item.text}</li>
+                            <li key={item.id} className="text1">{item.text}</li>
                         ))}
                     </ul>
-                    <p className="text3">Хакатон&nbsp;&mdash; это интенсивное командное соревнование, где за&nbsp;ограниченное время нужно решить научный кейс и&nbsp;представить его решение.</p>
+                    <p className={`text3 ${styles.textColor}`}>Хакатон&nbsp;&mdash; это интенсивное командное соревнование, где за&nbsp;ограниченное время нужно решить научный кейс и&nbsp;представить его решение.</p>
                 </li>
                 <li className={styles.imageWrapper}>
                     <img src={image} alt="Фотография участников хакатона"></img>
@@ -23,10 +23,10 @@ export default function HowHackathonGoes() {
                 </li>
                 <li className={`${styles.blockWrapper} ${styles.cardStages}`}>
                     <p className="text3">Этапы участия:</p>
-                    <ul>
+                    <ul className={styles.cardList}>
                         {stages.map((item) => (
-                            <li key={item.id}>
-                                <span className="text2">{item.title}</span>
+                            <li key={item.id} className="text1">
+                                <span className={`text2 ${styles.textColor}`}>{item.title}</span>
                                 {item.text}
                             </li>
                         ))} 
@@ -34,9 +34,9 @@ export default function HowHackathonGoes() {
                 </li>
                 <li className={styles.blockWrapper}>
                     <p className="text3">Что важно?</p>
-                    <ul>
+                    <ul className={styles.cardList}>
                         {important.map((item) => (
-                            <li key={item.id}>{item.text}</li>
+                            <li key={item.id} className="text1">{item.text}</li>
                         ))}
                     </ul>
                 </li>

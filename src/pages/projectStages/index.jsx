@@ -1,0 +1,31 @@
+import { Container } from "react-bootstrap";
+import LayoutLogin from "../auth/layoutLogin";
+import HeadStages from "./head-stages/headStages";
+import TeamInfo from "./team-info/teamInfo";
+import ProjectDocuments from "./project-documents/projectDocuments";
+import StagesList from "./stages/stagesList";
+
+import { projectExample } from "./utils/utils";
+
+import { useSelector } from "react-redux";
+import getProjects from "../../api/getProjects";
+
+export default function ProjectStages() {
+    const token = useSelector((state)=>state.user.token.accessToken);
+    getProjects(token);
+
+    return (
+        <>
+            <LayoutLogin>
+                <Container>
+                    <HeadStages obj={projectExample.project}/>
+                </Container>      
+            </LayoutLogin>
+            <Container>
+                <TeamInfo obj={projectExample.team}/>
+                <ProjectDocuments arr={projectExample.project.download}/>
+                <StagesList projectIsComplete={projectExample.project.isComplete}/>
+            </Container>
+        </>
+    )
+}

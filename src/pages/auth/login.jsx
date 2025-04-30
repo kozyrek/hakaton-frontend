@@ -6,17 +6,21 @@ import { loginFields } from "./utils/utils";
 import Inputs from "../../components/inputs/inputs";
 import { validateField, validateForm } from "./utils/validateForm";
 import { useDispatch } from "react-redux";
-import { add_token } from "../../store/user/userSlice";
+import { add_token, set_user } from "../../store/user/userSlice";
 import { getToken } from "../../api/getToken";
 import { ROUTES } from "../../utils/constants";
 
 import styles from "./styles/formLogin.module.css";
 import stylesReg from "./styles/registration.module.css";
+import getUser from "../../api/getUser";
+
+const INCORECT_EMAIL_PASSWORD = "Неверный адрес электронной почты или пароль.";
 
 export default function Login() {
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState({});
   const [loading, setLoading] = useState(false);
+  const [responseError, setResponseError] = useState(null);
   const timerRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -61,15 +65,23 @@ export default function Login() {
     const errors = validateForm(formData, formError, setFormError);
     if (!errors) return;
     setLoading(true);
-    const token = await getToken(
-      formData["email"].value,
-      formData["retryPassword"].value
-    );
-    setLoading(false);
-    if (token) {
-      dispatch(add_token(token));
+    setResponseError(null)
+    try {
+      const token = await getToken(
+        formData["email"].value,
+        formData["retryPassword"].value
+      );
+      dispatch(add_token(token.data));
+      const user = await getUser(token.data.accessToken);
+      console.log("user", user)
+      dispatch(set_user(user));
+      setLoading(false);
       navigate(ROUTES.PROFILE);
+    } catch (error) {
+      setResponseError(INCORECT_EMAIL_PASSWORD);
+      console.log(error.error);
     }
+    setLoading(false);
   };
 
   return (
@@ -80,12 +92,13 @@ export default function Login() {
       >
         <div className={styles.form}>
           {loading ? (
-            <h2 style={{ position: "absolute", top: "50%", left: "43%" }}>
+            <h2 style={{ position: "absolute", top: "50%", left: "47%" }}>
               Loading...
             </h2>
           ) : (
             <>
               <h3 className={styles.h3}>Вход</h3>
+              {responseError && <div>{responseError}</div>}
               <div className={styles.isNoAccount}>
                 Нет аккаунта?{" "}
                 <Link

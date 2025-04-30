@@ -11,8 +11,9 @@ export default function Contacts() {
                 <h2 className="visually-hidden">Контакты</h2>
                 <h3 className="titleH3">
                     Остались вопросы?
-                    <br></br>
-                    Свяжитесь с&nbsp;организаторами удобным для Вас способом
+                    <span>
+                        Свяжитесь с организаторами удобным для&#8239;&#8239;Вас&#8239;&#8239;способом
+                    </span>
                 </h3>
                 <ul className={`text2 ${styles.contactsList}`}>
                     {contacts.map((item) => (

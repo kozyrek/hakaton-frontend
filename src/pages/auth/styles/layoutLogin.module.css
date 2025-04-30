@@ -4,6 +4,14 @@
   position: relative;
   overflow: hidden !important;
   margin-top: 80px;
+
+  @media (max-width: 1024px) {
+    margin-top: 69px;/*по макету 70 - появляется белая линия*/
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 59px;/*по макету 60 - появляется белая линия*/
+  }
 }
 
 .bigLogo {

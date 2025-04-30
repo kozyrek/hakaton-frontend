@@ -11,7 +11,7 @@ export default function Reviews() {
     const [modalIsOpen, setModalIsOpen] = useState(null);
 
     return (
-        <section className="contentBox">
+        <section id="reviews" className="contentBox">
             <h2 className="titleH2">Отзывы участников</h2>
             <Slider items={reviews} Component={ReviewCard} setModalIsOpen={setModalIsOpen}/>
 

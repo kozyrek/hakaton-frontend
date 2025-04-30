@@ -1,0 +1,20 @@
+.title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.text{
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.download {
+  display: flex;
+  gap: 12px;
+}
+
+.downloadText {
+  padding-top: 2px;
+  color: #2b306c;
+  font-weight: 600;
+}

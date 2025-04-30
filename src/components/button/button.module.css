@@ -4,8 +4,11 @@
     text-decoration: none;
     border-radius: 8px;
     border: none;
+    font-family: "Open Sans Semibold", sans-serif;
     font-size: 16px;
+    line-height: 22px;
     font-weight: 600;
+    user-select: none;
 }
 
 /* Обычные кнопки */
@@ -17,6 +20,10 @@
 /* Размеры кнопок */
 .buttonSmall {
     padding: 10px 20px;
+
+    @media (max-width: 768px) {
+        padding: 6px 20px;
+    }
 }
 
 .buttonLarge {

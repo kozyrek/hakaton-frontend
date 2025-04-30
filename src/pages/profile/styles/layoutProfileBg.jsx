@@ -10,7 +10,7 @@ export default function LayoutProfileBg({ children }) {
         <ProfileBigLogo />
       </div>
       <div className={styles.content}>
-        <Container fluid="xl">{children}</Container>
+        <Container fluid="xxl">{children}</Container>
       </div>
     </Container>
   );

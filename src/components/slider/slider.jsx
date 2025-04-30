@@ -21,7 +21,7 @@ export default function Slider({
         slidesPerView={4}
         navigation
         breakpoints={{
-          360: {
+          0: {
             slidesPerView: 1,
           },
           768: {

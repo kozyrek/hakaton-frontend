@@ -9,8 +9,10 @@ import Registration from "./pages/auth/registration";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import Profile from "./pages/profile/profile";
+import ProjectStages from "./pages/projectStages";
+import StepProjectPage from "./pages/stepPage";
 
-import PasswordRecovery from "./pages/passwordRecovery";
+import PasswordRecovery from "./pages/auth/passwordRecovery";
 import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -18,6 +20,7 @@ import ErrorPage from "./pages/404";
 import { ROUTES } from "./utils/constants";
 import "./swiper.css";
 import "./bootstrap.css";
+import UserId from "./pages/profile/user-by-id/id";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -49,12 +52,24 @@ root.render(
                 element={<Profile />}
               />
               <Route
+                path={ROUTES.USER_ID}
+                element={<UserId />}
+              />
+              <Route
                 path={ROUTES.RECOVERY}
                 element={<PasswordRecovery />}
               />
               <Route
                 path="*"
                 element={<ErrorPage />}
+              />
+              <Route
+                path={ROUTES.STAGES}
+                element={<ProjectStages />}
+              />
+              <Route
+                path={ROUTES.STEP}
+                element={<StepProjectPage />}
               />
             </Routes>
             <Footer />
