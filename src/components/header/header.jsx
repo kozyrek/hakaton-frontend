@@ -43,14 +43,14 @@ export default function Header() {
   const navigate = useNavigate();
 
   let isLogIn = false;
-  z;
   let user = {};
-  const token = useSelector((state) => state.user.token.accessToken);
+  const token = useSelector((state) => state.user.token?.accessToken);
 
   useEffect(() => {
     const setUser = async () => {
-      if (token.accessToken) {
-        const user = await getUser(token.accessToken);
+      console.log(token);
+      if (token) {
+        const user = await getUser(token);
         if (user) {
           dispatch(set_user(user));
         }
