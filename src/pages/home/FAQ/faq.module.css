@@ -3,7 +3,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px 30px;
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1400px) {
         grid-template-columns: 1fr;
     }
 }
