@@ -1,7 +1,7 @@
 .slider {
     position: relative;
     
-    @media (max-width: 1024px) {
+    @media (max-width: 1400px) {
         padding-bottom: 80px;
     }
 }

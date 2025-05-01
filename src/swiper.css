@@ -9,10 +9,21 @@
   height: 60px;
   border-radius: 50%;
   background-color: #f6edff;
+  transition: all 0.3s ease;
   
   &::after {
     color: #2b306c;
     font-size: 35px;
+    transition: all 0.3s ease;
+  }
+
+  &:focus,
+  &:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active::after {
+    opacity: 0.5;
   }
 }
 
@@ -21,7 +32,7 @@
   left: auto;
   right: 90px;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1400px) {
     top: auto;
     left: calc(50% - 70px);
     bottom: 0;
@@ -31,7 +42,7 @@
 .swiper-button-next {
   top: -80px;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1400px) {
     top: auto;
     right: calc(50% - 70px);;
     bottom: 0;

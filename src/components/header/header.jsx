@@ -99,6 +99,7 @@ export default function Header() {
         }
     }, 100);
     }
+    // eslint-disable-next-line
   }, [location]);
 
   const classNameButton = cn(styles.buttonMenu, {
@@ -116,7 +117,7 @@ export default function Header() {
 
   return (
     <div className={styles.header}>
-      <Container>
+      <Container fluid="xxl">
         <div className={classNameWrapper}>
           <Logo
             src={SvgLogo}
