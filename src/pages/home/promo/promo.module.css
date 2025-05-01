@@ -4,10 +4,6 @@
     position: relative;
     z-index: 2;
 
-    @media (max-width: 1584px) {
-        margin: 0 -12px 0;
-    }
-
     @media (max-width: 1400px) {
         padding: 120px 0 120px;
     }
