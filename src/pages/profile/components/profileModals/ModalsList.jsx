@@ -1,119 +1,211 @@
-import React from "react";
-import ModalWindow from "../../../../components/modalWindow/index"
+import React, { useState, useEffect, useMemo } from "react";
+import ModalWindow from "../../../../components/modalWindow/index";
 import Button from "../../../../components/button/button";
-import styles from "./ModalsList.module.css"
+import TextButton from "../../ui/textButton/textButton";
+import styles from "./ModalsList.module.css";
+import Inputs from "../../../../components/inputs/inputs";
+import SearchInput from "../../ui/searchInput/searchInput";
+import CustomCheckbox from "../../ui/сustomCheckbox/CustomCheckbox";
 
-export const Modal1 = ({ isOpen, onClose }) => {
+export const AddMemberInTeam = ({
+  title,
+  isOpen,
+  onClose,
+  list = [],
+  onAddSelected,
+}) => {
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [list]);
+
+  const participants = useMemo(
+    () =>
+      list.map((item, idx) => ({
+        id: item.id ?? idx,
+        name: item.name ?? item.full_name,
+        role: item.role,
+      })),
+    [list]
+  );
+
   if (!isOpen) return null;
+
+  const toggleSelection = (id) =>
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+
+  const handleAddBulk = () => {
+    onAddSelected?.(selectedIds);
+    onClose();
+  };
+
   return (
     <div className={styles.modalOverlay}>
       <ModalWindow
-        title="Модальное окно 1"
-        description="Это первое модальное окно"
+        title={title}
         setIsShow={onClose}
+        addClass={styles.scaleModal}
       >
-        <div className={styles.btn}>
-          <Button text="Закрыть" onClick={onClose} />
+        <SearchInput />
+        <div className={styles.scroll}>
+          <ul className={styles.participantsListContainer}>
+            {participants.length > 0 ? (
+              participants.map((item) => (
+                <li key={item.id} className={styles.participantItem}>
+                  <div className={styles.leftParticipantItem}>
+                    <CustomCheckbox
+                      checked={selectedIds.includes(item.id)}
+                      onChange={() => toggleSelection(item.id)}
+                      className={styles.checkbox}
+                    />
+
+                    <p className={styles.participantName}>{item.name}</p>
+                  </div>
+                  <TextButton
+                    className={styles.textBtn}
+                    onClick={() => onAddSelected?.([item.id])}
+                  >
+                    Добавить
+                  </TextButton>
+                </li>
+              ))
+            ) : (
+              <div className={styles.emptyList}>Список пуст</div>
+            )}
+          </ul>
+        </div>
+        <div className={styles.addBtn}>
+          <Button
+            addClass={styles.addClass}
+            text="Добавить выбранных"
+            onClick={handleAddBulk}
+            disabled={selectedIds.length === 0}
+          />
         </div>
       </ModalWindow>
     </div>
   );
 };
 
-export const Modal2 = ({ isOpen, onClose }) => {
+export const MessageModal = ({ isOpen, onClose, title }) => {
   if (!isOpen) return null;
+
+  return (
+    <div className={styles.modalOverlay}>
+      <ModalWindow title={title} setIsShow={onClose} />
+    </div>
+  );
+};
+
+export const ProjectModal = ({
+  isOpen,
+  onClose,
+  title,
+  description,
+  data = [],
+  onSelect,
+}) => {
+  const projects = useMemo(() => {
+    return data.map((item, idx) => {
+      if (typeof item === 'string') {
+        return { id: idx + 1, name: item };
+      }
+      return {
+        id: item.id ?? idx + 1,
+        name: item.name ?? item.title ?? `Проект #${idx + 1}`,
+      };
+    });
+  }, [data]);
+
+  if (!isOpen) return null;
+
   return (
     <div className={styles.modalOverlay}>
       <ModalWindow
-        title="Модальное окно 2"
-        description="Это второе модальное окно"
+        title={title}
+        description={description}
         setIsShow={onClose}
+        addClass={styles.scaleModal}
       >
-        <div className={styles.btn}>
-          <Button text="Закрыть" onClick={onClose} />
+        <div className={styles.scroll}>
+          <ul className={styles.participantsListContainer}>
+            {projects.length > 0 ? (
+              projects.map((project) => (
+                <li key={project.id} className={styles.participantItem}>
+                  <div className={styles.leftParticipantItem}>
+                    <p className={styles.participantName}>{project.name}</p>
+                  </div>
+                  <TextButton
+                    className={styles.textBtn}
+                    onClick={() => onSelect(project)}
+                  >
+                    Добавить
+                  </TextButton>
+                </li>
+              ))
+            ) : (
+              <div className={styles.emptyList}>Список проектов пуст</div>
+            )}
+          </ul>
         </div>
       </ModalWindow>
     </div>
   );
 };
 
-
-export const Modal3 = ({ isOpen, onClose }) => {
+export const InputModal = ({
+  isOpen,
+  onClose,
+  title,
+  inputData,
+  error,
+  onChangeInputData,
+  onConfirm,
+  createText,
+  cancelText,
+  placeholder,
+}) => {
   if (!isOpen) return null;
+
   return (
     <div className={styles.modalOverlay}>
-      <ModalWindow
-        title="Модальное окно 3"
-        description="Это третье модальное окно"
-        setIsShow={onClose}
-      >
-        <div className={styles.btn}>
-          <Button text="Закрыть" onClick={onClose} />
+      <ModalWindow title={title} setIsShow={onClose}>
+        <Inputs
+          name="inputData"
+          type="text"
+          placeholder={placeholder}
+          formData={{ inputData: { value: inputData, type: "text" } }}
+          formError={{ inputData: error }}
+          onChange={(value) => onChangeInputData(value)}
+        />
+        <div className={styles.buttonContainerInput}>
+          <Button
+            addClass={styles.inputBtn}
+            text={createText}
+            large
+            onClick={onConfirm}
+          />
+          <Button
+            addClass={styles.inputBtn}
+            text={cancelText}
+            large
+            onClick={onClose}
+          />
         </div>
       </ModalWindow>
     </div>
   );
 };
-
-export const Modal4 = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-  return (
-    <div className={styles.modalOverlay}>
-      <ModalWindow
-        title="Модальное окно 4"
-        description="Это четвертое модальное окно"
-        setIsShow={onClose}
-      >
-        <div className={styles.btn}>
-          <Button text="Закрыть" onClick={onClose} />
-        </div>
-      </ModalWindow>
-    </div>
-  );
-};
-
-export const Modal5 = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-  return (
-    <div className={styles.modalOverlay}>
-      <ModalWindow
-        title="Модальное окно 5"
-        description="Это модальное окно"
-        setIsShow={onClose}
-      >
-        <div className={styles.btn}>
-          <Button text="Закрыть" onClick={onClose} />
-        </div>
-      </ModalWindow>
-    </div>
-  );
-};
-
-
-export const Modal6 = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-  return (
-    <div className={styles.modalOverlay}>
-      <ModalWindow
-        title="Модальное окно 6"
-        description="Это модальное окно"
-        setIsShow={onClose}
-      >
-        <div className={styles.btn}>
-          <Button text="Закрыть" onClick={onClose} />
-        </div>
-      </ModalWindow>
-    </div>
-  );
-};
-
 
 export const Modal7 = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
   return (
     <div className={styles.modalOverlay}>
       <ModalWindow
-        title="Модальное окно 7"
+        title="Модальное окно"
         description="Это модальное окно"
         setIsShow={onClose}
       >
@@ -124,11 +216,6 @@ export const Modal7 = ({ isOpen, onClose }) => {
     </div>
   );
 };
-
-
-
-
-
 
 export const ConfirmDeleteModal = ({
   isOpen,
@@ -143,24 +230,10 @@ export const ConfirmDeleteModal = ({
 
   return (
     <div className={styles.modalOverlay}>
-      <ModalWindow
-        title={title}
-        description={description}
-        setIsShow={onCancel}
-      >
+      <ModalWindow title={title} description={description} setIsShow={onCancel}>
         <div className={styles.buttonContainer}>
-          <Button
-            text={confirmText}
-            large
-            onClick={onConfirm}
-            addClass={styles.confirmButton}
-          />
-          <Button
-            text={cancelText}
-            large
-            onClick={onCancel}
-            addClass={styles.cancelButton}
-          />
+          <Button text={confirmText} large onClick={onConfirm} />
+          <Button text={cancelText} large onClick={onCancel} />
         </div>
       </ModalWindow>
     </div>

@@ -1,0 +1,31 @@
+.wrapper {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+  }
+  
+  .box {
+    display: block;
+  }
+  
+  .checkmark {
+    /* изначально скрыта */
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+  }
+  
+  /* при checked — полностью видима */
+  .input:checked + .box .checkmark {
+    opacity: 1;
+  }

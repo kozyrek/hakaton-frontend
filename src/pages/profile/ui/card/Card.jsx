@@ -19,7 +19,7 @@ export default function Card({
 
   const className = cn(cardClassName, styles.teamCard, styles[colorCard]);
   const titleClass = cn(styles.teamTitle, styles[titleSize]);
-  const buttonClass = cn(styles.deleteButton, buttonClassName);
+  const buttonClass = cn(styles.TextButton, buttonClassName);
 
   return (
     <div className={className} onClick={onClick}>

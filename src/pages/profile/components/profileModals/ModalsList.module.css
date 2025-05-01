@@ -1,27 +1,128 @@
-
 .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    color: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  color: black;
+}
+
+.btn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buttonContainer,
+.buttonContainerInput {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.scroll {
+  margin-top: 20px;
+  max-height: 528px;
+  height: auto;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+.addBtn {
+  margin-top: 20px;
+  display: flex;
+  justify-content: start;
+}
+
+.participantsListContainer {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.textBtn {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.scaleModal {
+  width: 1200px;
+  transform-origin: top center;
+}
+
+.participantItem {
+  border: 1px solid #ceb2e9;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px;
+  list-style-type: none;
+}
+
+.leftParticipantItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addMembersModal {
+  width: 803px;
+}
+
+.participantName {
+  font-weight: 400;
+  font-size: 16px;
+  text-align: left;
+}
+
+@media (max-width: 1200px) {
+  .scaleModal {
+    width: 944px;
   }
-  .btn{
-    display: flex; 
-    justify-content: flex-end;
+}
+
+@media (max-width: 944px) {
+  .scaleModal {
+    width: 530px;
+  }
+}
+
+@media (max-width: 380px) {
+  .scaleModal {
+    width: 320px;
   }
 
-  .buttonContainer {
-    margin-top:24px;
-    display:flex;
-    justify-content:center;
-    gap:20px;
- 
- }
- 
+  .participantName {
+    font-weight: 400;
+    font-size: 14px;
+    width: 127px;
+  }
+}
+
+@media (max-width: 360px) {
+  .buttonContainerInput {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .inputBtn {
+    max-width: none;
+  }
+}

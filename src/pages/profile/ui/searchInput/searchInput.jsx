@@ -1,7 +1,9 @@
 import React from "react";
 import styles from "./searchInput.module.css";
+import searchIcon from "../../../../assests/images/svg/search.svg"
 
-const SearchInput = ({ value, onChange, searchIcon }) => {
+
+const SearchInput = ({ value, onChange }) => {
   return (
     <div className={styles.searchUserForm}>
       <input

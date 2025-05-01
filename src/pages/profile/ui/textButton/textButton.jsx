@@ -1,7 +1,7 @@
 import React from "react";
-import styles from "./deleteButton.module.css";
+import styles from "./textButton.module.css";
 
-const DeleteButton = ({ onClick, children, className = "", ...props }) => {
+const TextButton = ({ onClick, children, className = "", ...props }) => {
   return (
     <button onClick={onClick} className={`${styles.removeButton} ${className}`} {...props}>
       {children}
@@ -9,4 +9,4 @@ const DeleteButton = ({ onClick, children, className = "", ...props }) => {
   );
 };
 
-export default DeleteButton;
+export default TextButton;

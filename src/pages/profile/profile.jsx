@@ -3,7 +3,6 @@ import data from "./data.json";
 import { Container } from "react-bootstrap";
 import LayoutProfileBg from "./styles/layoutProfileBg";
 import styles from "./styles/profile.module.css";
-import searchIcon from "../../assests/images/svg/search.svg";
 import ProfileHeader from "./components/head-profile/profileHeader";
 import ProfileMenu from "./components/profile-menu/ProfileMenu";
 import ProfileMembers from "./components/list-members/profileMembers";
@@ -63,7 +62,6 @@ export default function Profile() {
               <ProfileMembers
                 user={user.user}
                 participants={participants}
-                searchIcon={searchIcon}
                 onRemoveParticipant={handleRemoveParticipant}
               />
             )}

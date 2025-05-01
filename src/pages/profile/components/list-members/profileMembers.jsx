@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import styles from "./profileMembers.module.css";
 import SearchInput from "../../ui/searchInput/searchInput";
 import Pagination from "../../ui/pagination/pagination";
-import DeleteButton from "../../ui/deleteBtn/deleteButton";
+import TextButton from "../../ui/textButton/textButton";
 import getAllUser from "../../../../api/getAllUsers";
 import { getRole } from "../head-profile/profileHeader";
 import { ConfirmDeleteModal } from "../profileModals/ModalsList";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
 
-const ProfileMembers = ({ user, searchIcon, onRemoveParticipant }) => {
+const ProfileMembers = ({ user, onRemoveParticipant }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
@@ -121,7 +121,6 @@ const ProfileMembers = ({ user, searchIcon, onRemoveParticipant }) => {
           setSearchQuery(e.target.value);
           setCurrentPage(1);
         }}
-        searchIcon={searchIcon}
       />
 
       <ul className={styles.participantsListContainer}>
@@ -144,12 +143,12 @@ const ProfileMembers = ({ user, searchIcon, onRemoveParticipant }) => {
               </div>
               <div className={styles.rightZone}>{getRole(participant)}</div>
               <div>
-                <DeleteButton
+                <TextButton
                   className={styles.removeButton}
                   onClick={() => openModal(participant, index)}
                 >
                   Удалить
-                </DeleteButton>
+                </TextButton>
               </div>
             </li>
           ))

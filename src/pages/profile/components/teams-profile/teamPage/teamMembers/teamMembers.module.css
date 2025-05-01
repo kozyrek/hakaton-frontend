@@ -8,11 +8,15 @@ p {
   font-weight: 400;
 }
 
-.participantName{
+.participantName {
   font-size: 20px;
   font-weight: 600;
 }
 
+.textBtn {
+  font-weight: 600;
+  font-size: 16px;
+}
 
 .modalOverlay {
   position: fixed;
@@ -88,7 +92,7 @@ p {
 }
 
 .notVerified {
-  border: 2px solid #DB0000;
+  border: 2px solid #db0000;
 }
 
 .participantInfo {
@@ -96,7 +100,18 @@ p {
 }
 
 .rightZone {
-  margin-right: 80px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 20px;
+}
+
+.rightZoneCaptain {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  width: 50%;
+  justify-content: space-between;
 }
 
 .roleContainer {
@@ -106,17 +121,44 @@ p {
   cursor: pointer;
 }
 
+@media (max-width: 681px) {
+  .participantName {
+    width: 201px;
+  }
+}
 
+@media (max-width: 564px) {
+  .participantInfo {
+    flex-direction: column;
+  }
 
-@media (max-width: 600px) {
+  .participantName {
+    width: 100%;
+  }
+
   .participantItem {
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
   }
 
+  .participantItemActive {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
   .rightZone {
-    display: block;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rightZoneCaptain {
+    flex-direction: row-reverse;
+    max-width: 296px;
+    width: 100%;
+    max-height: 57px;
+    height: 100%;
   }
 }
 
@@ -126,15 +168,6 @@ p {
     justify-content: space-between;
     flex: 1;
     gap: 20px;
-  }
-
-  .participantName {
-    max-width: 160px;
-  }
-
-  .participantRole {
-    color: #666;
-    margin-right: auto;
   }
 }
 
@@ -154,7 +187,6 @@ p {
     padding: 10px;
     height: auto;
   }
-
 
   .modalOverlay {
     width: 100vw;

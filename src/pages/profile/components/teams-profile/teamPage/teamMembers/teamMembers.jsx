@@ -1,73 +1,113 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import styles from "./teamMembers.module.css";
 import LeaderLogo from "./leaderLogo";
-import DeleteButton from "../../../../ui/deleteBtn/deleteButton";
+import TextButton from "../../../../ui/textButton/textButton";
 import Button from "../../../../../../components/button/button";
 import Pencil from "../../../personal-info/images/Pencil";
 import data from "../../../../data.json";
 import { useResize } from "../../../../../../hooks/useResize";
-import { Modal1, Modal2, Modal3 } from "../../../profileModals/ModalsList"
-
-const availableRoles = [
-  "участник",
-  "аналитик",
-  "разработчик",
-  "дизайнер",
-  "тестировщик",
-  "менеджер",
-  "HR",
-];
+import {
+  ConfirmDeleteModal,
+  InputModal,
+  AddMemberInTeam,
+  MessageModal,
+} from "../../../profileModals/ModalsList";
 
 const TeamMembers = () => {
-
-  const [isModal1Open, setIsModal1Open] = useState(false);
-  const [isModal2Open, setIsModal2Open] = useState(false);
-  const [isModal3Open, setIsModal3Open] = useState(false);
-
   const [members, setMembers] = useState(data.mebersTeam);
+  const [isEditRoleOpen, setEditRoleOpen] = useState(false);
+  const [isDeleteOpen, setDeleteOpen] = useState(false);
+  const [isAddMemberOpen, setAddMemberOpen] = useState(false);
+  const [isLimitReachedOpen, setLimitReachedOpen] = useState(false);
 
-  const handleDelete = (index, e) => {
-    e.stopPropagation();
-    setMembers((prev) => prev.filter((_, i) => i !== index));
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [roleInput, setRoleInput] = useState("");
+
+  const width = useResize();
+
+  const modalList = useMemo(
+    () =>
+      data.mebersTeam.map((item, idx) => ({
+        id: item.id ?? idx,
+        name: item.name ?? item.full_name,
+        role: item.role,
+      })),
+    []
+  );
+
+  const handleAddSelected = (ids) => {
+    const toAdd = modalList
+      .filter((p) => ids.includes(p.id))
+      .map((p) => ({ full_name: p.name, role: "участник" }));
+
+    if (members.length + toAdd.length > 10) {
+      setLimitReachedOpen(true);
+      return;
+    }
+
+    setMembers((prev) => [...prev, ...toAdd]);
+    setAddMemberOpen(false);
   };
 
-  const handleMakeCaptain = (index, e) => {
+  const confirmDelete = () => {
+    if (selectedIndex !== null) {
+      setMembers((prev) => prev.filter((_, i) => i !== selectedIndex));
+    }
+    setDeleteOpen(false);
+    setSelectedIndex(null);
+  };
+
+  const handleDeleteClick = (idx, e) => {
+    e.stopPropagation();
+    setSelectedIndex(idx);
+    setDeleteOpen(true);
+  };
+
+  const handleAddMemberClick = () => {
+    if (members.length >= 10) {
+      setLimitReachedOpen(true);
+    } else {
+      setAddMemberOpen(true);
+    }
+  };
+
+  const handleRoleClick = (member, idx, e) => {
+    e.stopPropagation();
+    setEditingIndex(idx);
+    setRoleInput(member.role);
+    setEditRoleOpen(true);
+  };
+
+  const confirmRoleEdit = () => {
+    const newRole = roleInput.trim();
+    if (!newRole) return;
+    setMembers((prev) =>
+      prev.map((m, i) => (i === editingIndex ? { ...m, role: newRole } : m))
+    );
+    setEditRoleOpen(false);
+    setEditingIndex(null);
+  };
+
+  const handleMakeCaptain = (idx, e) => {
     e.stopPropagation();
     setMembers((prev) =>
-      prev.map((member, i) => ({
-        ...member,
-        role: i === index ? "капитан" : (member.role === "капитан" ? "участник" : member.role),
+      prev.map((m, i) => ({
+        ...m,
+        role:
+          i === idx ? "капитан" : m.role === "капитан" ? "участник" : m.role,
       }))
     );
   };
 
-  const handleRoleChange = (index, e) => {
-    e.stopPropagation();
-    setMembers((prev) =>
-      prev.map((member, i) => {
-        if (i === index) {
-          const currentIndex = availableRoles.indexOf(member.role);
-          const nextIndex = (currentIndex + 1) % availableRoles.length;
-          return { ...member, role: availableRoles[nextIndex] };
-        }
-        return member;
-      })
-    );
-  };
-
-  const handleAddMember = () => {
-
-  };
-
-  const width = useResize();
-
   return (
     <div className={styles.participantsList}>
       <h2 className={styles.profileTabTitle}>Участники команды</h2>
+
       <ul className={styles.participantsListContainer}>
-        {members.map((member, index) => (
+        {members.map((member, idx) => (
           <li
-            key={index}
+            key={idx}
             className={
               member.role === "капитан"
                 ? styles.participantItemActive
@@ -78,41 +118,83 @@ const TeamMembers = () => {
               <p className={styles.participantName}>{member.full_name}</p>
               <div
                 className={styles.roleContainer}
-                onClick={() => setIsModal1Open(true)}
+                onClick={(e) => handleRoleClick(member, idx, e)}
               >
                 <p className={styles.participantRole}>{member.role}</p>
-                <Pencil 
-                
-                width={width < 769 ? 12 : 18}
-                height={width < 769 ? 12 : 18}
-                aria-hidden="true"
-                
+                <Pencil
+                  width={width < 769 ? 12 : 18}
+                  height={width < 769 ? 12 : 18}
+                  aria-hidden="true"
                 />
               </div>
             </div>
-            <div className={styles.rightZone}>
+
+            <div
+              className={
+                member.role === "капитан"
+                  ? `${styles.rightZone} ${styles.rightZoneCaptain}`
+                  : styles.rightZone
+              }
+            >
               {member.role === "капитан" && <LeaderLogo />}
               {member.role !== "капитан" && (
-                <DeleteButton onClick={(e) => handleMakeCaptain(index, e)}>
+                <TextButton
+                  className={styles.textBtn}
+                  onClick={(e) => handleMakeCaptain(idx, e)}
+                >
                   Сделать капитаном
-                </DeleteButton>
+                </TextButton>
               )}
-              <DeleteButton
-                className={styles.removeButton}
-                onClick={() => setIsModal2Open(true)}
+              <TextButton
+                className={styles.textBtn}
+                onClick={(e) => handleDeleteClick(idx, e)}
               >
                 Удалить участника
-              </DeleteButton>
+              </TextButton>
             </div>
           </li>
         ))}
       </ul>
+
       <div className={styles.buttonsContainer}>
-        <Button text="Добавить участника" onClick={() => setIsModal3Open(true)}/>
+        <Button text="Добавить участника" onClick={handleAddMemberClick} />
       </div>
-      <Modal1 isOpen={isModal1Open} onClose={() => setIsModal1Open(false)} />
-      <Modal2 isOpen={isModal2Open} onClose={() => setIsModal2Open(false)} />
-      <Modal3 isOpen={isModal3Open} onClose={() => setIsModal3Open(false)} />
+
+      <InputModal
+        title="Изменить роль участника"
+        placeholder="Новая роль"
+        cancelText="Отменить"
+        createText="Сохранить"
+        isOpen={isEditRoleOpen}
+        onClose={() => setEditRoleOpen(false)}
+        inputData={roleInput}
+        error=""
+        onChangeInputData={setRoleInput}
+        onConfirm={confirmRoleEdit}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={isDeleteOpen}
+        onCancel={() => setDeleteOpen(false)}
+        onConfirm={confirmDelete}
+        title="Действительно хотите удалить данного участника из команды?"
+        description={
+          selectedIndex !== null ? members[selectedIndex].full_name : ""
+        }
+      />
+
+      <AddMemberInTeam
+        title="Добавить участника"
+        isOpen={isAddMemberOpen}
+        onClose={() => setAddMemberOpen(false)}
+        list={modalList}
+        onAddSelected={handleAddSelected}
+      />
+      <MessageModal
+        title="Добавление невозможно. Команда уже содержит 10 участников"
+        isOpen={isLimitReachedOpen}
+        onClose={() => setLimitReachedOpen(false)}
+      />
     </div>
   );
 };
