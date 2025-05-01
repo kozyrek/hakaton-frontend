@@ -7,6 +7,7 @@ export const ROUTES = {
   TEAMSPAGE: "/profile/teams/:teamId", 
   PROJECTSPAGE: "/profile/projects/:projectId",
   STAGES: "/stages",
+  STEP: "/step",
   USER_ID: "/profile/:userId",
 };
 

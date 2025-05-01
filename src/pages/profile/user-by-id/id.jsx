@@ -9,9 +9,9 @@ import ProfileHeader, {
 } from "../components/head-profile/profileHeader";
 import LayoutProfileBg from "../styles/layoutProfileBg";
 import PersonalInfo from "../components/personal-info";
-import getUserById from "../../../api/getUserById";
 import Button from "../../../components/button/button";
 import { ROLES, ROUTES } from "../../../utils/constants";
+import getUser from "../../../api/getUser";
 
 import styles from "../styles/profile.module.css";
 import stylesID from "./index.module.css";
@@ -23,11 +23,12 @@ export default function UserId() {
   const [error, setError] = useState(undefined);
   const { userId } = useParams();
   const navigate = useNavigate();
+  const token = useSelector((state) => state.user.token.accessToken);
 
   useEffect(() => {
     const fetchDataUser = async () => {
       try {
-        const requestUser = await getUserById(userId);
+        const requestUser = await getUser(token, userId);
         if (!requestUser.verified && getRole(user) !== ROLES.ADMIN) {
           navigate(ROUTES.PROFILE);
           return;
@@ -41,6 +42,7 @@ export default function UserId() {
     };
 
     fetchDataUser();
+    // eslint-disable-next-line
   }, [userId]);
 
   if (loading) return <div style={{ marginTop: "80px" }}>Loading...</div>;

@@ -6,7 +6,7 @@ import image from "./images/image.png";
 
 export default function Hackathon() {
     return (
-        <section className="contentBox">
+        <section id="forwhom" className="contentBox">
             <h2 className={`titleH2 ${styles.title}`}>Что такое хакатон?</h2>
             <p className={`text3 ${styles.subtitle}`}>Хакатон&nbsp;&mdash; это твой шанс создать что-то значимое и&nbsp;сделать первый шаг к&nbsp;будущей карьере в&nbsp;науке или технологиях!</p>
 

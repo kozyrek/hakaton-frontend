@@ -1,7 +1,20 @@
 .imageWrapper {
     margin-bottom: 20px;
+    aspect-ratio: 0.98;
     border-radius: 8px;
     overflow: hidden;
+
+    @media (max-width: 1400px) {
+        aspect-ratio: 0.875;
+    }
+
+    @media (max-width: 1024px) {
+        aspect-ratio: 0.967;
+    }
+
+    @media (max-width: 768px) {
+        aspect-ratio: 0.874;
+    }
 
     img {
         display: block;
@@ -9,6 +22,18 @@
         height: 100%;
         object-fit: cover;
         object-position: center;
+    }
+}
+
+.avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f6edff;
+
+    svg {
+        width: 50%;
+        height: 50%;
     }
 }
 

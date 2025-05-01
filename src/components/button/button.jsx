@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import styles from "./button.module.css";
 
 export default function Button({
+  type,
   text,
   path,
   large,
@@ -54,6 +55,7 @@ export default function Button({
     </Link>
   ) : (
     <button
+      type={type}
       className={className}
       onClick={onClick}
       disabled={disabled}

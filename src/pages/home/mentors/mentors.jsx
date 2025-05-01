@@ -6,7 +6,7 @@ import { mentors } from "../utils/utils";
 
 export default function Mentors() {
     return (
-        <section className="contentBox">
+        <section id="ourcommand" className="contentBox">
             <h2 className="titleH2">Наши менторы</h2>
             <Slider items={mentors} Component={PersonCard}/>
         </section>

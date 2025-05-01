@@ -5,7 +5,7 @@ import styles from "./gallery.module.css";
 
 export default function Gallery() {
     return (
-        <section className="contentBox">
+        <section id="gallery" className="contentBox">
             <h2 className="titleH2">Яркие моменты с прошедших хакатонов</h2>
             <ul className={styles.galleryList}>
                 {photos.map((item) => (

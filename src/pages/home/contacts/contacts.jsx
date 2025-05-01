@@ -19,10 +19,15 @@ export default function Contacts() {
                     {contacts.map((item) => (
                         <li key={item.id}>
                             {item.title}
-                            {/* (item.href === mailto) || (item.href === tel)
-                            ? <a href>{item.text}</a>
-                            :  */}
-                            <span>{item.text}</span>
+                            {item.tel || item.email
+                            ? <a 
+                                href={
+                                    item.tel
+                                    ? `tel:${item.tel}`
+                                    : `mailto:${item.email}`
+                                }
+                            >{item.text}</a>
+                            : <span>{item.text}</span>}
                         </li>
                     ))}
                 </ul>

@@ -1,4 +1,3 @@
-import React from "react";
 import { Container } from "react-bootstrap";
 import LayoutLogin from "../auth/layoutLogin";
 import HeadStages from "./head-stages/headStages";
@@ -8,7 +7,13 @@ import StagesList from "./stages/stagesList";
 
 import { projectExample } from "./utils/utils";
 
+import { useSelector } from "react-redux";
+import getProjects from "../../api/getProjects";
+
 export default function ProjectStages() {
+    const token = useSelector((state)=>state.user.token.accessToken);
+    getProjects(token);
+
     return (
         <>
             <LayoutLogin>
@@ -18,7 +23,7 @@ export default function ProjectStages() {
             </LayoutLogin>
             <Container>
                 <TeamInfo obj={projectExample.team}/>
-                <ProjectDocuments arr={projectExample.project.projectFiles}/>
+                <ProjectDocuments arr={projectExample.project.download}/>
                 <StagesList projectIsComplete={projectExample.project.isComplete}/>
             </Container>
         </>

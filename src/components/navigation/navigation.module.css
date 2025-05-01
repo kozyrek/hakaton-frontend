@@ -4,6 +4,25 @@
 }
 
 .navLinkItem {
-    color: #ffffff;
+    position: relative;
     text-decoration: none;
+    color: #ffffff;
+
+    &::after {
+        position: absolute;
+        content: "";
+        top: 98%;
+        left: 51%;
+        right: 51%;
+        width: 0;
+        height: 1px;
+        background-color: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    &:hover::after {
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
 }

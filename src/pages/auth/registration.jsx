@@ -17,6 +17,7 @@ import stylesReg from "./styles/registration.module.css";
 import ArrowDown from "./images/arrowdown";
 import ArrowUp from "./images/arrowup";
 import { MODAL } from "../../components/modalWindow/utils/constants";
+import userRegistration from "../../api/userRegistration";
 
 export default function Registration() {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,8 +85,11 @@ export default function Registration() {
       }));
       return;
     }
+    console.log(formError)
     if (errors) return;
+    const response = userRegistration();
     setIsShowModal(true);
+    console.log(response)
   };
 
   return (

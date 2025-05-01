@@ -10,6 +10,7 @@ import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import Profile from "./pages/profile/profile";
 import ProjectStages from "./pages/projectStages";
+import StepProjectPage from "./pages/stepPage";
 
 import TeamPage from "./pages/profile/components/teams-profile/teamPage/teamPage"
 import ProjectsPage from "./pages/profile/components/projects-profile/projectsPage/projectsPage";
@@ -71,6 +72,10 @@ root.render(
               <Route
                 path={ROUTES.STAGES}
                 element={<ProjectStages />}
+              />
+              <Route
+                path={ROUTES.STEP}
+                element={<StepProjectPage />}
               />
             </Routes>
             <Footer />
