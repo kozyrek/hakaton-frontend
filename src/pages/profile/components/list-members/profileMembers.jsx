@@ -9,6 +9,7 @@ import getAllUser from "../../../../api/getAllUsers";
 import { getRole } from "../head-profile/profileHeader";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
+import { useSelector } from "react-redux";
 
 const ProfileMembers = ({
   user,
@@ -20,17 +21,19 @@ const ProfileMembers = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
-  const [usersList, setUserList] = useState({});
+  const [usersList, setUserList] = useState([]);
   const [loading, setLoading] = useState(false);
   // Храним выбранного участника и его индекс (индекс в currentParticipants)
   const [selectedParticipant, setSelectedParticipant] = useState(null);
   const participantsPerPage = 10;
 
+  const token = useSelector(state => state.user.token.accessToken)
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const users = await getAllUser();
+        const users = await getAllUser(token);
         setUserList(users);
       } catch (err) {
         console.log(err.message);
@@ -40,7 +43,9 @@ const ProfileMembers = ({
     };
 
     fetchUsers();
+    // eslint-disable-next-line
   }, []);
+
   // Фильтрация участников по поисковому запросу
   const filteredParticipants = participants.filter((p) => {
     const query = searchQuery.toLowerCase();

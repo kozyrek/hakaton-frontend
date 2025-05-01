@@ -63,7 +63,7 @@ export default function Login() {
 
   const handleSubmit = async () => {
     const errors = validateForm(formData, formError, setFormError);
-    if (!errors) return;
+    if (errors) return;
     setLoading(true);
     setResponseError(null)
     try {
@@ -73,7 +73,6 @@ export default function Login() {
       );
       dispatch(add_token(token.data));
       const user = await getUser(token.data.accessToken);
-      console.log("user", user)
       dispatch(set_user(user));
       setLoading(false);
       navigate(ROUTES.PROFILE);

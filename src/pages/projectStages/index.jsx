@@ -7,7 +7,13 @@ import StagesList from "./stages/stagesList";
 
 import { projectExample } from "./utils/utils";
 
+import { useSelector } from "react-redux";
+import getProjects from "../../api/getProjects";
+
 export default function ProjectStages() {
+    const token = useSelector((state)=>state.user.token.accessToken);
+    getProjects(token);
+
     return (
         <>
             <LayoutLogin>
