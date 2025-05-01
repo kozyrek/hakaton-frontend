@@ -26,6 +26,7 @@ import { HTTP } from "./http";
  */
 
 export default async function getUser(token, id = null) {
+  console.log("ff")
   let param = id === null ? "me" : id;
   const response = await HTTP.get(`/users/${encodeURIComponent(param)}`, {
     headers: {
