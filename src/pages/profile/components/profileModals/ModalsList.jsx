@@ -15,9 +15,11 @@ export const AddMemberInTeam = ({
   onAddSelected,
 }) => {
   const [selectedIds, setSelectedIds] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     setSelectedIds([]);
+    setSearchTerm("");
   }, [list]);
 
   const participants = useMemo(
@@ -28,6 +30,18 @@ export const AddMemberInTeam = ({
         role: item.role,
       })),
     [list]
+  );
+
+  const filteredParticipants = useMemo(
+    () =>
+      participants.filter((item) => {
+        const term = searchTerm.toLowerCase();
+        return (
+          item.name.toLowerCase().includes(term) ||
+          (item.role && item.role.toLowerCase().includes(term))
+        );
+      }),
+    [participants, searchTerm]
   );
 
   if (!isOpen) return null;
@@ -49,11 +63,15 @@ export const AddMemberInTeam = ({
         setIsShow={onClose}
         addClass={styles.scaleModal}
       >
-        <SearchInput />
+        <SearchInput
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Поиск по имени или роли"
+        />
         <div className={styles.scroll}>
           <ul className={styles.participantsListContainer}>
-            {participants.length > 0 ? (
-              participants.map((item) => (
+            {filteredParticipants.length > 0 ? (
+              filteredParticipants.map((item) => (
                 <li key={item.id} className={styles.participantItem}>
                   <div className={styles.leftParticipantItem}>
                     <CustomCheckbox
@@ -61,8 +79,8 @@ export const AddMemberInTeam = ({
                       onChange={() => toggleSelection(item.id)}
                       className={styles.checkbox}
                     />
-
                     <p className={styles.participantName}>{item.name}</p>
+                    <span className={styles.participantRole}>{item.role}</span>
                   </div>
                   <TextButton
                     className={styles.textBtn}
@@ -110,7 +128,7 @@ export const ProjectModal = ({
 }) => {
   const projects = useMemo(() => {
     return data.map((item, idx) => {
-      if (typeof item === 'string') {
+      if (typeof item === "string") {
         return { id: idx + 1, name: item };
       }
       return {
