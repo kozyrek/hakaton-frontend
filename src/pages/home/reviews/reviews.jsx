@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Slider from "../../../components/slider/slider";
 import ReviewCard from "./reviewCard";
 import { reviews } from "../utils/utils";
+import { scrollPageLock, scrollPageUnlock } from "../../../utils/scrollLock";
 
 import styles from "./styles/reviews.module.css";
 import stylesCardItem from "./styles/reviewCard.module.css";
@@ -9,6 +10,15 @@ import CloseIcon from "./images/closeIcon";
 
 export default function Reviews() {
     const [modalIsOpen, setModalIsOpen] = useState(null);
+    const scrollWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    useEffect(() => {
+        if (modalIsOpen) {
+          scrollPageLock(scrollWidth);
+        } else {
+          scrollPageUnlock();
+        }
+      });
 
     return (
         <section id="reviews" className="contentBox">

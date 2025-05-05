@@ -1,4 +1,4 @@
-import { HTTP } from "./http";
+import { HTTP } from "../http";
 
 const ERROR_TEXT = {
     NETWORK_ERROR: "Network error. Please check your connection.",
@@ -26,12 +26,12 @@ const ERROR_TEXT = {
 
 export default function getProjects(token) {
     try {
-        // const response = HTTP.get("/projects", {
-        const response = HTTP.get("/users/1", {/*для теста обновления токена - удалить после*/
+        const response = HTTP.get("/projects/?page=1&per_page=25", {
             headers: {
                 Authorization: `Bearer ${token}`, 
             }
         });
+
         return response.data
     } catch (error) {
         if (!error.response) {
