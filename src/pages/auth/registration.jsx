@@ -37,10 +37,15 @@ export default function Registration() {
   useEffect(() => {
     const { applicableFields, errorFields } = formFields.reduce(
       (acc, field) => {
-        const isApplicable =
-          !Object.hasOwn(field, "role") || field.role === formData.role.value;
-
-        if (isApplicable) {
+        if (field.name === formData.role.value) {
+          field.data.map((val) => {
+            acc.applicableFields[val.name] = {
+              value: "",
+              type: val.type,
+            };
+            acc.errorFields[val.name] = "";
+          });
+        } else {
           acc.applicableFields[field.name] = {
             value: "",
             type: field.type,
@@ -52,6 +57,8 @@ export default function Registration() {
       { applicableFields: {}, errorFields: {} }
     );
 
+    console.log(applicableFields);
+
     setFormData((prev) => ({
       ...prev,
       ...applicableFields,
@@ -59,6 +66,8 @@ export default function Registration() {
 
     setFormError(errorFields);
   }, [formData.role.value]);
+
+  console.log("fo", formData);
 
   const handleChange = (value, name) => {
     setFormData({
@@ -85,11 +94,11 @@ export default function Registration() {
       }));
       return;
     }
-    console.log(formError)
+    console.log(formError);
     if (errors) return;
     const response = userRegistration();
     setIsShowModal(true);
-    console.log(response)
+    console.log(response);
   };
 
   return (
@@ -109,7 +118,7 @@ export default function Registration() {
               onClick={() => setIsOpen(!isOpen)}
             >
               {options.find((e) => e.role === formData.role.value).value}
-              <span className={stylesReg.arrow}>
+              <span className={stylesReg.arrow} key="role-selected">
                 {!isOpen ? <ArrowDown /> : <ArrowUp />}
               </span>
             </div>
@@ -136,22 +145,33 @@ export default function Registration() {
             )}
 
             {formFields.map((item) => {
-              return (
-                <div
-                  className={`${stylesReg.conInputs} mb-4`}
-                  key={item.id}
-                >
-                  {!item.hasOwnProperty("role") ||
-                  item["role"] === formData.role.value ? (
+              return item.name === formData.role.value ? (
+                item.data.map((e) => {
+                  return <div
+                    className={`${stylesReg.conInputs} mb-4`}
+                    key={e.id}
+                  >
                     <Inputs
-                      {...item}
+                      {...e}
                       formData={formData}
                       formError={formError}
                       onChange={handleChange}
                     />
-                  ) : null}
+                  </div>;
+                })
+              ) : item.label ? (
+                <div
+                  className={`${stylesReg.conInputs} mb-4`}
+                  key={item.id}
+                >
+                  <Inputs
+                    {...item}
+                    formData={formData}
+                    formError={formError}
+                    onChange={handleChange}
+                  />
                 </div>
-              );
+              ) : null;
             })}
 
             <div className={stylesReg.consent}>
