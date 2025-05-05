@@ -21,6 +21,9 @@
     margin: 0 0 60px;
     padding-left: 20px;
     list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 12px;
 
     li {
         position: relative;
