@@ -1,0 +1,210 @@
+p {
+  margin: 0;
+  margin-top: 0;
+}
+
+.participantRole {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.participantName {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.textBtn {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.buttonContainer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.profileTabTitle {
+  font-weight: 500;
+  font-size: 52px;
+  margin-bottom: 48px;
+}
+
+.participantsList {
+  margin-bottom: 48px;
+}
+
+.participantsListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 48px;
+  padding: 0;
+}
+
+.inputFieldSmall {
+  border: 1px solid #6600cc;
+  border-radius: 6px;
+  padding: 12px 16px;
+  padding-right: 40px;
+  width: 100%;
+  max-width: 447px;
+  height: 43px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.rightZone {
+  display: flex;
+  align-items: flex-end;
+}
+
+.participantItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f6edff;
+  border-radius: 6px;
+  padding: 12px 16px;
+}
+
+.participantItemActive {
+  background-color: #fffddc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px;
+  padding: 12px 16px;
+}
+
+.notVerified {
+  border: 2px solid #db0000;
+}
+
+.participantInfo {
+  width: 100%;
+}
+
+.rightZone {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 20px;
+}
+
+.rightZoneCaptain {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  width: 50%;
+  justify-content: space-between;
+}
+
+.roleContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+@media (max-width: 681px) {
+  .participantName {
+    width: 201px;
+  }
+}
+
+@media (max-width: 564px) {
+  .participantInfo {
+    flex-direction: column;
+  }
+
+  .participantName {
+    width: 100%;
+  }
+
+  .participantItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .participantItemActive {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .rightZone {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rightZoneCaptain {
+    flex-direction: row-reverse;
+    max-width: 296px;
+    width: 100%;
+    max-height: 57px;
+    height: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .participantInfo {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .profileTabTitle {
+    font-size: 28px;
+    margin-top: 5vh;
+    margin-bottom: 3vh;
+  }
+
+  .inputFieldSmall {
+    max-width: calc(100% - 20px);
+    font-size: 14px;
+  }
+
+  .participantItem {
+    padding: 10px;
+    height: auto;
+  }
+
+  .modalOverlay {
+    width: 100vw;
+    height: auto;
+    padding-left: auto;
+    padding-right: auto;
+  }
+
+  .buttonContainer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .confirmButton,
+  .cancelButton {
+    width: auto;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+}

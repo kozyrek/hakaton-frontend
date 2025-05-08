@@ -12,6 +12,8 @@ import Profile from "./pages/profile/profile";
 import ProjectStages from "./pages/projectStages";
 import StepProjectPage from "./pages/stepPage";
 
+import TeamPage from "./pages/profile/components/teams-profile/teamPage/teamPage"
+import ProjectsPage from "./pages/profile/components/projects-profile/projectsPage/projectsPage";
 import PasswordRecovery from "./pages/auth/passwordRecovery";
 import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
@@ -51,6 +53,10 @@ root.render(
                 path={ROUTES.PROFILE}
                 element={<Profile />}
               />
+              <Route path={ROUTES.TEAMSPAGE} 
+              element={<TeamPage />} />
+               <Route path={ROUTES.PROJECTSPAGE} 
+              element={<ProjectsPage />} />
               <Route
                 path={ROUTES.USER_ID}
                 element={<UserId />}

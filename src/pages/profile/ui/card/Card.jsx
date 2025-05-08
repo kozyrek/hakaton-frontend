@@ -7,24 +7,33 @@ import CardBigLogo2 from "./cardBigLogo2";
 export default function Card({
   team,
   onDelete,
+  onClick,
   logoVariant = "default",
   buttonText = "Удалить команду",
   cardClassName = "",
   colorCard = "default",
   titleSize = "default",
-  buttonClassName = ""
+  buttonClassName = "",
 }) {
   const Logo = logoVariant === "alternative" ? CardBigLogo2 : CardBigLogo;
 
   const className = cn(cardClassName, styles.teamCard, styles[colorCard]);
   const titleClass = cn(styles.teamTitle, styles[titleSize]);
-  const buttonClass = cn(styles.deleteButton, buttonClassName);
+  const buttonClass = cn(styles.TextButton, buttonClassName);
 
   return (
-    <div className={className}>
+    <div className={className} onClick={onClick}>
       <h3 className={titleClass}>{team}</h3>
       <Logo className={styles.bigLogo} />
-      <button className={buttonClass} onClick={onDelete}>{buttonText}</button>
+      <button
+        className={buttonClass}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+      >
+        {buttonText}
+      </button>
     </div>
   );
 }

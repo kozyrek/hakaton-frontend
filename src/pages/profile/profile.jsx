@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import data from "./data.json"; // Ваш JSON
+import data from "./data.json";
 import { Container } from "react-bootstrap";
 import LayoutProfileBg from "./styles/layoutProfileBg";
 import styles from "./styles/profile.module.css";
-import searchIcon from "../../assests/images/svg/search.svg";
-// import ProfileForm from "./profile-form/ProfileForm";
 import ProfileHeader from "./components/head-profile/profileHeader";
 import ProfileMenu from "./components/profile-menu/ProfileMenu";
 import ProfileMembers from "./components/list-members/profileMembers";
@@ -14,11 +12,13 @@ import PersonalInfo from "./components/personal-info";
 import cn from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/user/userSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  // Данные из JSON (без функционала редактирования)
-  // const [user] = useState(data.user);
+  const location = useLocation();
+  const initialTab = location.state?.activeTab || "profile";
+  const [activeTab, setActiveTab] = useState(initialTab);
+  
   const user = useSelector((state) => state.user);
   const [participants, setParticipants] = useState(data.participants);
   const [myTeams] = useState(data.my_teams);
@@ -27,8 +27,6 @@ export default function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Управление вкладками
-  const [activeTab, setActiveTab] = useState("profile");
   const handleTabChange = (tab) => setActiveTab(tab);
 
   const handleLogout = () => {
@@ -64,15 +62,11 @@ export default function Profile() {
               <ProfileMembers
                 user={user.user}
                 participants={participants}
-                searchIcon={searchIcon}
                 onRemoveParticipant={handleRemoveParticipant}
               />
             )}
             {activeTab === "teams" && (
-              <TeamsProfile
-                myTeams={myTeams}
-                allTeams={allTeams}
-              />
+              <TeamsProfile myTeams={myTeams} allTeams={allTeams} />
             )}
             {activeTab === "projects" && (
               <ProjectsProfile projects={projects} />

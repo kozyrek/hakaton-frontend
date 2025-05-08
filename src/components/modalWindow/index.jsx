@@ -15,7 +15,7 @@ import CloseIcon from "./images/closeIcon";
  * @param {Function} [props.setIsShow] - Функция для управления видимостью модального окна.
  * @param {boolean} [props.descriptionLg=false] - Флаг для изменения стиля описания на большой.
  * @param {React.ReactNode} [props.children] - Дочерние элементы, которые будут отображаться в модальном окне.
- *
+ * @param {string} [props.addClass] — доп классы
  * @returns {JSX.Element} Возвращает элемент модального окна с заголовком, описанием и дочерними элементами.
  */
 
@@ -25,6 +25,7 @@ export default function ModalWindow({
   setIsShow,
   descriptionLg = false,
   children,
+  addClass = "",
 }) {
   return (
     <Container
@@ -34,7 +35,7 @@ export default function ModalWindow({
       aria-labelledby="modal-title"
       aria-modal="true"
     >
-      <div className={styles.modal}>
+      <div  className={cn(styles.modal, addClass)}>
         {setIsShow && (
           <div
             className={styles.closeIcon}

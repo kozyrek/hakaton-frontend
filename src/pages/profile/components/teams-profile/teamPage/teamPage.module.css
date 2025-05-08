@@ -1,0 +1,27 @@
+.mt80 {
+    margin-top: 80px;
+  }
+  
+  .mb160 {
+    margin-bottom: 160px;
+  }
+
+  .content{
+    margin-top: 80px;
+  }
+
+  .projectZone{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .infoPrj{
+    font-weight: 500;
+font-size: 52px;
+  }
+  .messagePrj{
+    font-weight: 500;
+font-size: 32px;
+color: #2b306c;
+  }
