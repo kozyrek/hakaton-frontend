@@ -96,7 +96,7 @@ export default function Registration() {
     }
     console.log(formError);
     if (errors) return;
-    const response = userRegistration();
+    const response = userRegistration(formData);
     setIsShowModal(true);
     console.log(response);
   };

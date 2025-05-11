@@ -72,7 +72,7 @@ export default function Login() {
         formData["retryPassword"].value
       );
       dispatch(add_token(token.data));
-      const user = await getUser(token.data.accessToken);
+      const user = await getUser();
       dispatch(set_user(user));
       setLoading(false);
       navigate(ROUTES.PROFILE);

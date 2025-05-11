@@ -29,12 +29,13 @@ export default function Header() {
 
 
   const token = useSelector((state)=>state.user.token?.accessToken);
+  const user = useSelector((state)=>state.user.user);
 
   useEffect(() => {
     const setUser = async () => {
 
       if (token) {
-        const user = await getUser(token);
+        const user = await getUser();
         if (user) {
           dispatch(set_user(user));
         }
@@ -45,9 +46,7 @@ export default function Header() {
     setUser();
     // eslint-disable-next-line
   }, []);
-
   
-  const user = useSelector((state)=>state.user.user);
   if (Object.keys(user).length !== 0) {
     isLogIn = true;
   } else {

@@ -10,6 +10,8 @@ import { getRole } from "../head-profile/profileHeader";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
 import { useSelector } from "react-redux";
+import deleteUser from "../../../../api/deleteUser";
+import { useDebounce } from "../../../../hooks/useDebounce";
 
 const ProfileMembers = ({
   user,
@@ -27,13 +29,15 @@ const ProfileMembers = ({
   const [selectedParticipant, setSelectedParticipant] = useState(null);
   const participantsPerPage = 10;
 
-  const token = useSelector(state => state.user.token.accessToken)
+  // const token = useSelector((state) => state.user.token.accessToken);
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const users = await getAllUser(token);
+        const users = await getAllUser();
+        console.log("users", users);
         setUserList(users);
       } catch (err) {
         console.log(err.message);
@@ -46,18 +50,38 @@ const ProfileMembers = ({
     // eslint-disable-next-line
   }, []);
 
-  // Фильтрация участников по поисковому запросу
-  const filteredParticipants = participants.filter((p) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      p.full_name.toLowerCase().includes(query) ||
-      (p.role && p.role.toLowerCase().includes(query))
-    );
-  });
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const params = {
+          search: debouncedSearchQuery || null,
+        };
 
-  const totalPages = Math.ceil(
-    filteredParticipants.length / participantsPerPage
-  );
+        const usersData = await getAllUser(params);
+        setUserList(usersData || []);
+      } catch (err) {
+        console.error("Failed to fetch users:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [debouncedSearchQuery]);
+
+  // Фильтрация участников по поисковому запросу
+  // const filteredParticipants = participants.filter((p) => {
+  //   const query = searchQuery.toLowerCase();
+  //   return (
+  //     p.full_name.toLowerCase().includes(query) ||
+  //     (p.role && p.role.toLowerCase().includes(query))
+  //   );
+  // });
+
+  // const totalPages = Math.ceil(
+  //   filteredParticipants.length / participantsPerPage
+  // );
   // const startIndex = (currentPage - 1) * participantsPerPage;
   // const currentParticipants = filteredParticipants.slice(
   //   startIndex,
@@ -97,23 +121,30 @@ const ProfileMembers = ({
     return rangeWithDots;
   };
 
-  const pageNumbers = getPageNumbers(currentPage, totalPages);
+  const pageNumbers = getPageNumbers(currentPage, 1);
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   // Открытие модального окна с выбранным участником
-  const openModal = (participant, index) => {
-    setSelectedParticipant({ participant, index });
+  const openModal = (participant) => {
+    setSelectedParticipant(participant.id);
     setShowModal(true);
   };
 
-  // Подтверждение удаления участника
-  const confirmRemoval = () => {
+  const confirmRemoval = async () => {
     if (selectedParticipant) {
-      onRemoveParticipant(selectedParticipant.index);
-      setShowModal(false);
-      setSelectedParticipant(null);
+      try {
+        await deleteUser(selectedParticipant);
+        const params = { search: debouncedSearchQuery || null };
+        const usersData = await getAllUser(params);
+        setUserList(usersData.items || []);
+      } catch (err) {
+        console.error("Failed to delete user:", err.message);
+      } finally {
+        setShowModal(false);
+        setSelectedParticipant(null);
+      }
     }
   };
 
@@ -123,22 +154,25 @@ const ProfileMembers = ({
     setSelectedParticipant(null);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
+
   // Нужно добавить прелоадер
-  if (loading) return <>Loading</>;
+  // if (loading) return <>Loading</>;
 
   return (
     <div className={styles.participantsList}>
       <h2 className={styles.profileTabTitle}>Участники</h2>
       <SearchInput
         value={searchQuery}
-        onChange={(e) => {
-          setSearchQuery(e.target.value);
-          setCurrentPage(1);
-        }}
+        onChange={(e) => handleSearchChange(e)  }
         searchIcon={searchIcon}
       />
 
       <ul className={styles.participantsListContainer}>
+        {loading && <div>Loading</div>}
         {(usersList.items || []).length > 0 ? (
           (usersList.items || [])
             .filter((participant) => {
@@ -183,19 +217,17 @@ const ProfileMembers = ({
         )}
       </ul>
 
-      {totalPages > 1 && (
-        <Pagination
-          pageNumbers={pageNumbers}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
-      )}
+      <Pagination
+        pageNumbers={pageNumbers}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
 
       {showModal && (
         <div className={styles.modalOverlay}>
           <ModalWindow
-            title="Действительно хотите удалить данного участника из команды?"
-            description={selectedParticipant?.participant.full_name}
+            title="Действительно хотите удалить данного участника?"
+            // description={selectedParticipant?.participant.full_name}
             descriptionLg={false}
             setIsShow={cancelRemoval}
           >

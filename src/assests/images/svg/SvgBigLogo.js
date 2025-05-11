@@ -60,10 +60,10 @@ export default function SvgBigLogo() {
           y2="66.4958"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -74,10 +74,10 @@ export default function SvgBigLogo() {
           y2="71.5821"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -88,10 +88,10 @@ export default function SvgBigLogo() {
           y2="373.083"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -102,10 +102,10 @@ export default function SvgBigLogo() {
           y2="158.372"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -116,10 +116,10 @@ export default function SvgBigLogo() {
           y2="414.34"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -130,10 +130,10 @@ export default function SvgBigLogo() {
           y2="255.226"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -144,10 +144,10 @@ export default function SvgBigLogo() {
           y2="348.18"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -158,10 +158,10 @@ export default function SvgBigLogo() {
           y2="366.822"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -172,10 +172,10 @@ export default function SvgBigLogo() {
           y2="544.687"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -186,10 +186,10 @@ export default function SvgBigLogo() {
           y2="627.554"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
         <linearGradient
@@ -200,10 +200,10 @@ export default function SvgBigLogo() {
           y2="679.093"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#BE1B86" />
+          <stop stopColor="#BE1B86" />
           <stop
             offset="1"
-            stop-color="#2B306C"
+            stopColor="#2B306C"
           />
         </linearGradient>
       </defs>
