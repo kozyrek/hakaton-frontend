@@ -7,7 +7,7 @@ export default function Pencil({width, height}) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_1603_169606)">
+      <g clipPath="url(#clip0_1603_169606)">
         <path
           d="M12.2291 2.82166L2.86328 12.1875L7.81863 17.1428L17.1845 7.777L12.2291 2.82166Z"
           fill="#CEB2E9"

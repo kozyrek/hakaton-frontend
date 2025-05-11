@@ -1,25 +1,58 @@
 import { Container, Row, Col } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TextView from "./textView";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextEdit from "./text-edit";
+import { useResize } from "../../../../hooks/useResize";
+import getUserDocuments from "../../../../api/document-user/getUserDocuments";
 
 import styles from "./index.module.css";
 
 import Pencil from "./images/Pencil";
-import { useResize } from "../../../../hooks/useResize";
+import { set_user_files } from "../../../../store/user/userSlice";
 
 export const LABELS = {
   interests: "Интересы",
-  olympiads: "Олимпиады",
-  progress: "Достижения",
+  olympics: "Олимпиады",
+  achievements: "Достижения",
   download: "",
+  articles: "Статьи",
+  scientificInterests: "Круг научных интересов",
+  taughtSubjects: "Преподаваемые предметы",
+  researchTopics: "Тематика научных и исследовательских работ",
 };
 
 export default function PersonalInfo({ isViewied = false }) {
-  const personalInfo = useSelector((state) => state.user.personalInfo ?? {});
   const [isEdit, setIsEdit] = useState(false);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user ?? {});
+  const isMentor = user.user.isMentor;
   const width = useResize();
+
+  const data = isMentor
+    ? {
+        articles: user.user.mentor.articles,
+        scientificInterests: user.user.mentor.scientificInterests,
+        taughtSubjects: user.user.mentor.taughtSubjects,
+        researchTopics: user.user.mentor.researchTopics,
+        documents: user.documents,
+      }
+    : {
+        interests: user.user.participant.interests,
+        olympics: user.user.participant.olympics,
+        achievements: user.user.participant.achievements,
+        documents: user.documents,
+      };
+
+  useEffect(() => {
+    const getDocuments = async () => {
+      const docs = await getUserDocuments(user.user.id, user.token.accessToken);
+      dispatch(set_user_files(docs));
+    };
+    getDocuments();
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <Container
       fluid
@@ -45,11 +78,14 @@ export default function PersonalInfo({ isViewied = false }) {
       </Row>
       {isEdit ? (
         <TextEdit
-          personalInfo={personalInfo}
+          personalInfo={data}
           onClick={setIsEdit}
+          token={user.token.accessToken}
+          id={user.user.id}
+          isMentor={isMentor}
         />
       ) : (
-        Object.entries(personalInfo).map(([key, value]) => (
+        Object.entries(data).map(([key, value]) => (
           <Row
             className={styles.textViewContainer}
             key={key}

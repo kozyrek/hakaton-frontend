@@ -28,7 +28,7 @@ const ERROR_TEXT = {
 
 export const getToken = async (email, password) => {
   try {
-    return await HTTP.post("/auth/login", {
+    return await HTTP.post("/auth/token", {
       email,
       password,
     });

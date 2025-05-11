@@ -6,76 +6,95 @@ import { store } from "../store/store";
 
 const HTTP = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
-  headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-  },
   timeout: 10000,
-})
-
-HTTP.interceptors.response.use(function (response) {
-  return response;
-}, async function (error) {
-  switch (error.response.status) {
-    case 401:
-      console.log('ошибка 401', error.response);
-
-      const { refreshToken } = store.getState().user.token;
-      if (refreshToken) {
-        const newToken = await getNewToken(refreshToken);
-        // console.log("рефреш токен 3", refreshToken);
-        // console.log("новый токен", newToken)
-        store.dispatch(add_token(newToken.data))
-
-        const user = await getUser(newToken.data.accessToken);
-        store.dispatch(set_user(user))
-      } else {
-        store.dispatch(logout);
-      }
-      break;
-
-    case 403:
-      console.log('ошибка 403');
-      alert("У вас недостаточно прав для выполнения данного действия");
-      // return (
-      //   <ModalWindow title="У вас недостаточно прав для выполнения данного действия" />
-      // );
-      break;
-
-    case 400:
-      console.log('ошибка 400');
-      alert("Недопустимый JSON в поле user_data, или строка данных должна быть допустимым JSON.");
-      break;
-
-    case 409:
-      console.log('ошибка 409');
-      alert("Конфликт запроса с текущим состоянием сервера.");
-      break;
-
-    case 413:
-      console.log('ошибка 413');
-      alert("Размер файла превышает установленный лимит.");
-      break;
-
-    case 415:
-      console.log('ошибка 415');
-      alert("Неподдерживаемый формат файла фотографии.");
-      break;
-
-    case 422:
-      console.log('ошибка 422');
-      alert("Ошибка проверки данных. Проверка модели не удалась.");
-      break;
-
-    case 500:
-      console.log('ошибка 500');
-      alert("При обращении к серверу произошла ошибка");
-      break;
-
-    default:
-      return Promise.reject(error) 
-  }
 });
 
-export {HTTP};
+const updateAuthHeader = (token) => {
+  if (token) {
+    HTTP.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete HTTP.defaults.headers.common["Authorization"];
+  }
+};
+
+const initializeAuthHeader = () => {
+  const { accessToken } = store.getState().user.token;
+  updateAuthHeader(accessToken);
+};
+initializeAuthHeader();
+
+HTTP.interceptors.request.use(
+  (config) => {
+    // Для FormData не устанавливаем Content-Type, чтобы браузер сам добавил boundary
+    if (!(config.data instanceof FormData)) {
+      config.headers["Content-Type"] = "application/json";
+    }
+
+    const { accessToken } = store.getState().user.token;
+    if (accessToken && !config.headers["Authorization"]) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+HTTP.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const { refreshToken } = store.getState().user.token;
+        if (!refreshToken) throw new Error("No refresh token available");
+
+        const newToken = await getNewToken(refreshToken);
+        store.dispatch(add_token(newToken.data));
+
+        updateAuthHeader(newToken.data.accessToken);
+
+        const user = await getUser(newToken.data.accessToken);
+        store.dispatch(set_user(user));
+
+        originalRequest.headers.Authorization = `Bearer ${newToken.data.accessToken}`;
+        return HTTP(originalRequest);
+      } catch (refreshError) {
+        store.dispatch(logout());
+        return Promise.reject(refreshError);
+      }
+    }
+
+    handleApiError(error);
+    return Promise.reject(error);
+  }
+);
+
+const handleApiError = (error) => {
+  if (!error.response) {
+    console.error("Network error:", error);
+    return;
+  }
+
+  const { status, data } = error.response;
+  const errorMessages = {
+    400: "Некорректный запрос",
+    403: "Доступ запрещен",
+    404: "Ресурс не найден",
+    409: "Конфликт данных",
+    413: "Файл слишком большой",
+    415: "Неподдерживаемый формат файла",
+    422: "Ошибка валидации",
+    500: "Ошибка сервера",
+  };
+
+  const message =
+    data?.message || errorMessages[status] || "Неизвестная ошибка";
+  console.error(`Ошибка ${status}:`, message);
+
+  // Нужно добавить тосты для показа ошибок пользователю
+};
+
+export { HTTP, updateAuthHeader };

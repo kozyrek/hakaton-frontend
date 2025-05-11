@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import data from "./data.json"; // Ваш JSON
 import { Container } from "react-bootstrap";
 import LayoutProfileBg from "./styles/layoutProfileBg";
 import styles from "./styles/profile.module.css";
@@ -17,13 +16,11 @@ import { logout } from "../../store/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  // Данные из JSON (без функционала редактирования)
-  // const [user] = useState(data.user);
   const user = useSelector((state) => state.user);
-  const [participants, setParticipants] = useState(data.participants);
-  const [myTeams] = useState(data.my_teams);
-  const [allTeams] = useState(data.all_teams);
-  const [projects] = useState(data.projects);
+  const [participants, setParticipants] = useState();
+  const [myTeams] = useState();
+  const [allTeams] = useState();
+  const [projects] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
