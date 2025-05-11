@@ -22,7 +22,7 @@ export const LABELS = {
   researchTopics: "Тематика научных и исследовательских работ",
 };
 
-export default function PersonalInfo({ isViewied = false }) {
+export default function PersonalInfo({isViewied = false }) {
   const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user ?? {});
@@ -80,7 +80,6 @@ export default function PersonalInfo({ isViewied = false }) {
         <TextEdit
           personalInfo={data}
           onClick={setIsEdit}
-          token={user.token.accessToken}
           id={user.user.id}
           isMentor={isMentor}
         />
