@@ -9,7 +9,7 @@ const TeamsProfile = ({ myTeams, allTeams }) => {
   const [activeTab, setActiveTab] = useState("myTeams");
 
   // Локальные состояния для хранения списков команд (чтобы можно было удалять)
-  const [myTeamsState, setMyTeamsState] = useState(myTeams);
+  const [myTeamsState, setMyTeamsState] = useState([]);
   const [allTeamsState, setAllTeamsState] = useState(allTeams);
 
   // Состояния для модального окна

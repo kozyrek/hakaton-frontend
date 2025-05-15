@@ -24,13 +24,9 @@ const ERROR_TEXT = {
  * }
  */
 
-export default function getProjects(token) {
+export default async function getProjects() {
     try {
-        const response = HTTP.get("/projects/?page=1&per_page=25", {
-            headers: {
-                Authorization: `Bearer ${token}`, 
-            }
-        });
+        const response = await HTTP.get("/projects");
 
         return response.data
     } catch (error) {

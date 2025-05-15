@@ -17,19 +17,21 @@ export default async function userRegistration(data) {
     eduOrganization: data.eduOrganization.value,
     email: data.email.value,
     password: data.password.value,
-    personalData: data.policy.value,
-    regulationsAgreement: data.regulations.value,
+    personalData: true, //data.policy.value,
+    regulationsAgreement: true, //data.regulations.value,
     isMentor: data.role.value === "mentor",
   };
 
   // В зависимости от роли добавляем специфичные данные
   const newData = { ...baseData };
+  console.log("data", data);
 
   if (data.role.value === "participant") {
     newData.participant = {
-      regionId: data.regionId.value ? parseInt(data.regionId.value) || 0 : 0,
+      regionId: data.city.value ? parseInt(data.city.value) || 1 : 1,
+      // regionId: data.regionId.value ? parseInt(data.regionId.value) || 0 : 0,
       schoolGrade: data.schoolGrade.value,
-      city: data.city.value,
+      city: data.regionId.value,
     };
   } else if (data.role.value === "mentor") {
     newData.mentor = {
@@ -42,6 +44,6 @@ export default async function userRegistration(data) {
     const response = await HTTP.post("/users", newData);
     return response;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }

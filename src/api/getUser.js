@@ -27,6 +27,6 @@ import { HTTP } from "./http";
 
 export default async function getUser(id = null) {
   let param = id === null ? "me" : id;
-  const response = await HTTP.get(`/users/${encodeURIComponent(param)}`);
+  const response = await HTTP.get(`/users/${param}`);
   return response.data;
 }
