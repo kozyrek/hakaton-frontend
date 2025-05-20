@@ -68,7 +68,7 @@ root.render(
                 element={<ProjectStages />}
               />
               <Route
-                path={ROUTES.STEP}
+                path={ROUTES.STEP_ID}
                 element={<StepProjectPage />}
               />
             </Routes>

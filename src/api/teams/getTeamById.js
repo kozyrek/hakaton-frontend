@@ -6,9 +6,9 @@ const ERROR_TEXT = {
 };
 
 /**
- * Получает массив проектов.
+ * Получает данные команды по номеру id.
  *
- * @returns {Promise<object>} Promise с ответом сервера, содержащим массив проектов
+ * @returns {Promise<object>} Promise с ответом сервера, содержащим данные команды.
  * @throws {Error} Возможные ошибки:
  * - Проблемы с сетью
  * - Неверные учетные данные
@@ -17,21 +17,17 @@ const ERROR_TEXT = {
  * @example
  * // Пример использования
  * try {
- *   const response = await getProjects();
- *   console.log('Проекты:', response.data);
+ *   const response = await getTeamById(id);
+ *   console.log('Команда:', response.data);
  * } catch (error) {
  *   console.error('Ошибка аутентификации:', error.message);
  * }
  */
 
-export default function getProjects(token) {
+export default async function getTeamById(id) {
     try {
-        const response = HTTP.get("/projects/?page=1&per_page=25", {
-            headers: {
-                Authorization: `Bearer ${token}`, 
-            }
-        });
-
+        const response = await HTTP.get(`/teams/${id}`);
+        console.log(response.data)
         return response.data
     } catch (error) {
         if (!error.response) {

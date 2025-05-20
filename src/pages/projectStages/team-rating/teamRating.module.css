@@ -29,6 +29,10 @@
 
 .isStepPage {
     background-color: #fffddc;
+
+    span {
+        max-width: 150px;
+    }
 }
 
 .rating {

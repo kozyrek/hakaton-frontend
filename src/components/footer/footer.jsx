@@ -4,6 +4,7 @@ import Logo1T from "../../assests/images/svg/logo-1T.svg";
 import { Link } from "react-router-dom";
 import Navigation from "../navigation/navigation";
 import { navLinks } from "../utils/utils";
+import { contacts } from "../../pages/home/utils/utils";
 
 import styles from "./footer.module.css";
 import SvgLogo from "../../assests/images/svg/logo.svg";
@@ -15,8 +16,20 @@ export default function Footer() {
                 <div className={styles.block}>
                     <div className={styles.contacts}>
                         <Logo src={SvgLogo} addClass={styles.logo}/>
-                        <Link className={`text3 ${styles.contactsItem}`}>8 (8342) 22-32-50</Link>
-                        <Link className={`text3 ${styles.contactsItem}`}>licey-mrsu@yandex.ru</Link>
+                        <ul className={`text2 ${styles.contactsList}`}>
+                            {contacts.map((item) => (
+                                (item.tel || item.email) && <li key={item.id}>
+                                    <a 
+                                        className={`text3 ${styles.contactsItem}`}
+                                        href={
+                                            item.tel
+                                            ? `tel:${item.tel}`
+                                            : `mailto:${item.email}`
+                                        }
+                                    >{item.text}</a>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
 
                     <Navigation isFooter arr={navLinks} addClass={styles.navLinkList}></Navigation>

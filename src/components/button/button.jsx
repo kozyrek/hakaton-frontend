@@ -10,6 +10,7 @@ export default function Button({
   path,
   large,
   white,
+  violet,
   addClass,
   bigmenu,
   menu,
@@ -28,6 +29,7 @@ export default function Button({
     [styles.buttonSmall]: !large && !(bigmenu || menu),
     [styles.buttonWhite]: white && !(bigmenu || menu),
     [styles.buttonBlue]: !white && !(bigmenu || menu),
+    [styles.buttonViolet]: violet && !(bigmenu || menu),
     [styles.disabled]: disabled,
   });
 
