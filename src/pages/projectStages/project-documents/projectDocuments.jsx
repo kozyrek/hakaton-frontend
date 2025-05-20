@@ -3,15 +3,16 @@ import Button from "../../../components/button/button";
 
 import styles from "./projectDocuments.module.css";
 
+// Код для нескольких документов
 export default function ProjectDocuments({arr}) {
     return (
         <div className={`contentBox ${styles.documentsBlock}`}>
             <h3 className={`titleH3 ${styles.title}`}>Документы проекта</h3>
-            {arr.length !== 0 ? (
+            {arr ? (
                 <ul className={`text2 ${styles.documentsList}`}>
                     {arr.map((item, i) => (
                         <li key={i}>
-                            <Link className="tetx2">
+                            <Link className="text2">
                             {item}{/*----------------*/}
                             </Link>
                         </li>
@@ -25,7 +26,7 @@ export default function ProjectDocuments({arr}) {
                 path="#" 
                 text='Скачать проект' 
                 addClass={styles.buttonTop}
-                disabled={arr.length === 0}
+                disabled={!arr}
             ></Button>
         </div>
     )

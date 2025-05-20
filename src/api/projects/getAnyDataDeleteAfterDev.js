@@ -17,16 +17,27 @@ const ERROR_TEXT = {
  * @example
  * // Пример использования
  * try {
- *   const response = await getProjects();
+ *   const response = await getAnyDataDeleteAfterDev();
  *   console.log('Проекты:', response.data);
  * } catch (error) {
  *   console.error('Ошибка аутентификации:', error.message);
  * }
  */
 
-export default function getProjects() {
+export default function getAnyDataDeleteAfterDev() {
     try {
-        const response = HTTP.get("/projects/");
+        // const response = HTTP.get("/projects/?page=1&per_page=25");
+
+        // const response = HTTP.delete("/projects/5");
+
+        const response = HTTP.get("/users/28");
+
+        // const response = HTTP.patch("/teams/9", {
+        //     "name": "Вторая команда",
+        //     "projectId": 3,
+        //     "teamMembers": [
+        //     ]
+        //   });
         console.log(response.data);
 
         return response.data

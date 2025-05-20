@@ -27,7 +27,22 @@
     }
 }
 
-.stepIsComplete {
+/*стили не по макету*/
+/* .stepNotStarted {
+    position: relative;
+
+    &::after {
+        position: absolute;
+        content: "";
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.4);
+    }
+} */
+
+.stepIsAccept {
     background: linear-gradient(270deg, #be1b86 34px, #efefef 34px);
 
     svg {
@@ -42,6 +57,12 @@
     display: grid;
     grid-template-columns: 1fr;
     row-gap: 2px;
+
+    a {
+        text-decoration: none;
+        color: #1a1f1f;
+        user-select: none;
+    }
 
     p {
         color: #1a1f1f;

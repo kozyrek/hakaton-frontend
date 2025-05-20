@@ -33,7 +33,7 @@
 /* Цвета */
 .buttonWhite {
     /* background: linear-gradient(90deg, #FFFCCD 57.27%, #FFC851 159.17%); */
-    background: linear-gradient(90deg, #ffffff 50%, #FFFCCD 57.27%, #FFC851 159.17% );
+    background: linear-gradient(90deg, #ffffff 50%, #fffccd 57.27%, #ffc851 159.17% );
     background-size: 235% 100%;
     background-position: 0 0;
     transition: background-position .5s;
@@ -57,7 +57,28 @@
 
 
 .buttonBlue {
-    background: linear-gradient(90deg, #BE1B86, #2B306C, #2B306C);
+    background: linear-gradient(90deg, #be1b86, #2b306c, #2b306c);
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    transition: background-position .5s;
+    color: #ffffff;
+
+    &:hover {
+        background-position: 0 0;
+    }
+
+    &:disabled {
+        background: #9d9d9d;
+    }
+
+    &.disabled {
+        pointer-events: none;
+        background: #9d9d9d;
+    }
+}
+
+.buttonViolet {
+    background: linear-gradient(90deg, #be1b86, #6c3f99, #6c3f99);
     background-size: 200% 100%;
     background-position: 100% 0;
     transition: background-position .5s;

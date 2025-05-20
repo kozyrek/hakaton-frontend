@@ -6,9 +6,9 @@ const ERROR_TEXT = {
 };
 
 /**
- * Получает массив проектов.
+ * Получает комментарии шага проекта.
  *
- * @returns {Promise<object>} Promise с ответом сервера, содержащим массив проектов
+ * @returns {Promise<object>} Promise с ответом сервера, содержащим массив комментариев.
  * @throws {Error} Возможные ошибки:
  * - Проблемы с сетью
  * - Неверные учетные данные
@@ -17,17 +17,18 @@ const ERROR_TEXT = {
  * @example
  * // Пример использования
  * try {
- *   const response = await getProjects();
- *   console.log('Проекты:', response.data);
+ *   const response = await getStepComments(projectId, stepNumber);
+ *   console.log('Шаг проекта:', response.data);
  * } catch (error) {
  *   console.error('Ошибка аутентификации:', error.message);
  * }
  */
 
-export default function getProjects() {
+export default async function getStepComments(projectId, stepNumber) {
     try {
-        const response = HTTP.get("/projects/");
-        console.log(response.data);
+        const response = await HTTP.get(`/projects/${projectId}/steps/${stepNumber}/comments`);
+
+        console.log(`комментарии шага ${stepNumber} проекта # ${projectId}`, response.data);
 
         return response.data
     } catch (error) {

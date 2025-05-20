@@ -6,6 +6,9 @@ import { store } from "../store/store";
 
 const HTTP = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
+  headers: {
+      Accept: 'application/json',
+  },
   timeout: 10000,
 });
 
