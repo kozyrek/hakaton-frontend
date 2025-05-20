@@ -22,7 +22,7 @@ export default function Card({
 
   return (
     <div className={className}>
-      <h3 className={titleClass}>{team}</h3>
+      <h3 className={titleClass}>{team.name}</h3>
       <Logo className={styles.bigLogo} />
       <button className={buttonClass} onClick={onDelete}>{buttonText}</button>
     </div>

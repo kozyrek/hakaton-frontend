@@ -6,9 +6,9 @@ const ERROR_TEXT = {
 };
 
 /**
- * Получает проект с заданным id.
+ * Получает массив проектов.
  *
- * @returns {Promise<object>} Promise с ответом сервера.
+ * @returns {Promise<object>} Promise с ответом сервера, содержащим массив проектов
  * @throws {Error} Возможные ошибки:
  * - Проблемы с сетью
  * - Неверные учетные данные
@@ -17,17 +17,18 @@ const ERROR_TEXT = {
  * @example
  * // Пример использования
  * try {
- *   const response = await getProjectById(id);
- *   console.log('Проект:', response.data);
+ *   const response = await getProjects();
+ *   console.log('Проекты:', response.data);
  * } catch (error) {
  *   console.error('Ошибка аутентификации:', error.message);
  * }
  */
 
-export default async function getProjectById(id) {
+export default function getProjects() {
     try {
-        const response = await HTTP.get(`/projects/${id}`);
-        
+        const response = HTTP.get("/projects/");
+        console.log(response.data);
+
         return response.data
     } catch (error) {
         if (!error.response) {

@@ -59,7 +59,7 @@ HTTP.interceptors.response.use(
 
         updateAuthHeader(newToken.data.accessToken);
 
-        const user = await getUser(newToken.data.accessToken);
+        const user = await getUser();
         store.dispatch(set_user(user));
 
         originalRequest.headers.Authorization = `Bearer ${newToken.data.accessToken}`;
