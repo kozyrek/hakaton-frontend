@@ -72,7 +72,7 @@ export default function Profile() {
               />
             )}
             {activeTab === "projects" && (
-              <ProjectsProfile projects={projects} />
+              <ProjectsProfile projects={projects || []} />
             )}
           </div>
         </Container>

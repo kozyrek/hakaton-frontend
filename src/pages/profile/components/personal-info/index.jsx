@@ -22,27 +22,34 @@ export const LABELS = {
   researchTopics: "Тематика научных и исследовательских работ",
 };
 
-export default function PersonalInfo({isViewied = false }) {
+export default function PersonalInfo({ isViewied = false }) {
   const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user ?? {});
   const isMentor = user.user.isMentor;
   const width = useResize();
+  const [data, setData] = useState();
 
-  const data = isMentor
-    ? {
-        articles: user.user.mentor.articles,
-        scientificInterests: user.user.mentor.scientificInterests,
-        taughtSubjects: user.user.mentor.taughtSubjects,
-        researchTopics: user.user.mentor.researchTopics,
-        documents: user.documents,
-      }
-    : {
-        interests: user.user.participant.interests,
-        olympics: user.user.participant.olympics,
-        achievements: user.user.participant.achievements,
-        documents: user.documents,
-      };
+  useEffect(() => {
+    if (user) {
+      setData(
+        isMentor
+          ? {
+              articles: user.user.mentor.articles,
+              scientificInterests: user.user.mentor.scientificInterests,
+              taughtSubjects: user.user.mentor.taughtSubjects,
+              researchTopics: user.user.mentor.researchTopics,
+              documents: user.documents,
+            }
+          : {
+              interests: user.user.participant.interests,
+              olympics: user.user.participant.olympics,
+              achievements: user.user.participant.achievements,
+              documents: user.documents,
+            }
+      );
+    }
+  }, [isMentor]);
 
   useEffect(() => {
     const getDocuments = async () => {
@@ -52,6 +59,8 @@ export default function PersonalInfo({isViewied = false }) {
     getDocuments();
     // eslint-disable-next-line
   }, []);
+
+  if (!data) return <>Loading...</>;
 
   return (
     <Container
