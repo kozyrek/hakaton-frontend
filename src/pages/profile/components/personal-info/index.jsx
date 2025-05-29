@@ -31,7 +31,7 @@ export default function PersonalInfo({ isViewied = false }) {
   const [data, setData] = useState();
 
   useEffect(() => {
-    if (user) {
+    if (user && Object.keys(user.user).length !== 0) {
       setData(
         isMentor
           ? {
@@ -49,6 +49,7 @@ export default function PersonalInfo({ isViewied = false }) {
             }
       );
     }
+    // eslint-disable-next-line
   }, [isMentor]);
 
   useEffect(() => {

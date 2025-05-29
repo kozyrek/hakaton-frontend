@@ -1,7 +1,7 @@
 import { HTTP } from "../http";
 
 /**
- * Одобряет шаг проекта ментором.
+ * Устанавливает новый таймер для шага проекта.
  *
  * @returns {Promise<object>} Promise с ответом сервера.
  * @throws {Error} Возможные ошибки:
@@ -12,19 +12,20 @@ import { HTTP } from "../http";
  * @example
  * // Пример использования
  * try {
- *   const response = await acceptStep(projectId, stepNumber, scoreStep);
- *   console.log('Шаг одобрен:', response.data);
+ *   const response = await setTimerStep(projectId, stepNumber, timerStep);
+ *   console.log('Новый таймер:', response.data);
  * } catch (error) {
  *   console.error('Ошибка:', error.message);
  * }
  */
 
-export default async function acceptStep(projectId, stepNumber, scoreStep) {
+export default async function setTimerStep(projectId, stepNumber, timerStep) {
     try {
         const response = await HTTP.patch(`/projects/${projectId}/steps/${stepNumber}/attempts`,
             {
-                action: "accept",
-                score: scoreStep,
+                action: "set-timer",
+                timer: timerStep,
+                // score: scoreStep,
             },
         );
         console.log(response.data);

@@ -12,20 +12,19 @@ import { HTTP } from "../http";
  * @example
  * // Пример использования
  * try {
- *   const response = await rejectStep(projectId, stepNumber, data);
+ *   const response = await rejectStep(projectId, stepNumber, timerStep);
  *   console.log('Проекты:', response.data);
  * } catch (error) {
- *   console.error('Ошибка аутентификации:', error.message);
+ *   console.error('Ошибка:', error.message);
  * }
  */
 
-export default async function rejectStep(projectId, stepNumber, timerStep, scoreStep) {
+export default async function rejectStep(projectId, stepNumber, timerStep) {
     try {
         const response = await HTTP.patch(`/projects/${projectId}/steps/${stepNumber}/attempts`,
             {
                 action: "reject",
                 timer: timerStep,
-                score: scoreStep,
             },
         );
         console.log(response.data);
