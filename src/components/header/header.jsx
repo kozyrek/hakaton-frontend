@@ -26,7 +26,7 @@ export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let isLogIn = false;
-
+  const location = useLocation();
 
   const token = useSelector((state)=>state.user.token?.accessToken);
   const user = useSelector((state)=>state.user.user);
@@ -40,7 +40,9 @@ export default function Header() {
           dispatch(set_user(user));
         }
       } else {
-        navigate(ROUTES.LOGIN);
+        if (location.pathname !== ROUTES.MAIN) {
+          navigate(ROUTES.LOGIN);
+        }
       }
     };
     setUser();
@@ -74,7 +76,6 @@ export default function Header() {
     }
   };
 
-  const location = useLocation();
   const lastHash = useRef("");
   const width = useResize();
   const navbarHeight = width > 1024 ? "80" : "70";

@@ -12,7 +12,7 @@ import SvgLogo from "../../assests/images/svg/logo.svg";
 export default function Footer() {
     return (
         <div className={styles.wrapper}>
-            <Container>
+            <Container fluid="xxl">
                 <div className={styles.block}>
                     <div className={styles.contacts}>
                         <Logo src={SvgLogo} addClass={styles.logo}/>
