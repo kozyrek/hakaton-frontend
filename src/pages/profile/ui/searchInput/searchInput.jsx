@@ -1,7 +1,7 @@
-import React from "react";
 import styles from "./searchInput.module.css";
+import SearchIcon from "../../../../assests/images/svg/search.svg";
 
-const SearchInput = ({ value, onChange, searchIcon }) => {
+const SearchInput = ({ value, onChange }) => {
   return (
     <div className={styles.searchUserForm}>
       <input
@@ -12,7 +12,11 @@ const SearchInput = ({ value, onChange, searchIcon }) => {
         className={styles.inputFieldSmall}
       />
       <div className={styles.searchIconRight}>
-        <img src={searchIcon} alt="Search" className={styles.searchIconImg} />
+        <img
+          src={SearchIcon}
+          alt="Search"
+          className={styles.searchIconImg}
+        />
       </div>
     </div>
   );

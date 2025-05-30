@@ -1,9 +1,5 @@
 import { HTTP } from "../http";
-
-const ERROR_TEXT = {
-    NETWORK_ERROR: "Network error. Please check your connection.",
-    AUTHENTICATION_FAILED: "Authentication failed. Please try again.",
-};
+import { ERROR_TEXT } from "./utils/constants";
 
 /**
  * Получает данные команды по номеру id.
@@ -25,20 +21,20 @@ const ERROR_TEXT = {
  */
 
 export default async function getTeamById(id) {
-    try {
-        const response = await HTTP.get(`/teams/${id}`);
-        console.log(response.data)
-        return response.data
-    } catch (error) {
-        if (!error.response) {
-            throw new Error(ERROR_TEXT.NETWORK_ERROR);
-        }
-
-        const message =
-        error.response.data?.detail ||
-        error.response.data?.message ||
-        ERROR_TEXT.AUTHENTICATION_FAILED;
-
-        throw new Error(message);
+  try {
+    const response = await HTTP.get(`/teams/${id}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    if (!error.response) {
+      throw new Error(ERROR_TEXT.NETWORK_ERROR);
     }
-};
+
+    const message =
+      error.response.data?.detail ||
+      error.response.data?.message ||
+      ERROR_TEXT.AUTHENTICATION_FAILED;
+
+    throw new Error(message);
+  }
+}

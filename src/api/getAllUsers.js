@@ -3,7 +3,7 @@ import { HTTP } from "./http";
 export default async function getAllUser(params, is_mentor = false, page = 1) {
   const queryString = new URLSearchParams();
 
-  if (params.search) {
+  if (params?.search) {
     queryString.append("search", params.search);
   }
   queryString.append("ordering", "verified");

@@ -10,7 +10,7 @@ import getAnyDataDeleteAfterDev from "../../api/projects/getAnyDataDeleteAfterDe
 
 import getProjectById from "../../api/projects/getProjectById";
 import getProjectFiles from "../../api/projects/getProjectFiles";
-import getTeamById from "../../api/teams/getTeamById";
+import getTeamById from "../../api/team/getTeamById";
 import { useEffect, useState } from "react";
 
 export default function ProjectStages() {

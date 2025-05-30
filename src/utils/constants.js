@@ -3,6 +3,7 @@ export const ROUTES = {
   REGISTRATION: "/registration",
   LOGIN: "/login",
   PROFILE: "/profile",
+  TEAM_BY_ID: "/team/:teamId",
   RECOVERY: "/recovery",
   STAGES: "/stages",
   STEP_ID: "/step/:stepId",

@@ -1,5 +1,5 @@
 import React from 'react';
-import './ModalWrapper.css'; // Создадим файл стилей отдельно
+import './ModalWrapper.css';
 
 const ModalWrapper = ({ children, isOpen, onClose }) => {
   if (!isOpen) return null;

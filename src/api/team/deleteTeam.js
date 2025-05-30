@@ -1,11 +1,11 @@
 import { HTTP } from "../http";
 import { ERROR_TEXT } from "./utils/constants";
 
-export default async function getAllTeams() {
+export default async function deleteTeam(team_id) {
   try {
-    const response = await HTTP.get("/teams");
+    const response = await HTTP.delete(`/teams/${team_id}`);
 
-    return response.data;
+    return response;
   } catch (error) {
     if (!error.response) {
       throw new Error(ERROR_TEXT.NETWORK_ERROR);

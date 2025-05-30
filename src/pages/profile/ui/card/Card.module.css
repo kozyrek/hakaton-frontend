@@ -51,6 +51,7 @@
 
 
 .teamTitle {
+  word-break: break-all;
   margin: 0;
   position: relative; /* Обеспечивает, что текст находится поверх SVG */
   z-index: 1;

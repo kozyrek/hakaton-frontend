@@ -40,6 +40,7 @@ export default function Header() {
           dispatch(set_user(user));
         }
       } else {
+        // /
         navigate(ROUTES.LOGIN);
       }
     };
