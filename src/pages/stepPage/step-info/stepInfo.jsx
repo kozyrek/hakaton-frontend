@@ -8,14 +8,14 @@ import acceptStep from "../../../api/steps/acceptStep";
 import rejectStep from "../../../api/steps/rejectStep";
 
 import styles from "./stepInfo.module.css";
-import Inputs from "../../../components/inputs/inputs";
+import IconDelete from "../images/icon-delete";
+import IconPaperclip from "../images/icon-paperclip";
 
 export default function StepProjectInfo({
     step, 
     stepNumber, 
     stepTitle,
     handleSwitchStatus,
-
     stepStatus,
 }) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
@@ -23,6 +23,8 @@ export default function StepProjectInfo({
     const [textValue, setTextValue] = useState(step.text ? JSON.parse(step.text).text : "");
     const [scoreValue, setScoreValue] = useState(0);
     const [timer, setTimer] = useState(0);
+    const [fileDownload, setFileDownload] = useState(null);
+    // const [files, setFiles] = useState(null);
     
     const [time, setTime] = useState(5);//-----------------------
     useEffect(() => {
@@ -44,18 +46,40 @@ export default function StepProjectInfo({
     //     setTextEdit(!textEdit);        
     // }
 
+    useEffect(() => {
+        setFileDownload(step.files)
+    }, [step])
+
     const handleChange = (e) => {
         e.preventDefault();
         setTextValue(e.target.value);
         console.log(textValue)
     };
+    
+    const handleAddFile = (e) => {
+        e.preventDefault();
+        if (fileDownload?.length) {
+            setFileDownload([...fileDownload, ...Array.from(e.target.files)]);
+        } else {
+            setFileDownload(Array.from(e.target.files));
+        }
+    }
+
+    const handleDeleteFile = (i) => {
+        // const filteredFiles = fileDownload.filter((file) => file !== i);
+        // setFileDownload(filteredFiles);
+    }
 
     const handleSendDataStep = () => {
         let formData = new FormData();
         const data = {
-                text: textValue,
-            };
+            text: textValue,
+        };
         formData.append('text', JSON.stringify(data));
+        for (let file of fileDownload) {
+            formData.append('files', file);
+        }
+
         const response = sendDataStepProject(step.projectId, stepNumber, formData);
         console.log("шаг отправлен на ревью", response.data);
         handleSwitchStatus(stepStatus.isSubmitted);
@@ -141,14 +165,47 @@ export default function StepProjectInfo({
                 </h3>
 
                 <p className="text1">Документы, презентации, картинки, видео</p>
-                {/* <Inputs
-                    type="download"
-                    formData={formData}
-                    formError={formError}
-                    name="download"
-                    label="download"
-                    onChange={handleChange}
-                /> */}
+                {!isMentor && 
+                <label className={`${styles.inputFile} ${(
+                    stepStatus.notStarted || !stepStatus.inProgress || stepStatus.isSubmitted) 
+                    ? `${styles.disabled}` 
+                    : ""}`}>
+                    <span className={`text4 ${styles.inputFileText}`}>Выберите файл</span>
+                    <input 
+                        type="file" 
+                        name="file" 
+                        multiple 
+                        onChange={handleAddFile} 
+                        className={styles.visuallyHidden}
+                    />        
+                    <span className={`text2 ${styles.inputFileBtn}`}>Загрузить</span>
+                </label>}
+                {fileDownload &&
+                <ul className={`text2 ${styles.documentsList}`}>
+                    {fileDownload.map((item, i) => (
+                        <li key={i} className={styles.documentsItem}>
+                            <IconPaperclip />
+                            <a 
+                                className="text2" 
+                                href={item.filePath} 
+                                target="_blank" 
+                                rel="noreferrer"
+                            >
+                                {item.name}
+                            </a>
+                            {!isMentor &&
+                            <button 
+                                type="button"
+                                className={styles.buttonDeleteFile}
+                                onClick={handleDeleteFile(i)}
+                                aria-label="Удалить файл"
+                            >
+                                <IconDelete/>
+                            </button>}
+                        </li>
+                    ))}
+                </ul>
+                }
             </div>
             {isMentor && 
             <div className={styles.buttonBlock}>
