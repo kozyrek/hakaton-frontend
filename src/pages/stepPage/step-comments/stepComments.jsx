@@ -81,7 +81,7 @@ export default function StepProjectComment({
                     <>
                         <Textarea
                             name="comment"
-                            addClass={styles.texareaComment}
+                            addclass={styles.texareaComment}
                             placeholder="Введите комментарий"
                             maxLength={500}
                             value={commentValue}

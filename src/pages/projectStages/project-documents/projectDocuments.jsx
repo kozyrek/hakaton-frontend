@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import Button from "../../../components/button/button";
 import downloadAllFiles from "../../../api/projects/downloadAllFiles";
 
@@ -17,9 +16,14 @@ export default function ProjectDocuments({files, projectId, isCompleteProject}) 
                 <ul className={`text2 ${styles.documentsList}`}>
                     {files.map((item, i) => (
                         <li key={i}>
-                            <Link className="text2">
-                            {item}{/*----------------*/}
-                            </Link>
+                            <a 
+                                className="text2" 
+                                href={item.filePath} 
+                                target="_blank" 
+                                rel="noreferrer"
+                            >
+                                {item.name}
+                            </a>
                         </li>
                     ))}
                 </ul> 

@@ -7,7 +7,7 @@ export default function Textarea({value, maxLength, onChange, placeholder, ...ot
     return (
         <div className={`${styles.textareaWrapper}`}>
             <textarea
-                className={`${styles.textarea} ${other.addClass}`}
+                className={`${styles.textarea} ${other.addclass}`}
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}

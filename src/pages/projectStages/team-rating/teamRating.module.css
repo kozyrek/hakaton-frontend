@@ -61,6 +61,12 @@
     color: #be1b86;
     border: 1px solid #1a1f1f;
     background-color: transparent;
+    -moz-appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+    }
 }
 
 .buttonEdit {
@@ -81,6 +87,7 @@
 }
 
 .time {
+    position: relative;
     width: 93px;
     height: 60px;
     display: flex;
@@ -91,6 +98,11 @@
     background-color: #f6edff;
     border-radius: 4px;
     border: none;
+    user-select: none;
+
+    .buttonEdit {
+        left: 75%;
+    }
 
     span:first-child,
     input {
