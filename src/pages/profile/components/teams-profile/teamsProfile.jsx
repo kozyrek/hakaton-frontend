@@ -8,7 +8,7 @@ import getAllTeams from "../../../../api/team/getAllTeam";
 import Inputs from "../../../../components/inputs/inputs";
 import createTeam from "../../../../api/team/createTeam";
 import deleteTeam from "../../../../api/team/deleteTeam";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const TeamsProfile = () => {
   const [activeTab, setActiveTab] = useState("myTeams");
@@ -16,7 +16,7 @@ const TeamsProfile = () => {
   const [allTeamsState, _] = useState([]);
   const [isCreateTeam, setIsCreateTeam] = useState(false);
   const [isDeleteTeam, setIsDeleteTeam] = useState(false);
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const [formData, setFormData] = useState({
     teamName: { value: "", type: "text" },
   });
@@ -86,7 +86,7 @@ const TeamsProfile = () => {
                 key={team.id}
                 team={team}
                 onDelete={() => setIsDeleteTeam({ id: team.id })}
-                onClick={() => navigate(`/team/${team.id}`)}
+                // onClick={() => navigate(`/team/${team.id}`)}
               />
           ))}
         </div>

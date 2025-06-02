@@ -26,7 +26,7 @@ export default function StepProjectPage() {
         const fetchDataStep = async () => {
             try {
                 const requestStep = await getStep(projectId, stepNumber);
-                setStep(requestStep);
+                setStep(requestStep.data);
             } catch (e) {
                 setError(e.message);
             }
@@ -52,7 +52,7 @@ export default function StepProjectPage() {
         const fetchDataStepComments = async () => {
             try {
                 const requestStepComments = await getStepComments(projectId, stepNumber);
-                setComments(requestStepComments);
+                setComments(requestStepComments.data);
             } catch (e) {
                 setError(e.message);
             }

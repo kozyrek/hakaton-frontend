@@ -1,4 +1,5 @@
 import { HTTP } from "../http";
+import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
  * Устанавливает новый таймер для шага проекта.
@@ -25,13 +26,21 @@ export default async function setTimerStep(projectId, stepNumber, timerStep) {
             {
                 action: "set-timer",
                 timer: timerStep,
-                // score: scoreStep,
             },
         );
         console.log(response.data);
 
-        return response.data
+        return response
     } catch (error) {
-        console.log(error);
+        if (!error.response) {
+            throw new Error(ERROR_TEXT.NETWORK_ERROR);
+        }
+
+        const message =
+        error.response.data?.detail ||
+        error.response.data?.message ||
+        ERROR_TEXT.AUTHENTICATION_FAILED;
+
+        throw new Error(message);
     }
 };

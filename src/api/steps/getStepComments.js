@@ -1,9 +1,5 @@
 import { HTTP } from "../http";
-
-const ERROR_TEXT = {
-    NETWORK_ERROR: "Network error. Please check your connection.",
-    AUTHENTICATION_FAILED: "Authentication failed. Please try again.",
-};
+import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
  * Получает комментарии шага проекта.
@@ -18,7 +14,7 @@ const ERROR_TEXT = {
  * // Пример использования
  * try {
  *   const response = await getStepComments(projectId, stepNumber);
- *   console.log('Шаг проекта:', response.data);
+ *   console.log('Комментарии шага проекта:', response.data);
  * } catch (error) {
  *   console.error('Ошибка аутентификации:', error.message);
  * }
@@ -30,7 +26,7 @@ export default async function getStepComments(projectId, stepNumber) {
 
         console.log(`комментарии шага ${stepNumber} проекта # ${projectId}`, response.data);
 
-        return response.data
+        return response
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);

@@ -1,9 +1,5 @@
 import { HTTP } from "../http";
-
-const ERROR_TEXT = {
-    NETWORK_ERROR: "Network error. Please check your connection.",
-    AUTHENTICATION_FAILED: "Authentication failed. Please try again.",
-};
+import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
  * Получает проект с заданным id.
@@ -28,7 +24,7 @@ export default async function getProjectById(id) {
     try {
         const response = await HTTP.get(`/projects/${id}`);
         
-        return response.data
+        return response
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);

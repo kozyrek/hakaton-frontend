@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import LayoutLogin from "../auth/layoutLogin";
 import HeadStages from "./head-stages/headStages";
@@ -17,9 +18,7 @@ import { STEP_PROJECT_STATUS } from "../../utils/constants";
 
 export default function ProjectStages() {
     const [error, setError] = useState(undefined);
-    
-    const projectId = 9;
-
+    const projectId = useLocation().state.projectId;
     const [project, setProject] = useState({});
     const [files, setFiles] = useState([]);
     const [teamInfo, setTeamInfo] = useState(null);
@@ -29,7 +28,7 @@ export default function ProjectStages() {
         const fetchDataProject = async () => {
             try {
                 const requestProject = await getProjectById(projectId);
-                setProject(requestProject);
+                setProject(requestProject.data);
             } catch (e) {
                 setError(e.message);
             }
@@ -42,7 +41,7 @@ export default function ProjectStages() {
             const fetchFiles = async () => {
                 try {
                     const requestFiles = await getProjectFiles(projectId);
-                    setFiles(requestFiles);
+                    setFiles(requestFiles.data);
                 } catch (e) {
                     setError(e.message);
                 }
@@ -80,28 +79,28 @@ export default function ProjectStages() {
 
     // getAnyDataDeleteAfterDev();
     
-    const handleChange = () => {
-        // let formData = new FormData();
-        // const data = {
-        //     name: 'Проект для тестирования',
-        //     description: 'Здесь должно быть описание проекта'
-        // }
+    const handleChange = (event) => {
+        let formData = new FormData();
+        const data = {
+            name: 'тестирования!',
+            description: 'Здесь должно быть описание проекта'
+        }
 
-        // formData.append('data', JSON.stringify(data))
-        // formData.append('document', event.target.files[0])
+        formData.append('data', JSON.stringify(data))
+        formData.append('document', event.target.files[0])
 
         // console.log(event.target.files[0])
        
         try {
-            // const response = HTTP.post("/projects/", formData);
-            const response = HTTP.post(`/teams/39/members`,
-                [
-                    {
-                        participantId: 20,
-                        roleName: "капитан",
-                    }
-                ]
-            );
+            const response = HTTP.post("/projects/", formData);
+            // const response = HTTP.post(`/teams/39/members`,
+            //     [
+            //         {
+            //             participantId: 20,
+            //             roleName: "капитан",
+            //         }
+            //     ]
+            // );
 
             // const response = HTTP.post(`/teams`, 
             //     // [

@@ -2,7 +2,7 @@ import { HTTP } from "../http";
 import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
- * Одобряет шаг проекта ментором.
+ * Создает проект.
  *
  * @returns {Promise<object>} Promise с ответом сервера.
  * @throws {Error} Возможные ошибки:
@@ -13,23 +13,23 @@ import { ERROR_TEXT } from "../../api/utils/constants";
  * @example
  * // Пример использования
  * try {
- *   const response = await acceptStep(projectId, stepNumber, scoreStep);
- *   console.log('Шаг одобрен:', response.data);
+ *   const response = await createProject(data);
+ *   console.log('Проект:', response.data);
  * } catch (error) {
- *   console.error('Ошибка:', error.message);
+ *   console.error('Ошибка аутентификации:', error.message);
  * }
  */
 
-export default async function acceptStep(projectId, stepNumber, scoreStep) {
+export default async function createProject(name, description, document) {
     try {
-        const response = await HTTP.patch(`/projects/${projectId}/steps/${stepNumber}/attempts`,
-            {
-                action: "accept",
-                score: scoreStep,
-            },
-        );
-        console.log(response.data);
-
+        const response = await HTTP.post("/projects/", {
+            data: JSON.stringify({
+                name: name,
+                description: description,
+            }),
+            document: document,
+        });
+        // console.log(response.data);
         return response
     } catch (error) {
         if (!error.response) {

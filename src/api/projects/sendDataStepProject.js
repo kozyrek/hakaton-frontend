@@ -1,4 +1,5 @@
 import { HTTP } from "../http";
+import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
  * Передает на сервер данные по шагу проекта.
@@ -12,8 +13,8 @@ import { HTTP } from "../http";
  * @example
  * // Пример использования
  * try {
- *   const response = await getProjects();
- *   console.log('Проекты:', response.data);
+ *   const response = await sendDataStepProject(projectId, stepNumber, data);
+ *   console.log('Шаг:', response.data);
  * } catch (error) {
  *   console.error('Ошибка аутентификации:', error.message);
  * }
@@ -21,18 +22,20 @@ import { HTTP } from "../http";
 
 export default async function sendDataStepProject(projectId, stepNumber, data) {
     try {
-        const response = await HTTP.post(`/projects/${projectId}/steps/${stepNumber}/attempts/submission`, data
-        //     {
-        //     "name": "Вторая команда",
-        //     "projectId": 3,
-        //     "teamMembers": [
-        //     ]
-        //   }
-        );
+        const response = await HTTP.post(`/projects/${projectId}/steps/${stepNumber}/attempts/submission`, data);
         console.log(response.data);
 
-        return response.data
+        return response
     } catch (error) {
-        console.log(error);
+        if (!error.response) {
+            throw new Error(ERROR_TEXT.NETWORK_ERROR);
+        }
+
+        const message =
+        error.response.data?.detail ||
+        error.response.data?.message ||
+        ERROR_TEXT.AUTHENTICATION_FAILED;
+
+        throw new Error(message);
     }
 };

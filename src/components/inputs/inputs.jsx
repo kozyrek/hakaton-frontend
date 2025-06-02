@@ -25,7 +25,7 @@ export default function Inputs(props) {
     formData,
     formError,
     onChange,
-    maxLength = 600,
+    maxLength = 500,
     ...other
   } = props;
   const isError = formError[name] || null;

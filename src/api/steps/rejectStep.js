@@ -1,4 +1,5 @@
 import { HTTP } from "../http";
+import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
  * Отклоняет шаг на доработку участнику/капитану команды.
@@ -13,7 +14,7 @@ import { HTTP } from "../http";
  * // Пример использования
  * try {
  *   const response = await rejectStep(projectId, stepNumber, timerStep);
- *   console.log('Проекты:', response.data);
+ *   console.log('Шаг отклонен:', response.data);
  * } catch (error) {
  *   console.error('Ошибка:', error.message);
  * }
@@ -29,8 +30,17 @@ export default async function rejectStep(projectId, stepNumber, timerStep) {
         );
         console.log(response.data);
 
-        return response.data
+        return response
     } catch (error) {
-        console.log(error);
+        if (!error.response) {
+            throw new Error(ERROR_TEXT.NETWORK_ERROR);
+        }
+
+        const message =
+        error.response.data?.detail ||
+        error.response.data?.message ||
+        ERROR_TEXT.AUTHENTICATION_FAILED;
+
+        throw new Error(message);
     }
 };
