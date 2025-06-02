@@ -9,7 +9,7 @@ import ProfileMembers from "./components/list-members/profileMembers";
 import TeamsProfile from "./components/teams-profile/teamsProfile";
 import ProjectsProfile from "./components/projects-profile/projectsProfile";
 import PersonalInfo from "./components/personal-info";
-import cn from "classnames";
+// import cn from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/user/userSlice";
 import { useNavigate } from "react-router-dom";
@@ -53,7 +53,7 @@ export default function Profile() {
               onLogout={handleLogout}
             />
           </div>
-          <div className={cn(styles.mt80, styles.mb160)}>
+          <div className={styles.contentBox}>
             {/* {activeTab === "profile" && <ProfileForm formData={user} />} */}
             {activeTab === "profile" && <PersonalInfo isViewied />}
             {activeTab === "users" && (

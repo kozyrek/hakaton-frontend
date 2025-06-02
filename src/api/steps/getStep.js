@@ -1,9 +1,5 @@
 import { HTTP } from "../http";
-
-const ERROR_TEXT = {
-    NETWORK_ERROR: "Network error. Please check your connection.",
-    AUTHENTICATION_FAILED: "Authentication failed. Please try again.",
-};
+import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
  * Получает данные шага проекта.
@@ -30,7 +26,7 @@ export default async function getStep(projectId, stepNumber) {
 
         console.log(`шаг ${stepNumber} проекта # ${projectId}`, response.data);
 
-        return response.data
+        return response
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);

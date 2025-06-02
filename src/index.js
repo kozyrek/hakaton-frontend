@@ -65,7 +65,7 @@ root.render(
                 element={<ErrorPage />}
               />
               <Route
-                path={ROUTES.STAGES}
+                path={ROUTES.PROJECT_ID}
                 element={<ProjectStages />}
               />
               <Route

@@ -1,4 +1,5 @@
 import { HTTP } from "../http";
+import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
  * Получает файлы по проекту.
@@ -24,8 +25,17 @@ export default async function getProjectFiles(projectId) {
         const response = await HTTP.get(`/projects/${projectId}/files`);
         console.log(response.data);
 
-        return response.data
+        return response
     } catch (error) {
-        console.log(error);
+        if (!error.response) {
+            throw new Error(ERROR_TEXT.NETWORK_ERROR);
+        }
+
+        const message =
+        error.response.data?.detail ||
+        error.response.data?.message ||
+        ERROR_TEXT.AUTHENTICATION_FAILED;
+
+        throw new Error(message);
     }
 };

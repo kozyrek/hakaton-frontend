@@ -1,4 +1,5 @@
 import { HTTP } from "../http";
+import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
  * Добавляет комментарий на шаге проекта.
@@ -12,8 +13,8 @@ import { HTTP } from "../http";
  * @example
  * // Пример использования
  * try {
- *   const response = await acceptStep(projectId, stepNumber, timerStep, scoreStep);
- *   console.log('Проекты:', response.data);
+ *   const response = await addStepComment(projectId, stepNumber, data);
+ *   console.log('Комментарий:', response.data);
  * } catch (error) {
  *   console.error('Ошибка аутентификации:', error.message);
  * }
@@ -24,8 +25,17 @@ export default async function addStepComment(projectId, stepNumber, data) {
         const response = await HTTP.post(`/projects/${projectId}/steps/${stepNumber}/comments`, data);
         console.log(response.data);
 
-        return response.data
+        return response
     } catch (error) {
-        console.log(error);
+        if (!error.response) {
+            throw new Error(ERROR_TEXT.NETWORK_ERROR);
+        }
+
+        const message =
+        error.response.data?.detail ||
+        error.response.data?.message ||
+        ERROR_TEXT.AUTHENTICATION_FAILED;
+
+        throw new Error(message);
     }
 };
