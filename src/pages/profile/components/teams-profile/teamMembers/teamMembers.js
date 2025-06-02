@@ -1,5 +1,10 @@
 import React, { useState, useMemo } from "react";
-import styles from "./teamMembers.module.css";
+// import { Link } from "react-router-dom";
+// import ROUTES from "../../../../../utils/constants";
+
+// import styles from "./teamMembers.module.css";//файл не найден, заменила на 
+import styles from "../teamsProfile.module.css";
+
 // import LeaderLogo from "./leaderLogo";
 // import TextButton from "../../../../ui/textButton/textButton";
 // import Button from "../../../../../../components/button/button";
@@ -185,7 +190,9 @@ const TeamMembers = () => {
           onClick={handleAddMemberClick}
         />
       </div>
-      <ModalWrapper
+
+      {/* Модальное окно не работает */}
+      {/* <ModalWrapper
         isOpen={isAddMemberOpen}
         onClose={() => setAddMemberOpen(false)}
       >
@@ -217,7 +224,8 @@ const TeamMembers = () => {
             </div>
           </li>
         </ModalWindow>
-      </ModalWrapper>
+      </ModalWrapper> */}
+
       {/* 
       <InputModal
         title="Изменить роль участника"
