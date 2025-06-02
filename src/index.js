@@ -21,6 +21,7 @@ import { ROUTES } from "./utils/constants";
 import "./swiper.css";
 import "./bootstrap.css";
 import UserId from "./pages/profile/user-by-id/id";
+import TeamMembers from "./pages/profile/components/teams-profile/teamMembers/teamMembers";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -70,6 +71,10 @@ root.render(
               <Route
                 path={ROUTES.STEP_ID}
                 element={<StepProjectPage />}
+              />
+              <Route
+                path={ROUTES.TEAM_BY_ID}
+                element={<TeamMembers />}
               />
             </Routes>
             <Footer />

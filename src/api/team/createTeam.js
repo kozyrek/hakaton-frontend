@@ -1,11 +1,11 @@
 import { HTTP } from "../http";
 import { ERROR_TEXT } from "./utils/constants";
 
-export default async function getAllTeams() {
+export default async function createTeam(name) {
   try {
-    const response = await HTTP.get("/teams");
+    const response = await HTTP.post("/teams", { name: name });
 
-    return response.data;
+    return response;
   } catch (error) {
     if (!error.response) {
       throw new Error(ERROR_TEXT.NETWORK_ERROR);

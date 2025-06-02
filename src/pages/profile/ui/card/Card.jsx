@@ -7,6 +7,7 @@ import CardBigLogo2 from "./cardBigLogo2";
 export default function Card({
   team,
   onDelete,
+  onClick,
   logoVariant = "default",
   buttonText = "Удалить команду",
   cardClassName = "",
@@ -21,7 +22,7 @@ export default function Card({
   const buttonClass = cn(styles.deleteButton, buttonClassName);
 
   return (
-    <div className={className}>
+    <div className={className} onClick={onClick}>
       <h3 className={titleClass}>{team.name}</h3>
       <Logo className={styles.bigLogo} />
       <button className={buttonClass} onClick={onDelete}>{buttonText}</button>

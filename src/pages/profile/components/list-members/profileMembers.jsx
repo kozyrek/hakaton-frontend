@@ -16,7 +16,6 @@ import { useDebounce } from "../../../../hooks/useDebounce";
 const ProfileMembers = ({
   user,
   participants,
-  searchIcon,
   onRemoveParticipant,
 }) => {
   // Состояния для поиска, пагинации и модального окна
@@ -167,8 +166,7 @@ const ProfileMembers = ({
       <h2 className={styles.profileTabTitle}>Участники</h2>
       <SearchInput
         value={searchQuery}
-        onChange={(e) => handleSearchChange(e)  }
-        searchIcon={searchIcon}
+        onChange={(e) => handleSearchChange(e)}
       />
 
       <ul className={styles.participantsListContainer}>
