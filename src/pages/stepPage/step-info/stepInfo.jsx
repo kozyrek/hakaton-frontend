@@ -24,17 +24,17 @@ export default function StepProjectInfo({
     const [scoreValue, setScoreValue] = useState(0);
     const [timer, setTimer] = useState(0);
     const [fileDownload, setFileDownload] = useState(null);
-    // const [files, setFiles] = useState(null);
+
     
-    const [time, setTime] = useState(5);//-----------------------
-    useEffect(() => {
-        if (time > 0) {
-            setTimeout(setTime, 1000, time - 1);
-            console.log(time)//----------------------
-        } else {
-            console.log("таймер стоп")//-------------
-        }
-    }, [time])
+    // const [time, setTime] = useState(5);//-----------------------
+    // useEffect(() => {
+    //     if (time > 0) {
+    //         setTimeout(setTime, 1000, time - 1);
+    //         console.log(time)//----------------------
+    //     } else {
+    //         console.log("таймер стоп")//-------------
+    //     }
+    // }, [time])
 
     useEffect(() => {
         setTextValue(step.text ? JSON.parse(step.text).text : "");
@@ -66,8 +66,7 @@ export default function StepProjectInfo({
     }
 
     const handleDeleteFile = (i) => {
-        // const filteredFiles = fileDownload.filter((file) => file !== i);
-        // setFileDownload(filteredFiles);
+        setFileDownload(fileDownload => fileDownload.filter(el => el !== fileDownload[i]))
     }
 
     const handleSendDataStep = () => {
@@ -193,11 +192,11 @@ export default function StepProjectInfo({
                             >
                                 {item.name}
                             </a>
-                            {!isMentor &&
+                            {!isMentor && (!stepStatus.notStarted || stepStatus.inProgress || !stepStatus.isSubmitted || !stepStatus.isAccept) &&//--------уточнить условия отображения
                             <button 
                                 type="button"
                                 className={styles.buttonDeleteFile}
-                                onClick={handleDeleteFile(i)}
+                                onClick={() => handleDeleteFile(i)}
                                 aria-label="Удалить файл"
                             >
                                 <IconDelete/>

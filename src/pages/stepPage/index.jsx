@@ -43,7 +43,7 @@ export default function StepProjectPage() {
                 isSubmitted: step.status === STEP_PROJECT_STATUS.SUBMITTED,
                 isAccept: step.status === STEP_PROJECT_STATUS.ACCEPTED,
             });
-            console.log(stepStatus);//---
+            // console.log(stepStatus);//---
         }
         // eslint-disable-next-line
     }, [step])
