@@ -7,7 +7,7 @@ import { STEP_PROJECT_STATUS } from "../../../utils/constants";
 
 import styles from "./styles/stagesItem.module.css";
 
-export default function StagesItem({item, projectId}) {
+export default function StagesItem({item, projectId, isAcceptPrevStep}) {
     const [inProgress, setInProgress] = useState(false);
     const [isAccept, setIsAccept] = useState(false);
     const [notStarted, setNotStarted] = useState(false);
@@ -56,7 +56,7 @@ export default function StagesItem({item, projectId}) {
                 <p className="text4">
                     Шаг&nbsp;{item.stepNumber}
                 </p>
-                {!notStarted 
+                {isAcceptPrevStep || item.stepNumber === 1
                 ? <Link to={`/step/${item.id}`}
                     state={{
                         projectId: projectId,

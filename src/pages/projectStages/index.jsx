@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import LayoutLogin from "../auth/layoutLogin";
 import HeadStages from "./head-stages/headStages";
@@ -11,16 +12,18 @@ import getAnyDataDeleteAfterDev from "../../api/projects/getAnyDataDeleteAfterDe
 import getProjectById from "../../api/projects/getProjectById";
 import getProjectFiles from "../../api/projects/getProjectFiles";
 import getTeamById from "../../api/team/getTeamById";
-import { useEffect, useState } from "react";
+import { STEP_PROJECT_STATUS } from "../../utils/constants";
+
 
 export default function ProjectStages() {
     const [error, setError] = useState(undefined);
     
-    const projectId = 3;
+    const projectId = 9;
 
     const [project, setProject] = useState({});
     const [files, setFiles] = useState([]);
     const [teamInfo, setTeamInfo] = useState(null);
+    const [isCompleteProject, setIsCompleteProject] = useState(false);
 
     useEffect(() => {
         const fetchDataProject = async () => {
@@ -64,14 +67,24 @@ export default function ProjectStages() {
         // eslint-disable-next-line
     }, [project.teamId])
 
-    // getAnyDataDeleteAfterDev();
+    useEffect(() => {
+        if (project.steps) {
+            setIsCompleteProject(project.steps.find
+                (x => (x.stepNumber === 15) && (x.status === STEP_PROJECT_STATUS.ACCEPTED)
+            ));
+        }
+        // eslint-disable-next-line
+    }, [project.steps])
 
     /*Тестовый код------------------------------------------------------------------*/ 
+
+    // getAnyDataDeleteAfterDev();
+    
     const handleChange = () => {
         // let formData = new FormData();
         // const data = {
-        //     name: 'Еще один проект',
-        //     description: 'Тестовый проект 3'
+        //     name: 'Проект для тестирования',
+        //     description: 'Здесь должно быть описание проекта'
         // }
 
         // formData.append('data', JSON.stringify(data))
@@ -81,7 +94,7 @@ export default function ProjectStages() {
        
         try {
             // const response = HTTP.post("/projects/", formData);
-            const response = HTTP.post(`/teams/9/members`, 
+            const response = HTTP.post(`/teams/39/members`,
                 [
                     {
                         participantId: 20,
@@ -89,6 +102,15 @@ export default function ProjectStages() {
                     }
                 ]
             );
+
+            // const response = HTTP.post(`/teams`, 
+            //     // [
+            //         {
+            //             name: "Тестовая команда. НЕ удалять!"
+            //         }
+            //     // ]
+            // );
+
             return response.data
         } catch (error) {
             if (!error.response) {
@@ -112,12 +134,25 @@ export default function ProjectStages() {
 
 {/* <button type="button" onClick={handleChange}>добавить участника в команду</button> */}
 
+{/* <input type="file" onChange={handleChange}/> */}
+
                 </Container>      
             </LayoutLogin>
             <Container>
-                <TeamInfo obj={teamInfo} arr={project.steps}/>
-                <ProjectDocuments files={files}/>
-                <StagesList arr={project.steps} projectId={project.id} />
+                <TeamInfo 
+                    obj={teamInfo} 
+                    arr={project.steps}
+                />
+                <ProjectDocuments 
+                    files={files} 
+                    projectId={project.id} 
+                    isCompleteProject={isCompleteProject} 
+                />
+                <StagesList 
+                    arr={project.steps} 
+                    projectId={project.id} 
+                    isCompleteProject={isCompleteProject} 
+                />
             </Container>
         </>
     )

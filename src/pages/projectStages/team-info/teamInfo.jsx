@@ -41,16 +41,16 @@ export default function TeamInfo({obj, arr}) {
                 <div>
                     <h2 className={`titleH2 ${styles.title}`}>Команда {obj.name}</h2>
                     {isCompleteText 
-                    ? <ul >
+                    ? <ul className={styles.textList}>
                         {arr.map((item) => (
                             item.text && <li key={item.id}>
-                                <p className="text1">{item.text}</p>
+                                <p className="text1">{JSON.parse(item.text).text}</p>
                             </li>
                         ))}
                     </ul>
                     : <p className="text1">Вы&nbsp;пока не&nbsp;загрузили текст</p>}
                 </div>         
-                <TeamRating value={overallRating}/>
+                <TeamRating overallRating={overallRating}/>
             </>}
             {!obj && <p className="text1">Команда ещё не назначена</p>}
         </div>

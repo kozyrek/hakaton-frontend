@@ -1,7 +1,7 @@
 import { HTTP } from "../http";
 
 /**
- * Одобряет шаг проекта ментором.
+ * Скачивает все файлы по проекту.
  *
  * @returns {Promise<object>} Promise с ответом сервера.
  * @throws {Error} Возможные ошибки:
@@ -12,21 +12,16 @@ import { HTTP } from "../http";
  * @example
  * // Пример использования
  * try {
- *   const response = await acceptStep(projectId, stepNumber, scoreStep);
- *   console.log('Шаг одобрен:', response.data);
+ *   const response = await downLoadAllFiles(projectId);
+ *   console.log('Все файлы проекта:', response.data);
  * } catch (error) {
  *   console.error('Ошибка:', error.message);
  * }
  */
 
-export default async function acceptStep(projectId, stepNumber, scoreStep) {
+export default async function downloadAllFiles(projectId) {
     try {
-        const response = await HTTP.patch(`/projects/${projectId}/steps/${stepNumber}/attempts`,
-            {
-                action: "accept",
-                score: scoreStep,
-            },
-        );
+        const response = await HTTP.get(`/projects/${projectId}/files-zip`);
         console.log(response.data);
 
         return response.data

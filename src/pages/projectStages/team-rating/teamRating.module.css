@@ -33,6 +33,11 @@
     span {
         max-width: 150px;
     }
+
+    &.valueBlock {
+        width: 196px;
+        height: 196px;
+    }
 }
 
 .rating {
@@ -45,7 +50,7 @@
     position: relative;
 }
 
-.inputeValue {
+.inputValue {
     max-width: 80px;
     height: 64px;
     padding: 0;
@@ -56,6 +61,12 @@
     color: #be1b86;
     border: 1px solid #1a1f1f;
     background-color: transparent;
+    -moz-appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+    }
 }
 
 .buttonEdit {
@@ -68,7 +79,6 @@
 
 .timerBlock {
     display: flex;
-    gap: 6px;
     align-items: center;
     font-family: "Open Sans Regular", sans-serif;
     font-weight: 400;
@@ -77,25 +87,46 @@
 }
 
 .time {
-    width: 90px;
+    position: relative;
+    width: 93px;
     height: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
     background-color: #f6edff;
     border-radius: 4px;
+    border: none;
+    user-select: none;
 
-    span:first-child {
+    .buttonEdit {
+        left: 75%;
+    }
+
+    span:first-child,
+    input {
         margin-bottom: -15px;
         font-family: "Gotham";
         font-weight: 500;
         font-size: 32px;
     }
+
+    input {
+        height: auto;
+        -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+    }
 }
 
 .divider {
+    width: 22px;
     font-size: 35px;
     color: #2b306c;
+    text-align: center;
 }
 

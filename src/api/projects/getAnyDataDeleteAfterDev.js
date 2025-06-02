@@ -28,16 +28,20 @@ export default function getAnyDataDeleteAfterDev() {
     try {
         // const response = HTTP.get("/projects/?page=1&per_page=25");
 
-        // const response = HTTP.delete("/projects/5");
+        // const response = HTTP.delete("/teams/9/members/20");
 
-        const response = HTTP.get("/users/28");
+        // const response = HTTP.get("/teams");
 
-        // const response = HTTP.patch("/teams/9", {
-        //     "name": "Вторая команда",
-        //     "projectId": 3,
-        //     "teamMembers": [
-        //     ]
-        //   });
+        // const response = HTTP.delete("/projects/3");
+
+        // const response = HTTP.get("/users/28");
+
+        const response = HTTP.patch("/teams/39", {
+            "name": "Тестовая команда. НЕ удалять!",
+            "projectId": 9,
+            "teamMembers": [
+            ]
+          });
         console.log(response.data);
 
         return response.data
