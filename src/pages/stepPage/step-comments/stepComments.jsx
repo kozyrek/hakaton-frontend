@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import Button from "../../../components/button/button";
 import PaperClip from "../../profile/components/personal-info/textView/images/PaperClip";
 import Textarea from "../../../components/textarea/textarea";
 import startWorkOnStep from "../../../api/steps/startWorkOnStep";
 import addStepComment from "../../../api/steps/addStepComment";
+import downloadComments from "../../../api/steps/downloadComments";
+import { getDate } from "../../../utils/getDate";
 
 import styles from "./stepComments.module.css";
 
@@ -12,8 +14,7 @@ import { HTTP } from "../../../api/http";//-------------------------
 
 export default function StepProjectComment({
     step, 
-    comments, 
-    stepNumber, 
+    comments,
     handleAddNewComment,
     stepStatus,
     handleSwitchStatus,
@@ -21,21 +22,9 @@ export default function StepProjectComment({
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
     const [commentValue, setCommentValue] = useState('');
 
-    const handleChange = (e) => {
+    const handleChangeTextComment = (e) => {
         e.preventDefault();
         setCommentValue(e.target.value);
-    }
-
-    const getDate = (str) => {
-        const options = {
-            day: 'numeric',
-            month: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-        }
-        const date = new Date(str);
-        return date.toLocaleString('ru', options)
     }
 
     const handleAddComment = async () => {
@@ -45,27 +34,33 @@ export default function StepProjectComment({
                 text: commentValue,
             };
         formData.append('text', JSON.stringify(data));
-        const response = await addStepComment(step.projectId, stepNumber, formData);
-        console.log("комментарий отправлен", response);
-        
-        handleAddNewComment();
-        setCommentValue('');
+
+        const response = await addStepComment(step.projectId, step.stepNumber, formData);
+        if (response.status === 201) {
+            console.log("комментарий отправлен", response);
+            handleAddNewComment();
+            setCommentValue('');
+        }
     }
 
-    const handleStartStep = () => {
-        const response = startWorkOnStep(step.projectId, stepNumber);
-        console.log("старт работы на шаге", response.data);//---------
-        handleSwitchStatus(stepStatus.inProgress);
+    const handleStartStep = async () => {
+        const response = await startWorkOnStep(step.projectId, step.stepNumber);
+        if (response.status === 200) {
+            console.log("старт работы на шаге", response.data);
+            handleSwitchStatus(stepStatus.inProgress);
+        }
     }
 
     // Взаимодействие ментора со страницей
-    const downloadComments = () => {
+
+    const handleDownloadComments = async () => {
+        const response = await downloadComments(step.projectId, step.stepNumber);
     }
 
     //Тестовый код------------------------------------------
     const handleChange2 = () => {
         try {
-            const response = HTTP.delete(`/projects/${step.projectId}/steps/${stepNumber}/comments/21`);
+            const response = HTTP.delete(`/projects/${step.projectId}/steps/${step.stepNumber}/comments/21`);
             return response.data
         } catch (error) {
             console.log(error);
@@ -85,7 +80,7 @@ export default function StepProjectComment({
                             placeholder="Введите комментарий"
                             maxLength={500}
                             value={commentValue}
-                            onChange={handleChange}
+                            onChange={handleChangeTextComment}
                             disabled={
                                 stepStatus.notStarted
                                 || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
@@ -103,6 +98,7 @@ export default function StepProjectComment({
                             disabled={
                                 stepStatus.notStarted 
                                 || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
+                                || !commentValue
                             }
                         />
                     </>
@@ -143,7 +139,7 @@ export default function StepProjectComment({
                 <Button 
                     large 
                     text="Скачать комментарии" 
-                    onClick={downloadComments} 
+                    onClick={handleDownloadComments} 
                     addClass={styles.buttonDownload}
                     disabled={stepStatus.notStarted || !stepStatus.inProgress}
                 />}

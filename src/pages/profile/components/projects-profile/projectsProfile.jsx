@@ -9,7 +9,6 @@ import createProject from "../../../../api/projects/createProject";
 import deleteProject from "../../../../api/projects/deleteProject";
 
 import styles from "./projectsProfile.module.css";
-import { type } from "@testing-library/user-event/dist/type";
 
 const ProjectsProfile = () => {
   const [projects, setProjects] = useState(null);

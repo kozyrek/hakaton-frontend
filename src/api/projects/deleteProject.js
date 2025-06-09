@@ -23,8 +23,7 @@ import { ERROR_TEXT } from "../../api/utils/constants";
 export default async function deleteProject(projectId) {
     try {
         const response = await HTTP.delete(`/projects/${projectId}`);
-        // console.log(response.data);
-        return response
+        return response;
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);

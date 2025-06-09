@@ -38,17 +38,17 @@ export default function ProjectStages() {
     }, [projectId])
 
     useEffect(() => {
-            const fetchFiles = async () => {
-                try {
-                    const requestFiles = await getProjectFiles(projectId);
-                    setFiles(requestFiles.data);
-                } catch (e) {
-                    setError(e.message);
-                }
+        const fetchFiles = async () => {
+            try {
+                const requestFiles = await getProjectFiles(projectId);
+                setFiles(requestFiles.data);
+            } catch (e) {
+                setError(e.message);
             }
-            fetchFiles();
-            // eslint-disable-next-line
-        }, [])
+        }
+        fetchFiles();
+        // eslint-disable-next-line
+    }, [])
 
     useEffect(() => {
         if (project.teamId) {
@@ -128,7 +128,7 @@ export default function ProjectStages() {
     return (
         <>
             <LayoutLogin>
-                <Container>
+                <Container fluid="xxl">
                     <HeadStages obj={project}/>     
 
 {/* <button type="button" onClick={handleChange}>добавить участника в команду</button> */}
@@ -137,7 +137,7 @@ export default function ProjectStages() {
 
                 </Container>      
             </LayoutLogin>
-            <Container>
+            <Container fluid="xxl">
                 <TeamInfo 
                     obj={teamInfo} 
                     arr={project.steps}

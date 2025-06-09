@@ -23,8 +23,7 @@ import { ERROR_TEXT } from "../../api/utils/constants";
 export default async function getProjectById(id) {
     try {
         const response = await HTTP.get(`/projects/${id}`);
-        
-        return response
+        return response;
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);
