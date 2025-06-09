@@ -1,0 +1,47 @@
+.wrapper {
+    padding: 200px 0 80px;
+    position: relative;
+    /* z-index: 2; */
+
+    @media (max-width: 1400px) {
+        padding: 140px 0 60px;
+    }
+
+    @media (max-width: 1024px) {
+        padding: 130px 0 60px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 100px 0 60px;
+    }
+}
+
+.btnEdit {
+    background-color: transparent;
+    border: none;
+}
+
+.mentorBlock {
+    display: flex;
+    column-gap: 30px;
+    align-items: flex-end;
+    
+    span {
+        color: #ffffff;
+    }
+}
+
+.imgWrapper {
+    width: 208px;
+    height: 180px;
+    background-color: #f6edff;
+    border-radius: 8px;
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        object-position: center;
+    }
+}

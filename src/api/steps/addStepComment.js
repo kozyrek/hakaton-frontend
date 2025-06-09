@@ -23,9 +23,7 @@ import { ERROR_TEXT } from "../../api/utils/constants";
 export default async function addStepComment(projectId, stepNumber, data) {
     try {
         const response = await HTTP.post(`/projects/${projectId}/steps/${stepNumber}/comments`, data);
-        console.log(response.data);
-
-        return response
+        return response;
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);

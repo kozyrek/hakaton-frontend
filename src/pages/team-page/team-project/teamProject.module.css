@@ -1,0 +1,42 @@
+.title {
+    margin-bottom: 28px;
+}
+
+.subtitle {
+    margin-bottom: 48px;
+}
+
+.projectButton {
+    margin-bottom: 80px;
+}
+
+.projectList {
+    padding: 0;
+    margin: 0;
+    max-height: 80vh;
+    overflow-x: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    list-style-type: none;
+}
+
+.projectItem {
+    padding: 12px 8px;
+    display: grid;
+    grid-template-columns: 1fr min-content;
+    gap: 10px;
+    border: 1px solid #ceb2e9;
+    border-radius: 6px;
+    
+    span {
+        text-align: start;
+        text-decoration: underline;
+    }
+}
+
+.textBtn {
+    background-color: transparent;
+    border: none;
+    text-decoration: underline;
+}

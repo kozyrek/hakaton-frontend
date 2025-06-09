@@ -28,9 +28,7 @@ export default async function acceptStep(projectId, stepNumber, scoreStep) {
                 score: scoreStep,
             },
         );
-        console.log(response.data);
-
-        return response
+        return response;
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);

@@ -28,9 +28,7 @@ export default async function rejectStep(projectId, stepNumber, timerStep) {
                 timer: timerStep,
             },
         );
-        console.log(response.data);
-
-        return response
+        return response;
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);
