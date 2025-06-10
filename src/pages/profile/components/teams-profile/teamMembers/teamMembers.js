@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 // import { Link } from "react-router-dom";
 // import ROUTES from "../../../../../utils/constants";
 
-// import styles from "./teamMembers.module.css";//файл не найден, заменила на 
+// import styles from "./teamMembers.module.css";//файл не найден, заменила на
 import styles from "../teamsProfile.module.css";
 
 // import LeaderLogo from "./leaderLogo";
@@ -19,6 +19,9 @@ import getTeamById from "../../../../../api/team/getTeamById";
 import SearchInput from "../../../ui/searchInput/searchInput";
 import ModalWrapper from "../../../../../components/modalOverlay";
 import ModalWindow from "../../../../../components/modalWindow";
+import getAllUser from "../../../../../api/getAllUsers";
+import UserDisplay from "./components/user-display/UserDisplay";
+import addMembers from "../../../../../api/team/addMembers";
 // import {
 //   ConfirmDeleteModal,
 //   InputModal,
@@ -29,6 +32,7 @@ import ModalWindow from "../../../../../components/modalWindow";
 const TeamMembers = () => {
   const { teamId } = useParams();
   const [members, setMembers] = useState([]);
+  const [participantWithoutTeam, setParticipantWithoutTeam] = useState([]);
   const [isEditRoleOpen, setEditRoleOpen] = useState(false);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [isAddMemberOpen, setAddMemberOpen] = useState(false);
@@ -46,8 +50,15 @@ const TeamMembers = () => {
       setMembers(response.teamMembers);
     };
     fetchTeamMembers(teamId);
-    console.log("mount", teamId);
   }, []);
+
+  useEffect(() => {
+    const fetchParticipant = async () => {
+      const response = await getAllUser({ is_team_member: false });
+      setParticipantWithoutTeam(response.items);
+    };
+    if (isAddMemberOpen) fetchParticipant();
+  }, [isAddMemberOpen]);
 
   // const modalList = useMemo(
   //   () =>
@@ -80,6 +91,15 @@ const TeamMembers = () => {
   //   setDeleteOpen(false);
   //   setSelectedIndex(null);
   // };
+
+  const handleAddMember = async (item) => {
+    console.log(item);
+    const response = await addMembers(teamId, [
+      {
+        participantId: item.participant.id,
+      },
+    ]);
+  };
 
   const handleDeleteClick = (idx, e) => {
     e.stopPropagation();
@@ -192,39 +212,26 @@ const TeamMembers = () => {
       </div>
 
       {/* Модальное окно не работает */}
-      {/* <ModalWrapper
+      <ModalWrapper
         isOpen={isAddMemberOpen}
         onClose={() => setAddMemberOpen(false)}
       >
-        <ModalWindow title="Создание новой команды">
+        <ModalWindow
+          title="Добавить участника"
+          buttonArea={[<Button text="Добавить выбранных" />]}
+          // onClick={}
+        >
           <SearchInput />
-          <li
-            key={participant.id}
-            className={`${styles.participantItem} ${
-              !participant.verified && styles.notVerified
-            }`}
-          >
-            <div className={`${styles.participantInfo}`}>
-              <Link
-                to={`${ROUTES.PROFILE}/${participant.id}`}
-                className={styles.link}
-              >
-                {participant.lastName} &nbsp;
-                {participant.firstName} &nbsp;
-                {participant.patronymic}
-              </Link>
-            </div>
-            <div>
-              <DeleteButton
-                className={styles.removeButton}
-                onClick={() => openModal(participant)}
-              >
-                Удалить
-              </DeleteButton>
-            </div>
-          </li>
+          <div style={{ marginTop: "28px" }}>
+            {participantWithoutTeam.map((item) => (
+              <UserDisplay
+                item={item}
+                onSubmit={handleAddMember}
+              />
+            ))}
+          </div>
         </ModalWindow>
-      </ModalWrapper> */}
+      </ModalWrapper>
 
       {/* 
       <InputModal
