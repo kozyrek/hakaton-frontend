@@ -23,10 +23,8 @@ import { ERROR_TEXT } from "../../api/utils/constants";
 export default async function getStep(projectId, stepNumber) {
     try {
         const response = await HTTP.get(`/projects/${projectId}/steps/${stepNumber}`);
-
         console.log(`шаг ${stepNumber} проекта # ${projectId}`, response.data);
-
-        return response
+        return response;
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);

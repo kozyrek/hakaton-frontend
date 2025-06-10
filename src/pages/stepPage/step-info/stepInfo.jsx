@@ -13,7 +13,6 @@ import IconPaperclip from "../images/icon-paperclip";
 
 export default function StepProjectInfo({
     step, 
-    stepNumber, 
     stepTitle,
     handleSwitchStatus,
     stepStatus,
@@ -50,13 +49,15 @@ export default function StepProjectInfo({
         setFileDownload(step.files)
     }, [step])
 
-    const handleChange = (e) => {
+    //Взаимодействие капитана/участника со страницей 
+
+    const handleChangeText = (e) => {
         e.preventDefault();
         setTextValue(e.target.value);
-        console.log(textValue)
     };
     
     const handleAddFile = (e) => {
+        //добавить валидацию файла--------------------------------------
         e.preventDefault();
         if (fileDownload?.length) {
             setFileDownload([...fileDownload, ...Array.from(e.target.files)]);
@@ -69,33 +70,52 @@ export default function StepProjectInfo({
         setFileDownload(fileDownload => fileDownload.filter(el => el !== fileDownload[i]))
     }
 
-    const handleSendDataStep = () => {
-        let formData = new FormData();
-        const data = {
-            text: textValue,
-        };
-        formData.append('text', JSON.stringify(data));
-        for (let file of fileDownload) {
-            formData.append('files', file);
-        }
+    const handleSendDataStep = async () => {
+        if (!textValue || !fileDownload?.length) {
+            alert("Заполните текст шага или добавьте файлы");
+        } else {
+            let formData = new FormData();
+            const data = {
+                text: textValue,
+            };
+            formData.append('text', JSON.stringify(data));
+            //------------------------------------------------
+            for (let file of fileDownload) {
+                formData.append('files', file);
+            }
 
-        const response = sendDataStepProject(step.projectId, stepNumber, formData);
-        console.log("шаг отправлен на ревью", response.data);
-        handleSwitchStatus(stepStatus.isSubmitted);
+            const response = await sendDataStepProject(step.projectId, step.stepNumber, formData);
+            if (response.status === 200) {
+                console.log("шаг отправлен на ревью", response.data);
+                handleSwitchStatus(stepStatus.isSubmitted);
+            }
+        }
     }
 
     //Взаимодействие ментора со страницей 
 
-    const handleAcceptStep = () => {
-        const response = acceptStep(step.projectId, stepNumber, scoreValue);
-        console.log("шаг согласован", response.data);
-        handleSwitchStatus(stepStatus.isAccept);
+    const handleAcceptStep = async () => {
+        if (scoreValue < 0 || scoreValue > 10 || isNaN(scoreValue) || !Number.isInteger(scoreValue)) {
+            alert("Установите баллы (от 0 до 10) в поле «Оценка», используйте целые числа");//----------
+        } else {
+            const response = await acceptStep(step.projectId, step.stepNumber, scoreValue);
+            if (response.status === 200) {
+                console.log("шаг согласован", response.data);
+                handleSwitchStatus(stepStatus.isAccept);
+            }
+        }
     }
 
-    const handleRejectStep = () => {
-        const response = rejectStep(step.projectId, stepNumber, timer);
-        console.log("шаг отклонен", response.data);
-        handleSwitchStatus(stepStatus.notStarted);
+    const handleRejectStep = async() => {
+        if (timer <= 0 || isNaN(timer) || !Number.isInteger(timer)) {
+            alert("Установите таймер, используйте целые числа");//------------
+        } else {
+            const response = await rejectStep(step.projectId, step.stepNumber, timer);
+            if (response.status === 200) {
+                console.log("шаг отклонен", response.data);
+                handleSwitchStatus(stepStatus.notStarted);
+            }
+        }
     }
 
     return (
@@ -104,7 +124,7 @@ export default function StepProjectInfo({
             {/* <span>{time}</span> */}
             <div className={styles.infoWrapper}>
                 <h1 className={`titleH2 ${styles.title}`}>{stepTitle}</h1>
-                <h2 className={`titleH3 ${styles.stepTitle}`}>Шаг {stepNumber}</h2>
+                <h2 className={`titleH3 ${styles.stepTitle}`}>Шаг {step.stepNumber}</h2>
 
                 {!isMentor && 
                 <Textarea
@@ -112,7 +132,7 @@ export default function StepProjectInfo({
                     placeholder="Введите текст"
                     maxLength={10000}
                     value={textValue}
-                    onChange={handleChange}
+                    onChange={handleChangeText}
                     disabled={
                         stepStatus.notStarted 
                         || !stepStatus.inProgress 
@@ -130,7 +150,7 @@ export default function StepProjectInfo({
                     placeholder="Введите текст"
                     maxLength={10000}
                     value={textValue}
-                    onChange={handleChange}
+                    onChange={handleChangeText}
                     disabled={notStarted || (isSubmitted && !isMentor)}
                 />
                 } */}

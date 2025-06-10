@@ -21,7 +21,8 @@ import { ROUTES } from "./utils/constants";
 import "./swiper.css";
 import "./bootstrap.css";
 import UserId from "./pages/profile/user-by-id/id";
-import TeamMembers from "./pages/profile/components/teams-profile/teamMembers/teamMembers";
+// import TeamMembers from "./pages/profile/components/teams-profile/teamMembers/teamMembers";
+import TeamPage from "./pages/team-page";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -74,7 +75,8 @@ root.render(
               />
               <Route
                 path={ROUTES.TEAM_BY_ID}
-                element={<TeamMembers />}
+                // element={<TeamMembers />}
+                element={<TeamPage />}
               />
             </Routes>
             <Footer />

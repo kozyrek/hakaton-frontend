@@ -42,8 +42,9 @@ export default function StepProjectPage() {
                 inProgress: step.status === STEP_PROJECT_STATUS.IN_PROGRESS,
                 isSubmitted: step.status === STEP_PROJECT_STATUS.SUBMITTED,
                 isAccept: step.status === STEP_PROJECT_STATUS.ACCEPTED,
+                timeExceeded: step.status === STEP_PROJECT_STATUS.TIME_EXCEEDED,
             });
-            // console.log(stepStatus);//---
+            console.log("текущий статус шага", stepStatus);//---
         }
         // eslint-disable-next-line
     }, [step])
@@ -82,16 +83,13 @@ export default function StepProjectPage() {
             default:
                 break;
         }
-        console.log("статус шага изменен на", status, stepStatus
-        );
     }
 
     return (
         <>
             <Container fluid="xxl">
                 <StepProjectInfo 
-                    step={step} 
-                    stepNumber={stepNumber} 
+                    step={step}
                     stepTitle={stepTitle} 
                     stepStatus={stepStatus}
                     handleSwitchStatus={handleSwitchStatus}
@@ -99,7 +97,6 @@ export default function StepProjectPage() {
                 <StepProjectComment 
                     step={step} 
                     comments={comments} 
-                    stepNumber={stepNumber} 
                     handleAddNewComment={handleAddNewComment} 
                     stepStatus={stepStatus}
                     handleSwitchStatus={handleSwitchStatus}

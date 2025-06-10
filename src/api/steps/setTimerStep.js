@@ -29,8 +29,7 @@ export default async function setTimerStep(projectId, stepNumber, timerStep) {
             },
         );
         console.log(response.data);
-
-        return response
+        return response;
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);

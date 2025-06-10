@@ -24,3 +24,7 @@ export const STEP_PROJECT_STATUS = {
   ACCEPTED: "Accepted",
   TIME_EXCEEDED: "Time exceeded",
 }
+
+export const POINTS = ["балл", "балла", "баллов"];
+export const MINUTES = ["минута", "минуты", "минут"];
+export const SECONDS = ["секунда", "секунды", "секунд"];
