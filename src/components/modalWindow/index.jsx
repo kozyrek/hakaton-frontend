@@ -14,15 +14,29 @@ import CloseIcon from "./images/closeIcon";
  * @param {string} [props.description] - Описание, отображаемое в модальном окне.
  * @param {Function} [props.setIsShow] - Функция для управления видимостью модального окна.
  * @param {boolean} [props.descriptionLg=false] - Флаг для изменения стиля описания на большой.
+ * @param {React.ReactNode[]} [props.buttonArea] - Массив кнопок/элементов для области действий
  * @param {React.ReactNode} [props.children] - Дочерние элементы, которые будут отображаться в модальном окне.
  *
  * @returns {JSX.Element} Возвращает элемент модального окна с заголовком, описанием и дочерними элементами.
+ * @example
+ * <ModalWindow
+ *   title="Удаление проекта"
+ *   description="Вы уверены, что хотите удалить проект?"
+ *   setIsShow={setIsModalVisible}
+ *   buttonArea={[
+ *     <Button key="cancel">Отмена</Button>,
+ *     <Button key="confirm" variant="danger">Удалить</Button>
+ *   ]}
+ * >
+ *   <AdditionalContent />
+ * </ModalWindow>
  */
 
 export default function ModalWindow({
   title = "Добавь заголовок",
   description,
   setIsShow,
+  buttonArea,
   descriptionLg = false,
   children,
 }) {
@@ -56,6 +70,13 @@ export default function ModalWindow({
           </p>
         )}
         <div style={{ position: "relative" }}>{children}</div>
+        {buttonArea && (
+          <div className={styles.buttonArea}>
+            {buttonArea.map((button, index) => (
+              <React.Fragment key={index}>{button}</React.Fragment>
+            ))}
+          </div>
+        )}
       </div>
     </Container>
   );

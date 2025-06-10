@@ -118,6 +118,10 @@
     padding: 60px;
     max-width: 493px;
 
+    @media (max-width: 768px) {
+        padding: 20px;
+    }
+
     .textWrapper {
         height: unset;
         max-height: 500px;

@@ -1,47 +1,65 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./teamsProfile.module.css";
 import Button from "../../../../components/button/button";
 import ModalWindow from "../../../../components/modalWindow";
 import Card from "../../ui/card/Card";
+import ModalWrapper from "../../../../components/modalOverlay";
+import getAllTeams from "../../../../api/team/getAllTeam";
+import Inputs from "../../../../components/inputs/inputs";
+import createTeam from "../../../../api/team/createTeam";
+import deleteTeam from "../../../../api/team/deleteTeam";
 
-
-const TeamsProfile = ({ myTeams, allTeams }) => {
+const TeamsProfile = () => {
   const [activeTab, setActiveTab] = useState("myTeams");
-
-  // Локальные состояния для хранения списков команд (чтобы можно было удалять)
-  const [myTeamsState, setMyTeamsState] = useState(myTeams);
-  const [allTeamsState, setAllTeamsState] = useState(allTeams);
-
-  // Состояния для модального окна
-  const [showModal, setShowModal] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [myTeamsState, setMyTeamsState] = useState([]);
+  const [allTeamsState, _] = useState([]);
+  const [isCreateTeam, setIsCreateTeam] = useState(false);
+  const [isDeleteTeam, setIsDeleteTeam] = useState(false);
+  const [formData, setFormData] = useState({
+    teamName: { value: "", type: "text" },
+  });
+  const [formError, setFormError] = useState({
+    teamName: "",
+  });
 
   const menuItems = [
     { key: "myTeams", label: "Мои команды" },
     { key: "allTeams", label: "Все команды" },
   ];
 
-  const openModal = (teamName) => {
-    setSelectedTeam(teamName);
-    setShowModal(true);
-  };
-
-
-  const cancelRemoval = () => {
-    setShowModal(false);
-    setSelectedTeam(null);
-  };
-
-
-  const confirmRemoval = () => {
-    if (selectedTeam) {
-      if (activeTab === "myTeams") {
-        setMyTeamsState((prev) => prev.filter((t) => t !== selectedTeam));
-      } else {
-        setAllTeamsState((prev) => prev.filter((t) => t !== selectedTeam));
-      }
+  const fetchProjects = async () => {
+    try {
+      const response = await getAllTeams();
+      setMyTeamsState(response.items);
+    } catch (error) {
+      console.log(error);
     }
-    cancelRemoval();
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const handleCreateTeame = async (teamName) => {
+    const response = await createTeam(teamName);
+    if (response.status === 201) {
+      fetchProjects();
+      setIsCreateTeam(false);
+    }
+  };
+
+  const handleDeleteTeam = async (isDeleteTeam) => {
+    const response = await deleteTeam(isDeleteTeam);
+    if (response.status === 204) {
+      fetchProjects();
+      setIsDeleteTeam(false);
+    }
+  };
+  const handleChange = (value, name = "teamName") => {
+    setFormData({
+      ...formData,
+      [name]: { value: value, type: "text" },
+    });
   };
 
   return (
@@ -61,11 +79,12 @@ const TeamsProfile = ({ myTeams, allTeams }) => {
       </div>
       {activeTab === "myTeams" && (
         <div className={styles.cardsContainer}>
-          {myTeamsState.map((team, index) => (
-            <Card 
-              key={index} 
-              team={team} 
-              onDelete={() => openModal(team)} 
+          {myTeamsState.map((team) => (
+            <Card
+              key={team.id}
+              team={team}
+              onDelete={() => setIsDeleteTeam({ id: team.id })}
+              // onClick={() => navigate(`/team/${team.id}`)}
             />
           ))}
         </div>
@@ -75,49 +94,73 @@ const TeamsProfile = ({ myTeams, allTeams }) => {
         <div className={styles.cardsContainer}>
           {allTeamsState.map((team, index) => (
             <Card
-            key={index} 
-            team={team} 
-            onDelete={() => openModal(team)} 
-  logoVariant="default"
-/>
-
-         
+              key={index}
+              team={team}
+              onDelete={() => handleDeleteTeam(team.id)}
+              logoVariant="default"
+            />
           ))}
         </div>
       )}
-<div  className={styles.createButton}>
-     <Button
-     large
-        text="Создать команду"
-        onClick={() => alert("Создать команду")}
-      />
+      <div className={styles.createButton}>
+        <Button
+          large
+          text="Создать команду"
+          onClick={() => setIsCreateTeam(true)}
+        />
+      </div>
 
-</div>
- 
-      {showModal && (
-        <div className={styles.modalOverlay}>
-          <ModalWindow
-            title="Действительно хотите удалить данную команду?"
-            description={selectedTeam}
-            setIsShow={cancelRemoval}
-          >
-            <div className={styles.buttonContainer}>
+      <ModalWrapper
+        isOpen={isCreateTeam}
+        onClose={() => setIsCreateTeam(false)}
+      >
+        <ModalWindow
+          title="Создание новой команды"
+          buttonArea={[
             <Button
-                text="Да"
-                large
-                onClick={confirmRemoval}
-                addClass={styles.confirmButton}
-              />
-              <Button
-                text="Нет"
-                large
-                onClick={cancelRemoval}
-                addClass={styles.cancelButton}
-              />
-            </div>
-          </ModalWindow>
-        </div>
-      )}
+              text="Создать"
+              onClick={() => handleCreateTeame(formData.teamName.value)}
+            />,
+            <Button
+              violet
+              text="Отменить"
+              onClick={() => {
+                handleChange("");
+                setIsCreateTeam(false);
+              }}
+            />,
+          ]}
+        >
+          <Inputs
+            name="teamName"
+            type="text"
+            formData={formData}
+            formError={formError}
+            placeholder="Название"
+            onChange={handleChange}
+          />
+        </ModalWindow>
+      </ModalWrapper>
+
+      <ModalWrapper
+        isOpen={isDeleteTeam}
+        onClose={() => setIsDeleteTeam(false)}
+      >
+        <ModalWindow
+          title="Вы хотите удалить данную команду?"
+          buttonArea={[
+            <Button
+              text="Да"
+              onClick={() => handleDeleteTeam(isDeleteTeam.id)}
+            />,
+            <Button
+              violet
+              text="Нет"
+              onClick={() => setIsDeleteTeam(false)}
+            />,
+          ]}
+        />
+      </ModalWrapper>
     </div>
   );
 };

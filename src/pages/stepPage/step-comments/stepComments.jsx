@@ -1,78 +1,140 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import Inputs from "../../../components/inputs/inputs";
 import Button from "../../../components/button/button";
 import PaperClip from "../../profile/components/personal-info/textView/images/PaperClip";
-import { Link } from "react-router-dom";
-import createFormDataAndError from "../../../utils/createFormDataAndError";
+import Textarea from "../../../components/textarea/textarea";
+import startWorkOnStep from "../../../api/steps/startWorkOnStep";
+import addStepComment from "../../../api/steps/addStepComment";
 
 import styles from "./stepComments.module.css";
 
-export default function StepProjectComment({project}) {
+import { HTTP } from "../../../api/http";//-------------------------
+
+export default function StepProjectComment({
+    step, 
+    comments, 
+    stepNumber, 
+    handleAddNewComment,
+    stepStatus,
+    handleSwitchStatus,
+}) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
-    const [formData, setFormData] = useState({});
-    const [formError, setFormError] = useState({});
-    
-    useEffect(() => {
-        const { applicableFields, errorFields } =
-            createFormDataAndError(project);
-            setFormData(applicableFields);
-            setFormError(errorFields);
-        }, [project]);
+    const [commentValue, setCommentValue] = useState('');
 
-    // console.log(formData);/*------*/
-
-    const handleChange = (value, name) => {
-        setFormData((prev) => ({ ...prev, [name]: { value: value } }));
-    };
-
-    const handleClick = (id) => {
+    const handleChange = (e) => {
+        e.preventDefault();
+        setCommentValue(e.target.value);
     }
 
+    const getDate = (str) => {
+        const options = {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+        }
+        const date = new Date(str);
+        return date.toLocaleString('ru', options)
+    }
+
+    const handleAddComment = async () => {
+        // добавить отправку файлов-----------------------------------------
+        let formData = new FormData();
+        const data = {
+                text: commentValue,
+            };
+        formData.append('text', JSON.stringify(data));
+        const response = await addStepComment(step.projectId, stepNumber, formData);
+        console.log("комментарий отправлен", response);
+        
+        handleAddNewComment();
+        setCommentValue('');
+    }
+
+    const handleStartStep = () => {
+        const response = startWorkOnStep(step.projectId, stepNumber);
+        console.log("старт работы на шаге", response.data);//---------
+        handleSwitchStatus(stepStatus.inProgress);
+    }
+
+    // Взаимодействие ментора со страницей
     const downloadComments = () => {
     }
+
+    //Тестовый код------------------------------------------
+    const handleChange2 = () => {
+        try {
+            const response = HTTP.delete(`/projects/${step.projectId}/steps/${stepNumber}/comments/21`);
+            return response.data
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    //-----------------------------------------------------
 
     return (
         <div className={`contentBox ${styles.wrapper}`}>
             <h3 className={`titleH3 ${styles.title}`}>Комментарии к&#8239;&#8239;проекту</h3>
             <div className={styles.commentBlock}>
-                <Inputs 
-                    name="comment"
-                    placeholder="Введите комментарий"
-                    type="textarea"
-                    formData={formData}
-                    onChange={handleChange}
-                    formError={formError}
-                />
+                {!stepStatus.isAccept &&
+                    <>
+                        <Textarea
+                            name="comment"
+                            addclass={styles.texareaComment}
+                            placeholder="Введите комментарий"
+                            maxLength={500}
+                            value={commentValue}
+                            onChange={handleChange}
+                            disabled={
+                                stepStatus.notStarted
+                                || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
+                            }
+                        />
 
-                <input type="file"></input>
+                        <input type="file"></input>
 
-                <Button type="submit" large text="Отправить" addClass={styles.buttonSend} />
+                        <Button 
+                            type="button" 
+                            large 
+                            text="Отправить" 
+                            onClick={handleAddComment} 
+                            addClass={styles.buttonSend}
+                            disabled={
+                                stepStatus.notStarted 
+                                || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
+                            }
+                        />
+                    </>
+                }
+
+                {/* <button type="button" onClick={handleChange2}>удалить комментарий</button>----------------------------------- */}
 
                 <div className={`text1 ${styles.commentsList}`}>
-                    {project.comments.map((item, i) => (
-                        <div key={i}>
-                            <p className={`text2 ${styles.nameText}`}>{item.author}, {item.time}</p>
-                            <p className={styles.commentText}>{item.text}</p>
-                            {item.download.length !== 0 && (
+                    {comments.sort((a, b) => {return b.id - a.id}).map((item) => (
+                        <div key={item.id}>
+                            <p className={`text2 ${styles.nameText}`}>
+                                {item.user.lastName} {item.user.firstName} {item.user.patronymic}, {getDate(item.createdAt)}
+                            </p>
+                            <p className={styles.commentText}>{JSON.parse(item.text).text}</p>
+                            {item.files.length !== 0 && (
                                 <ul className={`text2 ${styles.documentsList}`}>
-                                    {item.download.map((item, index) => (
+                                    {item.files.map((item, index) => (
                                         <li key={index} className={styles.documentsItem}>
                                             <PaperClip />
-                                            <Link className={`text2 ${styles.documentsLink}`} to="#">
-                                                {item}{/*----------------*/}
-                                            </Link>
+                                            <a 
+                                                target="_blank" 
+                                                href={item.filePath} 
+                                                rel="noreferrer" 
+                                                className={`text2 ${styles.documentsLink}`}
+                                            >
+                                                {/* {item.filePath.split('/').at(-1)} */}
+                                                {item.name}
+                                            </a>
                                         </li>
                                     ))}
                                 </ul> 
                             )}
-                            <button 
-                                type="button" 
-                                className={`text2 ${styles.buttonAnswer}`} 
-                                onClick={handleClick(i)}
-                            >
-                                Ответить
-                            </button>
                         </div>
                     ))}
                 </div>
@@ -83,8 +145,17 @@ export default function StepProjectComment({project}) {
                     text="Скачать комментарии" 
                     onClick={downloadComments} 
                     addClass={styles.buttonDownload}
+                    disabled={stepStatus.notStarted || !stepStatus.inProgress}
                 />}
             </div>
+            {!isMentor && !stepStatus.isAccept && <Button 
+                large 
+                violet 
+                text="Старт" 
+                onClick={handleStartStep} 
+                addClass={styles.buttonStart}
+                disabled={!stepStatus.notStarted || stepStatus.inProgress || stepStatus.isSubmitted}
+            />}
         </div>
     )
 }

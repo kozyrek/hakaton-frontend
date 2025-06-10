@@ -4,10 +4,6 @@
     position: relative;
     z-index: 2;
 
-    @media (max-width: 1584px) {
-        margin: 0 -12px 0;
-    }
-
     @media (max-width: 1400px) {
         padding: 120px 0 120px;
     }
@@ -25,6 +21,9 @@
     margin: 0 0 60px;
     padding-left: 20px;
     list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 12px;
 
     li {
         position: relative;

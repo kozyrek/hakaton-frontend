@@ -1,76 +1,175 @@
-import React, { useState } from "react";
-import styles from "./projectsProfile.module.css";
+import { useEffect, useState } from "react";
 import Card from "../../ui/card/Card";
+import ModalWrapper from "../../../../components/modalOverlay";
 import ModalWindow from "../../../../components/modalWindow";
+import Inputs from "../../../../components/inputs/inputs";
 import Button from "../../../../components/button/button";
+import getProjects from "../../../../api/projects/getProjects";
+import createProject from "../../../../api/projects/createProject";
+import deleteProject from "../../../../api/projects/deleteProject";
 
-const ProjectsProfile = ({ projects }) => {
-  const [projectsState, setProjectsState] = useState(projects);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null);
+import styles from "./projectsProfile.module.css";
+import { type } from "@testing-library/user-event/dist/type";
 
+const ProjectsProfile = () => {
+  const [projects, setProjects] = useState(null);
+  const [isCreateProject, setIsCreateProject] = useState(false);
+  const [isDeleteProject, setIsDeleteProject] = useState(false);
 
-  const openModal = (projectName) => {
-    setSelectedProject(projectName);
-    setShowModal(true);
-  };
+  const [formData, setFormData] = useState({
+    name: { value: "", type: "text" },
+    description: { value: "", type: "text", },
+    document: { value: null, type: "file"},
+  });
+  const [formError, setFormError] = useState({
+    // projectName: "",
+    // projectDescription: "",
+  });
 
-
-  const cancelRemoval = () => {
-    setShowModal(false);
-    setSelectedProject(null);
-  };
-
-
-  const confirmRemoval = () => {
-    if (selectedProject) {
-      setProjectsState((prev) => prev.filter((p) => p !== selectedProject));
+  const fetchProjects = async () => {
+    try {
+      const response = await getProjects();
+      console.log("res", response);
+      setProjects(response.data.items);
+    } catch (e) {
+      console.log(e.message);
     }
-    cancelRemoval();
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const handleCreateProject = async (name, description,document) => {
+      const response = await createProject(name, description, document);
+      if (response.status === 201) {
+        fetchProjects();
+        setIsCreateProject(false);
+      }
+    };
+
+  const handleDeleteProject = async (isDeleteProject) => {
+    const response = await deleteProject(isDeleteProject);
+    if (response.status === 204) {
+      fetchProjects();
+      setIsDeleteProject(false);
+    }
+  };
+// -ДОПИСАТЬ ФУНКЦИЮ---------------------------------------------------
+  const handleChange = (
+    value, 
+    name = "name", 
+    description = "description", 
+    document = "document",
+  ) => {
+    setFormData({
+      ...formData,
+      [name]: { value: value, type: "text" },
+      [description]: { value: value, type: "text" },
+      [document]: {value: value, type: "file"},
+    });
   };
 
   return (
-    <div className={styles.projectsGrid}>
-      <h2 className={styles.profileTabTitle}>Проекты</h2>
+    <>
+      <h2 className="titleH2">Проекты</h2>
       <div className={styles.cardsContainer}>
-        {projectsState.map((proj, index) => (
-          <Card
-            key={index}
-            team={proj}
-            onDelete={() => openModal(proj)}
-            colorCard="alternative"
-            logoVariant="alternative"
-            buttonText="Удалить проект"
-            titleSize = "alternative"
-          />
-        ))}
+        {projects && 
+          projects.map((proj) => (
+            <Card
+              key={proj.id}
+              team={proj}
+              onDelete={() => {setIsDeleteProject({ id: proj.id })}}
+              colorCard="alternative"
+              logoVariant="alternative"
+              buttonText="Удалить проект"
+              isProject
+            />
+          ))}
       </div>
 
-      <div  className={styles.createButton}>
-     <Button
-     large
-        text="Создать проект"
-        onClick={() => alert("Создать команду")}
-      />
+      <div className={styles.createButton}>
+        <Button
+          large
+          text="Создать проект"
+          onClick={() => setIsCreateProject(true)}
+        />
+      </div>
 
-</div>
+      <ModalWrapper
+        isOpen={isCreateProject}
+        onClose={() => setIsCreateProject(false)}
+      >
+        <ModalWindow
+          title="Создание нового проекта"
+          buttonArea={[
+            <Button
+              text="Создать"
+              // дописать функцию
+              onClick={() => handleCreateProject(formData.name.value, formData.description.value, formData.document.value)}
+            />,
+            <Button
+              violet
+              text="Отменить"
+              onClick={() => {
+                handleChange("");
+                setIsCreateProject(false);
+              }}
+            />,
+          ]}
+        >
+          {/* добавить поля для названия, описания и файла */}
+          <Inputs
+            name="name"
+            type="text"
+            formData={formData}
+            formError={formError}
+            placeholder="Название кейса"
+            onChange={handleChange}
+          />
+          <Inputs
+            name="description"
+            type="textarea"
+            formData={formData}
+            formError={formError}
+            placeholder="Описание кейса"
+            onChange={handleChange}
+          />
+          <Inputs
+            name="document"
+            type="download"
+            formData={formData}
+            formError={formError}
+            placeholder="Загрузите документ кейса"
+            onChange={handleChange}
+          />
+        </ModalWindow>
+      </ModalWrapper>
 
-
-      {showModal && (
-        <div className={styles.modalOverlay}>
-          <ModalWindow
-            title="Удалить проект?"
-            description={selectedProject}
-            setIsShow={cancelRemoval}
-          >
-            <div className={styles.buttonContainer}>
-              <Button text="Да" large onClick={confirmRemoval} addClass={styles.confirmButton} />
-              <Button text="Нет" large onClick={cancelRemoval} addClass={styles.cancelButton} />
-            </div>
-          </ModalWindow>
-        </div>
-      )}
-    </div>
+      <ModalWrapper
+        isOpen={isDeleteProject}
+        onClose={() => setIsDeleteProject(false)}
+      >
+        <ModalWindow
+          title="Действительно хотите удалить данный проект?"
+          buttonArea={[
+            <Button
+              text="Да"
+              onClick={() => handleDeleteProject(isDeleteProject.id)}
+            />,
+            <Button
+              violet
+              text="Нет"
+              onClick={() => setIsDeleteProject(false)}
+            />,
+          ]}
+        >
+          <p className="text4">
+            «{projects && projects.find((el) => el.id === isDeleteProject.id)?.name}»
+          </p>
+        </ModalWindow>
+      </ModalWrapper>
+    </>
   );
 };
 

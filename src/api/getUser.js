@@ -12,11 +12,11 @@ import { HTTP } from "./http";
  *
  * @example
  * // Get current authenticated user
- * await getUser('auth_token_123');
+ * await getUser();
  *
  * @example
  * // Get specific user by ID
- * await getUser('auth_token_123', 456);
+ * await getUser(456);
  *
  * @note
  * - Automatically encodes user ID for URL safety
@@ -25,12 +25,8 @@ import { HTTP } from "./http";
  * - Returns parsed response data from API
  */
 
-export default async function getUser(token, id = null) {
+export default async function getUser(id = null) {
   let param = id === null ? "me" : id;
-  const response = await HTTP.get(`/users/${encodeURIComponent(param)}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await HTTP.get(`/users/${param}`);
   return response.data;
 }

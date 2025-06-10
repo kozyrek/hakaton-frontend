@@ -1,82 +1,253 @@
 import { useState, useEffect } from "react";
-import createFormDataAndError from "../../../utils/createFormDataAndError";
-import Inputs from "../../../components/inputs/inputs";
+import { useSelector } from "react-redux";
 import Button from "../../../components/button/button";
+import Textarea from "../../../components/textarea/textarea";
 import TeamRating from "../../projectStages/team-rating/teamRating";
+import sendDataStepProject from "../../../api/projects/sendDataStepProject";
+import acceptStep from "../../../api/steps/acceptStep";
+import rejectStep from "../../../api/steps/rejectStep";
 
 import styles from "./stepInfo.module.css";
+import IconDelete from "../images/icon-delete";
+import IconPaperclip from "../images/icon-paperclip";
 
-export default function StepProjectInfo({project, stepNumber, stepTitle}) {
-    const text = project.description;
-    const [textEdit, setTextEdit] = useState(text ? false : true);
+export default function StepProjectInfo({
+    step, 
+    stepNumber, 
+    stepTitle,
+    handleSwitchStatus,
+    stepStatus,
+}) {
+    const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
+    // const [textEdit, setTextEdit] = useState(!step.text);
+    const [textValue, setTextValue] = useState(step.text ? JSON.parse(step.text).text : "");
+    const [scoreValue, setScoreValue] = useState(0);
+    const [timer, setTimer] = useState(0);
+    const [fileDownload, setFileDownload] = useState(null);
 
-    const [formData, setFormData] = useState({});
-    const [formError, setFormError] = useState({});
+    
+    // const [time, setTime] = useState(5);//-----------------------
+    // useEffect(() => {
+    //     if (time > 0) {
+    //         setTimeout(setTime, 1000, time - 1);
+    //         console.log(time)//----------------------
+    //     } else {
+    //         console.log("таймер стоп")//-------------
+    //     }
+    // }, [time])
 
     useEffect(() => {
-        const { applicableFields, errorFields } =
-            createFormDataAndError(project);
-            setFormData(applicableFields);
-            setFormError(errorFields);
-        }, [project]);
+        setTextValue(step.text ? JSON.parse(step.text).text : "");
+        // setTextEdit(!step.text)
+        // eslint-disable-next-line
+    }, [step.text])
 
-    console.log(formData);/*------*/
+    // const editContent = () => {
+    //     setTextEdit(!textEdit);        
+    // }
 
-    const handleChange = (value, name) => {
-        setFormData((prev) => ({ ...prev, [name]: { value: value } }));
+    useEffect(() => {
+        setFileDownload(step.files)
+    }, [step])
+
+    const handleChange = (e) => {
+        e.preventDefault();
+        setTextValue(e.target.value);
+        console.log(textValue)
     };
+    
+    const handleAddFile = (e) => {
+        e.preventDefault();
+        if (fileDownload?.length) {
+            setFileDownload([...fileDownload, ...Array.from(e.target.files)]);
+        } else {
+            setFileDownload(Array.from(e.target.files));
+        }
+    }
 
-    const editContent = () => {
-        setTextEdit(true);
+    const handleDeleteFile = (i) => {
+        setFileDownload(fileDownload => fileDownload.filter(el => el !== fileDownload[i]))
+    }
+
+    const handleSendDataStep = () => {
+        let formData = new FormData();
+        const data = {
+            text: textValue,
+        };
+        formData.append('text', JSON.stringify(data));
+        for (let file of fileDownload) {
+            formData.append('files', file);
+        }
+
+        const response = sendDataStepProject(step.projectId, stepNumber, formData);
+        console.log("шаг отправлен на ревью", response.data);
+        handleSwitchStatus(stepStatus.isSubmitted);
+    }
+
+    //Взаимодействие ментора со страницей 
+
+    const handleAcceptStep = () => {
+        const response = acceptStep(step.projectId, stepNumber, scoreValue);
+        console.log("шаг согласован", response.data);
+        handleSwitchStatus(stepStatus.isAccept);
+    }
+
+    const handleRejectStep = () => {
+        const response = rejectStep(step.projectId, stepNumber, timer);
+        console.log("шаг отклонен", response.data);
+        handleSwitchStatus(stepStatus.notStarted);
     }
 
     return (
         <div className={`contentBox ${styles.wrapper}`}>
+
+            {/* <span>{time}</span> */}
             <div className={styles.infoWrapper}>
                 <h1 className={`titleH2 ${styles.title}`}>{stepTitle}</h1>
-                <h2 className={`titleH3 ${styles.stepTitle}`}>{stepNumber}</h2>
+                <h2 className={`titleH3 ${styles.stepTitle}`}>Шаг {stepNumber}</h2>
 
-                {(!text || textEdit) && 
-                <Inputs 
+                {!isMentor && 
+                <Textarea
                     name="description"
                     placeholder="Введите текст"
-                    type="textarea"
-                    maxLength={3000}
-                    formData={formData}
+                    maxLength={10000}
+                    value={textValue}
                     onChange={handleChange}
-                    formError={formError}
-                />
+                    disabled={
+                        stepStatus.notStarted 
+                        || !stepStatus.inProgress 
+                        || stepStatus.isSubmitted 
+                        || stepStatus.isAccept
+                    }
+                />}
+                {isMentor && step.text &&
+                <p className={`text1 ${styles.text}`}>{JSON.parse(step.text).text}</p>
                 }
-            
-                {text && !textEdit && (
+
+                {/* {(!step.text || (step.text && textEdit)) && !isAccept && 
+                <Textarea
+                    name="description"
+                    placeholder="Введите текст"
+                    maxLength={10000}
+                    value={textValue}
+                    onChange={handleChange}
+                    disabled={notStarted || (isSubmitted && !isMentor)}
+                />
+                } */}
+        
+                {/* {((step.text && !textEdit) || isAccept) && (
                     <>
-                        <p className={`text1 ${styles.text}`}>{text}</p>
+                        <p className={`text1 ${styles.text}`}>{JSON.parse(step.text).text}</p>
+                        {(
+                            // !isAccept || 
+                            !notStarted) && 
                         <button 
                             className={`text2 ${styles.buttonEdit}`}
                             type="button"
                             onClick={editContent}
                         >
                             Изменить текст
-                        </button>
+                        </button>}
                     </>
-                )}
+                )} */}
             </div>
-            <TeamRating
-                // obj={projectExample.team}
+            <TeamRating 
+                step={step} 
+                setScoreValue={setScoreValue} 
+                setTimer={setTimer}
+                stepStatus={stepStatus}
             />
             <div className={styles.filesWrapper}>
-                <h3 className={`titleH3 ${styles.title}`}>Загрузите файлы проекта</h3>
+                
+                <h3 className={`titleH3 ${styles.title}`}>
+                    {!stepStatus.isAccept ? "Загрузите файлы проекта" : "Файлы проекта"}
+                </h3>
+
                 <p className="text1">Документы, презентации, картинки, видео</p>
-                {/* <Inputs
-                    type="download"
-                    formData={formData}
-                    formError={formError}
-                    name="download"
-                    label="download"
-                    onChange={handleChange}
-                /> */}
+                {!isMentor && 
+                <label className={`${styles.inputFile} ${(
+                    stepStatus.notStarted || !stepStatus.inProgress || stepStatus.isSubmitted) 
+                    ? `${styles.disabled}` 
+                    : ""}`}>
+                    <span className={`text4 ${styles.inputFileText}`}>Выберите файл</span>
+                    <input 
+                        type="file" 
+                        name="file" 
+                        multiple 
+                        onChange={handleAddFile} 
+                        className={styles.visuallyHidden}
+                    />        
+                    <span className={`text2 ${styles.inputFileBtn}`}>Загрузить</span>
+                </label>}
+                {fileDownload &&
+                <ul className={`text2 ${styles.documentsList}`}>
+                    {fileDownload.map((item, i) => (
+                        <li key={i} className={styles.documentsItem}>
+                            <IconPaperclip />
+                            <a 
+                                className="text2" 
+                                href={item.filePath} 
+                                target="_blank" 
+                                rel="noreferrer"
+                            >
+                                {item.name}
+                            </a>
+                            {!isMentor && (!stepStatus.notStarted || stepStatus.inProgress || !stepStatus.isSubmitted || !stepStatus.isAccept) &&//--------уточнить условия отображения
+                            <button 
+                                type="button"
+                                className={styles.buttonDeleteFile}
+                                onClick={() => handleDeleteFile(i)}
+                                aria-label="Удалить файл"
+                            >
+                                <IconDelete/>
+                            </button>}
+                        </li>
+                    ))}
+                </ul>
+                }
             </div>
-            <Button type="submit" large text="Готово" />
+            {isMentor && 
+            <div className={styles.buttonBlock}>
+                <Button 
+                    type="button" 
+                    large 
+                    text="Принять" 
+                    onClick={handleAcceptStep}
+                    disabled={
+                        stepStatus.notStarted 
+                        || stepStatus.inProgress 
+                        || !stepStatus.isSubmitted 
+                        || stepStatus.isAccept
+                    }
+                />
+                <Button 
+                    type="button" 
+                    large 
+                    text="Отклонить" 
+                    onClick={handleRejectStep} 
+                    addClass={styles.buttonReject}
+                    violet 
+                    disabled={
+                        stepStatus.notStarted 
+                        || stepStatus.nProgress 
+                        || !stepStatus.isSubmitted 
+                        || stepStatus.isAccept
+                    }
+                />
+            </div>}
+            {!isMentor && !stepStatus.isAccept &&
+            <Button 
+                type="button" 
+                large 
+                text="Готово" 
+                onClick={handleSendDataStep}
+                disabled={
+                    stepStatus.notStarted 
+                    || !stepStatus.inProgress 
+                    || stepStatus.isSubmitted
+                } 
+            />
+            } 
         </div>
     )
 }

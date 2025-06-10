@@ -11,9 +11,9 @@ export default function UserBlock({ user }) {
         <span>{user.firstName}</span>
       </p>
       <div className={styles.imageWrapper}>
-        {user.image ? (
+        {user.photoPath ? (
           <img
-            src={user.image}
+            src={user.photoPath}
             alt="Фотография пользователя"
           ></img>
         ) : (

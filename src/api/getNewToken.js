@@ -27,7 +27,7 @@ const ERROR_TEXT = {
 
 export default async function getNewToken(refreshToken) {
     try {
-        return await HTTP.post("/auth/refresh", {
+        return await HTTP.post("/auth/token/refresh", {
             refreshToken,
         });
     } catch (error) {

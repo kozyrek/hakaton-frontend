@@ -3,9 +3,10 @@ export const ROUTES = {
   REGISTRATION: "/registration",
   LOGIN: "/login",
   PROFILE: "/profile",
+  TEAM_BY_ID: "/team/:teamId",
   RECOVERY: "/recovery",
-  STAGES: "/stages",
-  STEP: "/step",
+  PROJECT_ID: "/project/:projectId",
+  STEP_ID: "/step/:stepId",
   USER_ID: "/profile/:userId",
 };
 
@@ -14,4 +15,12 @@ export const ROLES = {
   MENTOR: "Ментор",
   PARTICIPANT: "Участник",
   UNDEFINED: "Роль не определена",
+}
+
+export const STEP_PROJECT_STATUS = {
+  NOT_STARTED: "Not started",
+  IN_PROGRESS: "In progress",
+  SUBMITTED: "Submitted for review",
+  ACCEPTED: "Accepted",
+  TIME_EXCEEDED: "Time exceeded",
 }

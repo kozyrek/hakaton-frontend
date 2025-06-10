@@ -1,0 +1,37 @@
+.participantItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid #cbc3e3;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.participantInfo {
+  /* width: 100%; */
+  /* text-decoration: underline; */
+  margin-right: auto;
+  margin-left: 8px;
+}
+
+.consentCheckBox {
+  /* margin-top: 8px; */
+  border: 2px solid #b899d6 !important;
+  outline: none;
+  width: 18px !important;
+  padding-left: 0px;
+  /* padding-top: 4px; */
+  height: 18px;
+  /* border-radius: 4px; */
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.consentCheckBox:checked {
+  background-color: #b899d6;
+  width: 12px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z'/%3e%3c/svg%3e");
+}

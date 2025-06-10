@@ -33,6 +33,10 @@
   margin-bottom: 12px;
 }
 
+.texareaComment {
+  height: 123px;
+}
+
 .documentsList {
   list-style-type: none;
   padding: 0;
@@ -49,13 +53,10 @@
   text-decoration: none;
 }
 
-.buttonAnswer {
-  padding: 0;
-  border: none;
-  background-color: transparent;
-  text-decoration: underline;
-}
-
 .buttonDownload {
   margin-top: 40px;
+}
+
+.buttonStart {
+  margin-top: 48px;
 }

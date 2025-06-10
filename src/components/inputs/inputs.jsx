@@ -6,16 +6,28 @@ import styles from "./index.module.css";
 import ShowPassword from "./images/showPassword";
 import SvgDelete from "./images/SvgDelete";
 import PaperClip from "../../pages/profile/components/personal-info/textView/images/PaperClip";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { add_user_file, delete_user_file } from "../../store/user/userSlice";
 import { Col, Row } from "react-bootstrap";
+import addUserDocument from "../../api/document-user/addUserDocument";
+import deleteUserDocument from "../../api/document-user/deleteUserDocument";
 
 const HELPER_TEXT_PASSWORD =
   "Пароль должен содержать не менее 8 символов, используйте латиницу, спецсимволы (@#$%&*!), заглавные и прописные буквы, цифры.";
 
 export default function Inputs(props) {
+  const documents = useSelector((state) => state.user?.documents);
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const { name, label, type, formData, formError, onChange, maxLength = 600, ...other } = props;
+  const {
+    name,
+    label,
+    type,
+    formData,
+    formError,
+    onChange,
+    maxLength = 500,
+    ...other
+  } = props;
   const isError = formError[name] || null;
 
   const handelClick = (type) => {
@@ -37,10 +49,10 @@ export default function Inputs(props) {
     <div className={styles.container}>
       {type === "download" ? (
         <Row>
-          {Array.isArray(formData[name].value) &&
-            formData[name].value.map((item) => (
+          {Array.isArray(documents) &&
+            documents.map((item) => (
               <DownloadField
-                key={item}
+                key={item.id}
                 files={item}
               />
             ))}
@@ -94,16 +106,14 @@ export default function Inputs(props) {
   );
 }
 
-export function DownloadField({ files = "" }) {
-  const [file, setFile] = useState(files);
+export function DownloadField({ files = null }) {
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      dispatch(add_user_file(e.target.files[0].name));
-      setFile(null);
+      const file = await addUserDocument(e.target.files[0]);
+      dispatch(add_user_file(file.data));
     }
   };
 
@@ -111,12 +121,9 @@ export function DownloadField({ files = "" }) {
     fileInputRef.current?.click();
   };
 
-  const handleRemoveFile = (value) => {
-    setFile(null);
-    if (fileInputRef.current) {
-      dispatch(delete_user_file(value));
-      fileInputRef.current.value = "";
-    }
+  const handleRemoveFile = async (id) => {
+    await deleteUserDocument(id);
+    dispatch(delete_user_file(id));
   };
 
   return (
@@ -132,15 +139,15 @@ export function DownloadField({ files = "" }) {
         style={{ display: "none" }}
       />
 
-      {file ? (
+      {files ? (
         <div className={styles.fileInfo}>
           <div>
             <PaperClip />
           </div>
-          <div className={styles.fileName}>{file.name || file}</div>
+          <div className={styles.fileName}>{files.name}</div>
           <Button
             text="Удалить"
-            onClick={() => handleRemoveFile(file.name || file)}
+            onClick={() => handleRemoveFile(files.id)}
           />
         </div>
       ) : (

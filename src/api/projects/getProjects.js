@@ -1,9 +1,5 @@
-import { HTTP } from "./http";
-
-const ERROR_TEXT = {
-    NETWORK_ERROR: "Network error. Please check your connection.",
-    AUTHENTICATION_FAILED: "Authentication failed. Please try again.",
-};
+import { HTTP } from "../http";
+import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
  * Получает массив проектов.
@@ -24,15 +20,12 @@ const ERROR_TEXT = {
  * }
  */
 
-export default function getProjects(token) {
+export default async function getProjects() {
     try {
-        // const response = HTTP.get("/projects", {
-        const response = HTTP.get("/users/1", {/*для теста обновления токена - удалить после*/
-            headers: {
-                Authorization: `Bearer ${token}`, 
-            }
-        });
-        return response.data
+        const response = await HTTP.get("/projects/");
+        // console.log(response.data);
+
+        return response
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);

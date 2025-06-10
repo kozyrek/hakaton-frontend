@@ -16,11 +16,11 @@ export default function Home() {
     return (
         <>
             <LayoutLogin>
-                <Container>
+                <Container fluid="xxl">
                     <Promo/>
                 </Container>      
             </LayoutLogin>
-            <Container>
+            <Container fluid="xxl">
                 <AboutUs/>
                 <Hackathon/>
                 <HowHackathonGoes/>

@@ -1,19 +1,29 @@
-import { Link } from "react-router-dom";
 import Button from "../../../components/button/button";
+import downloadAllFiles from "../../../api/projects/downloadAllFiles";
 
 import styles from "./projectDocuments.module.css";
 
-export default function ProjectDocuments({arr}) {
+export default function ProjectDocuments({files, projectId, isCompleteProject}) {
+    const handleClick = () => {
+        const response = downloadAllFiles(projectId);
+        console.log("скачать все файлы проекта", response.data);
+    }
+
     return (
         <div className={`contentBox ${styles.documentsBlock}`}>
             <h3 className={`titleH3 ${styles.title}`}>Документы проекта</h3>
-            {arr.length !== 0 ? (
+            {files ? (
                 <ul className={`text2 ${styles.documentsList}`}>
-                    {arr.map((item, i) => (
+                    {files.map((item, i) => (
                         <li key={i}>
-                            <Link className="tetx2">
-                            {item}{/*----------------*/}
-                            </Link>
+                            <a 
+                                className="text2" 
+                                href={item.filePath} 
+                                target="_blank" 
+                                rel="noreferrer"
+                            >
+                                {item.name}
+                            </a>
                         </li>
                     ))}
                 </ul> 
@@ -25,7 +35,9 @@ export default function ProjectDocuments({arr}) {
                 path="#" 
                 text='Скачать проект' 
                 addClass={styles.buttonTop}
-                disabled={arr.length === 0}
+                onClick={handleClick}
+                // disabled={!files}
+                disabled={!isCompleteProject}
             ></Button>
         </div>
     )

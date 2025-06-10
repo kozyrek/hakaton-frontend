@@ -92,13 +92,13 @@ export const contacts = [
         id: 2,
         title: 'Телефон: ',
         text: '8 (8342) 22-32-50',
-        link: true,
+        tel: '+78342223250',
     },
     {
         id: 3,
         title: 'Почта: ',
         text: 'licey-mrsu@yandex.ru',
-        link: true,
+        email: 'licey-mrsu@yandex.ru',
     },
 ]
 
@@ -434,7 +434,8 @@ export const reviews = [
     },
     {
         id: 2,
-        url: 'https://www.aykes.ru/video/copy_00DBBD09-03F7-493F-961D-E4DFFA40390A.mp4',
+        /*моковая ссылка на видео*/
+        url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     },
     {
         id: 11,
@@ -446,7 +447,8 @@ export const reviews = [
     },
     {
         id: 12,
-        url: 'https://www.aykes.ru/video/copy_00DBBD09-03F7-493F-961D-E4DFFA40390A.mp4',
+        /*моковая ссылка на видео*/
+        url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     },
     {
         id: 3,
