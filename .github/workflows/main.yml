@@ -32,17 +32,17 @@ jobs:
       - name: Copy docker-compose.yml via ssh
         uses: appleboy/scp-action@master
         with:
-          host: 89.111.153.222
+          host: 83.166.244.205
           username: root
-          password: csTuj5OyvGQoGqzD
+          password: iwLEBeEgj9NIqMGt
           source: "docker-compose.production.yml"
           target: "hackaton"
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
-          host: 89.111.153.222
+          host: 83.166.244.205
           username: root
-          password: csTuj5OyvGQoGqzD
+          password: iwLEBeEgj9NIqMGt
           script: |
             cd hackaton 
             docker compose -f docker-compose.production.yml pull

@@ -10,6 +10,10 @@ import ModalWrapper from "../../../components/modalOverlay";
 import ModalWindow from "../../../components/modalWindow";
 
 import styles from "./teamMembers.module.css";
+import UserDisplay from "../../profile/components/teams-profile/teamMembers/components/user-display/UserDisplay";
+import addMembers from "../../../api/team/addMembers";
+import getAllUser from "../../../api/getAllUsers";
+import deleteMembers from "../../../api/team/deleteMembers";
 
 // import {
 //   ConfirmDeleteModal,
@@ -18,18 +22,29 @@ import styles from "./teamMembers.module.css";
 //   MessageModal,
 // } from "../../../profileModals/ModalsList";
 
-const TeamMembers = ({members}) => {
+const TeamMembers = ({ members }) => {
   const { teamId } = useParams();
   const [isEditRoleOpen, setEditRoleOpen] = useState(false);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [isAddMemberOpen, setAddMemberOpen] = useState(false);
   const [isLimitReachedOpen, setLimitReachedOpen] = useState(false);
-
+  const [participantWithoutTeam, setParticipantWithoutTeam] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [roleInput, setRoleInput] = useState("");
 
   const width = useResize();
+
+  const fetchParticipant = async () => {
+    const response = await getAllUser({
+      is_team_member: false,
+      is_mentor: false,
+    });
+    setParticipantWithoutTeam(response.items);
+  };
+  useEffect(() => {
+    if (isAddMemberOpen) fetchParticipant();
+  }, [isAddMemberOpen]);
 
   // const modalList = useMemo(
   //   () =>
@@ -63,9 +78,8 @@ const TeamMembers = ({members}) => {
   //   setSelectedIndex(null);
   // };
 
-  const handleDeleteClick = (idx, e) => {
-    e.stopPropagation();
-    setSelectedIndex(idx);
+  const handleDeleteClick = async (teamId, memberId) => {
+    const response = await deleteMembers(teamId, memberId);
     setDeleteOpen(true);
   };
 
@@ -75,6 +89,15 @@ const TeamMembers = ({members}) => {
     } else {
       setAddMemberOpen(true);
     }
+  };
+
+  const handleAddMember = async (item) => {
+    const response = await addMembers(teamId, [
+      {
+        participantId: item.participant.id,
+      },
+    ]);
+    fetchParticipant();
   };
 
   const handleRoleClick = (member, idx, e) => {
@@ -107,100 +130,94 @@ const TeamMembers = ({members}) => {
 
   return (
     <>
-        <div className={`contentBox ${styles.participantsBlock}`}>
-            <h2 className="titleH2">Участники команды</h2>
+      <div className={`contentBox ${styles.participantsBlock}`}>
+        <h2 className="titleH2">Участники команды</h2>
 
-            <ul className={styles.participantsList}>
-                {members.map((member) => (
-                <li
-                    key={member.id}
-                    className={`${styles.participantItem} ${member.roleName === "капитан" ? styles.isActive : ""}`}
+        <ul className={styles.participantsList}>
+          {members.map((member) => (
+            <li
+              key={member.id}
+              className={`${styles.participantItem} ${
+                member.roleName === "капитан" ? styles.isActive : ""
+              }`}
+            >
+              <div className={styles.participantInfo}>
+                <p className={`text3 ${styles.participantName}`}>
+                  {member.lastName} {member.firstName}
+                </p>
+                <div
+                  className={styles.roleContainer}
+                  onClick={(e) => handleRoleClick(member, member.id, e)}
                 >
-                    <div className={styles.participantInfo}>
-                        <p className={`text3 ${styles.participantName}`}>{member.lastName} {member.firstName}</p>
-                        <div
-                            className={styles.roleContainer}
-                            onClick={(e) => handleRoleClick(member, member.id, e)}
-                        >
-                            <p className={`text1 ${styles.participantRole}`}>{member.roleName}</p>
-                            <Pencil
-                                width={width < 769 ? 12 : 18}
-                                height={width < 769 ? 12 : 18}
-                                aria-hidden="true"
-                            />
-                        </div>
-                    </div>
+                  <p className={`text1 ${styles.participantRole}`}>
+                    {member.roleName}
+                  </p>
+                  <Pencil
+                    width={width < 769 ? 12 : 18}
+                    height={width < 769 ? 12 : 18}
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
 
-                    <div
-                        className={
-                            member.roleName === "капитан"
-                            ? `${styles.rightZone} ${styles.rightZoneCaptain}`
-                            : styles.rightZone
-                        }
-                    >
-                        {member.roleName === "капитан"
-                        ? <LeaderLogo />
-                        : <button
-                            className={`text2 ${styles.textBtn}`}
-                            onClick={(e) => handleMakeCaptain(member.id, e)}
-                          >
-                            Сделать&nbsp;капитаном
-                          </button>
-                        }
-                        
-                    </div>
-                    <button
-                      className={`text2 ${styles.textBtn}`}
-                      onClick={(e) => handleDeleteClick(member.id, e)}
-                    >
-                      Удалить&nbsp;участника
-                    </button>
-                </li>
-                ))}
-            </ul>
-
-            <Button
-                large
-                text="Добавить участника"
-                onClick={handleAddMemberClick}
-            />
-
-          {/* Модальное окно не работает */}
-          {/* <ModalWrapper
-            isOpen={isAddMemberOpen}
-            onClose={() => setAddMemberOpen(false)}
-          >
-            <ModalWindow title="Создание новой команды">
-              <SearchInput />
-              <li
-                key={participant.id}
-                className={`${styles.participantItem} ${
-                  !participant.verified && styles.notVerified
-                }`}
+              <div
+                className={
+                  member.roleName === "капитан"
+                    ? `${styles.rightZone} ${styles.rightZoneCaptain}`
+                    : styles.rightZone
+                }
               >
-                <div className={`${styles.participantInfo}`}>
-                  <Link
-                    to={`${ROUTES.PROFILE}/${participant.id}`}
-                    className={styles.link}
+                {member.roleName === "капитан" ? (
+                  <LeaderLogo />
+                ) : (
+                  <button
+                    className={`text2 ${styles.textBtn}`}
+                    onClick={(e) => handleMakeCaptain(member.id, e)}
                   >
-                    {participant.lastName} &nbsp;
-                    {participant.firstName} &nbsp;
-                    {participant.patronymic}
-                  </Link>
-                </div>
-                <div>
-                  <DeleteButton
-                    className={styles.removeButton}
-                    onClick={() => openModal(participant)}
-                  >
-                    Удалить
-                  </DeleteButton>
-                </div>
-              </li>
-            </ModalWindow>
-          </ModalWrapper> */}
+                    Сделать&nbsp;капитаном
+                  </button>
+                )}
+              </div>
+              <button
+                className={`text2 ${styles.textBtn}`}
+                onClick={(e) => handleDeleteClick(teamId, member.id)}
+              >
+                Удалить&nbsp;участника
+              </button>
+            </li>
+          ))}
+        </ul>
 
-          {/* 
+        <Button
+          large
+          text="Добавить участника"
+          onClick={handleAddMemberClick}
+        />
+
+        {/* Модальное окно не работает */}
+        <ModalWrapper
+          isOpen={isAddMemberOpen}
+          onClose={() => setAddMemberOpen(false)}
+        >
+          <ModalWindow
+            title="Добавить участника"
+            buttonArea={[<Button text="Добавить выбранных" />]}
+            // onClick={}
+          >
+            <SearchInput />
+            <div style={{ marginTop: "28px" }}>
+              {participantWithoutTeam.map((item) => (
+                <UserDisplay
+                  key={item.id}
+                  item={item}
+                  onSubmit={handleAddMember}
+                />
+              ))}
+            </div>
+          </ModalWindow>
+        </ModalWrapper>
+
+        {/* 
           <InputModal
             title="Изменить роль участника"
             placeholder="Новая роль"
@@ -236,7 +253,7 @@ const TeamMembers = ({members}) => {
             isOpen={isLimitReachedOpen}
             onClose={() => setLimitReachedOpen(false)}
           /> */}
-        </div>
+      </div>
     </>
   );
 };
