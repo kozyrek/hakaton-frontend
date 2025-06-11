@@ -9,45 +9,23 @@ import getAllUser from "../../../../api/getAllUsers";
 import { getRole } from "../head-profile/profileHeader";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
-import { useSelector } from "react-redux";
 import deleteUser from "../../../../api/deleteUser";
 import { useDebounce } from "../../../../hooks/useDebounce";
 
-const ProfileMembers = ({
-  user,
-  participants,
-  onRemoveParticipant,
-}) => {
-  // Состояния для поиска, пагинации и модального окна
+const ProfileMembers = ({ user }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
-  const [usersList, setUserList] = useState([]);
+  const [usersData, setUsersData] = useState({
+    items: [],
+    totalPages: 1,
+    currentPage: 1,
+  });
   const [loading, setLoading] = useState(false);
-  // Храним выбранного участника и его индекс (индекс в currentParticipants)
   const [selectedParticipant, setSelectedParticipant] = useState(null);
   const participantsPerPage = 10;
 
-  // const token = useSelector((state) => state.user.token.accessToken);
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const users = await getAllUser();
-        console.log("users", users);
-        setUserList(users);
-      } catch (err) {
-        console.log(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-    // eslint-disable-next-line
-  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -56,9 +34,13 @@ const ProfileMembers = ({
         const params = {
           search: debouncedSearchQuery || null,
         };
-
-        const usersData = await getAllUser(params);
-        setUserList(usersData || []);
+        
+        const response = await getAllUser(params, currentPage);
+        setUsersData({
+          items: response.items || [],
+          totalPages: response.totalPages || 1,
+          currentPage: response.currentPage || 1,
+        });
       } catch (err) {
         console.error("Failed to fetch users:", err.message);
       } finally {
@@ -67,65 +49,54 @@ const ProfileMembers = ({
     };
 
     fetchUsers();
-  }, [debouncedSearchQuery]);
+  }, [debouncedSearchQuery, currentPage]);
 
-  // Фильтрация участников по поисковому запросу
-  // const filteredParticipants = participants.filter((p) => {
-  //   const query = searchQuery.toLowerCase();
-  //   return (
-  //     p.full_name.toLowerCase().includes(query) ||
-  //     (p.role && p.role.toLowerCase().includes(query))
-  //   );
-  // });
+  const getPageNumbers = () => {
+    const totalPages = usersData.totalPages;
+    const currentPage = usersData.currentPage;
+    const pages = [];
+    const maxVisiblePages = 5;
 
-  // const totalPages = Math.ceil(
-  //   filteredParticipants.length / participantsPerPage
-  // );
-  // const startIndex = (currentPage - 1) * participantsPerPage;
-  // const currentParticipants = filteredParticipants.slice(
-  //   startIndex,
-  //   startIndex + participantsPerPage
-  // );
-
-  // Функция для генерации номеров страниц с эллипсисами
-  const getPageNumbers = (current, total) => {
-    const range = new Set();
-    const rangeWithDots = [];
-    let last;
-
-    range.add(1);
-    range.add(2);
-    const middleStart = Math.max(4, Math.min(current - 1, total - 5));
-    const middleEnd = Math.min(total - 3, middleStart + 2);
-
-    for (let i = middleStart; i <= middleEnd; i++) {
-      range.add(i);
-    }
-
-    range.add(total - 1);
-    range.add(total);
-
-    const sortedRange = [...range].sort((a, b) => a - b);
-    for (let i of sortedRange) {
-      if (last) {
-        if (i - last === 2) {
-          rangeWithDots.push(last + 1);
-        } else if (i - last > 2) {
-          rangeWithDots.push("...");
-        }
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
       }
-      rangeWithDots.push(i);
-      last = i;
+    } else {
+      // Always show first page
+      pages.push(1);
+
+      // Calculate start and end pages
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      // Add ellipsis if needed
+      if (startPage > 2) {
+        pages.push("...");
+      }
+
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      // Add ellipsis if needed
+      if (endPage < totalPages - 1) {
+        pages.push("...");
+      }
+
+      // Always show last page
+      pages.push(totalPages);
     }
-    return rangeWithDots;
+
+    return pages;
   };
 
-  const pageNumbers = getPageNumbers(currentPage, 1);
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    if (pageNumber !== "..." && pageNumber !== currentPage) {
+      setCurrentPage(pageNumber);
+    }
   };
 
-  // Открытие модального окна с выбранным участником
   const openModal = (participant) => {
     setSelectedParticipant(participant.id);
     setShowModal(true);
@@ -136,8 +107,12 @@ const ProfileMembers = ({
       try {
         await deleteUser(selectedParticipant);
         const params = { search: debouncedSearchQuery || null };
-        const usersData = await getAllUser(params);
-        setUserList(usersData.items || []);
+        const response = await getAllUser(params, false, currentPage);
+        setUsersData({
+          items: response.items || [],
+          totalPages: response.totalPages || 1,
+          currentPage: response.currentPage || 1,
+        });
       } catch (err) {
         console.error("Failed to delete user:", err.message);
       } finally {
@@ -147,7 +122,6 @@ const ProfileMembers = ({
     }
   };
 
-  // Отмена удаления
   const cancelRemoval = () => {
     setShowModal(false);
     setSelectedParticipant(null);
@@ -158,21 +132,21 @@ const ProfileMembers = ({
     setCurrentPage(1);
   };
 
-  // Нужно добавить прелоадер
-  // if (loading) return <>Loading</>;
-
   return (
     <div className={styles.participantsList}>
       <h2 className={styles.profileTabTitle}>Участники</h2>
       <SearchInput
         value={searchQuery}
-        onChange={(e) => handleSearchChange(e)}
+        onChange={handleSearchChange}
+        placeholder="Поиск участников"
       />
 
       <ul className={styles.participantsListContainer}>
-        {loading && <div>Loading</div>}
-        {(usersList.items || []).length > 0 ? (
-          (usersList.items || [])
+        {loading && <div className={styles.loading}>Загрузка...</div>}
+        {!loading && usersData.items.length === 0 ? (
+          <div className={styles.emptyList}>Список участников пуст</div>
+        ) : (
+          usersData.items
             .filter((participant) => {
               const isAdmin = user.mentor?.isAdmin ?? false;
               const isVerified = participant.verified ?? false;
@@ -185,13 +159,12 @@ const ProfileMembers = ({
                   !participant.verified && styles.notVerified
                 }`}
               >
-                <div className={`${styles.participantInfo}`}>
+                <div className={styles.participantInfo}>
                   <Link
                     to={`${ROUTES.PROFILE}/${participant.id}`}
                     className={styles.link}
                   >
-                    {participant.lastName} &nbsp;
-                    {participant.firstName} &nbsp;
+                    {participant.lastName} {participant.firstName}{" "}
                     {participant.patronymic}
                   </Link>
                 </div>
@@ -210,22 +183,21 @@ const ProfileMembers = ({
                 </div>
               </li>
             ))
-        ) : (
-          <div className={styles.emptyList}>Список участников пуст</div>
         )}
       </ul>
 
-      <Pagination
-        pageNumbers={pageNumbers}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
-      />
+      {usersData.totalPages > 1 && (
+        <Pagination
+          pageNumbers={getPageNumbers()}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      )}
 
       {showModal && (
         <div className={styles.modalOverlay}>
           <ModalWindow
             title="Действительно хотите удалить данного участника?"
-            // description={selectedParticipant?.participant.full_name}
             descriptionLg={false}
             setIsShow={cancelRemoval}
           >
