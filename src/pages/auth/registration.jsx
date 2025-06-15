@@ -1,6 +1,8 @@
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LayoutLogin from "./layoutLogin";
 import Inputs from "../../components/inputs/inputs";
 import ModalWindow from "../../components/modalWindow";
@@ -18,14 +20,17 @@ import ArrowDown from "./images/arrowdown";
 import ArrowUp from "./images/arrowup";
 import { MODAL } from "../../components/modalWindow/utils/constants";
 import userRegistration from "../../api/userRegistration";
+import getRegion from "../../api/regions/getRegions";
 
 export default function Registration() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isShowRegion, setIsShowRegion] = useState(false);
   const [formData, setFormData] = useState({
     role: { value: "participant", type: "role" },
     policy: { value: false, type: "checkbox" },
     regulations: { value: false, type: "checkbox" },
   });
+  const [regions, setRegions] = useState([]);
   const timerRef = useRef(null);
   const [formError, setFormError] = useState({});
   const [isShowModal, setIsShowModal] = useState(false);
@@ -33,6 +38,15 @@ export default function Registration() {
     { role: "mentor", value: "Ментор" },
     { role: "participant", value: "Участник" },
   ];
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRegion = async () => {
+      const response = await getRegion();
+      setRegions(response.data);
+    };
+    fetchRegion();
+  }, []);
 
   useEffect(() => {
     const { applicableFields, errorFields } = formFields.reduce(
@@ -57,7 +71,7 @@ export default function Registration() {
       { applicableFields: {}, errorFields: {} }
     );
 
-    console.log(applicableFields);
+    // console.log(applicableFields);
 
     setFormData((prev) => ({
       ...prev,
@@ -67,38 +81,90 @@ export default function Registration() {
     setFormError(errorFields);
   }, [formData.role.value]);
 
-  console.log("fo", formData);
+  // console.log("fo", formData);
 
   const handleChange = (value, name) => {
+    const processedValue =
+      name === "phoneNumber" ? value.replace(/^\+/, "") : value;
+
     setFormData({
       ...formData,
-      [name]: { value: value, type: formData[name].type },
+      [name]: { value: processedValue, type: formData[name].type },
     });
 
     if (timerRef.current) {
-      clearTimeout(timerRef);
+      clearTimeout(timerRef.current);
     }
 
     timerRef.current = setTimeout(() => {
-      validateField(value, formData[name].type, name, setFormError);
+      validateField(processedValue, formData[name].type, name, setFormError);
     }, 1500);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errors = validateForm(formData, formError, setFormError);
     if (!passwordMatchValidation(formData)) {
       const name = "retryPassword";
       setFormError((prevError) => ({
         ...prevError,
-        [name]: "Пароли не совпадают.",
+        [name]: "Пароли не совпадают",
       }));
       return;
     }
-    console.log(formError);
+
     if (errors) return;
-    const response = userRegistration(formData);
-    setIsShowModal(true);
-    console.log(response);
+
+    try {
+      const response = await userRegistration(formData);
+
+      if (response?.status === 201) {
+        console.log("reg");
+        setIsShowModal(true);
+      }
+    } catch (error) {
+      console.error("Ошибка регистрации:", error);
+
+      // Обработка конфликта 409
+      if (error.response?.status === 409) {
+        const errorMessage = error.response.data.detail;
+
+        // Проверяем конкретную причину конфликта
+        if (errorMessage.includes("User with this email already exists")) {
+          setFormError((prev) => ({
+            ...prev,
+            email: "Пользователь с таким email уже зарегистрирован",
+          }));
+        } else if (errorMessage.includes("region_id does not exist")) {
+          setFormError((prev) => ({
+            ...prev,
+            regionId: "Указанный регион не существует",
+          }));
+        } else {
+          toast.error(errorMessage, {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+      } else {
+        toast.error(
+          error.response?.data?.detail || "Произошла неизвестная ошибка",
+          {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+      }
+    }
   };
 
   return (
@@ -118,7 +184,10 @@ export default function Registration() {
               onClick={() => setIsOpen(!isOpen)}
             >
               {options.find((e) => e.role === formData.role.value).value}
-              <span className={stylesReg.arrow} key="role-selected">
+              <span
+                className={stylesReg.arrow}
+                key="role-selected"
+              >
                 {!isOpen ? <ArrowDown /> : <ArrowUp />}
               </span>
             </div>
@@ -146,19 +215,62 @@ export default function Registration() {
 
             {formFields.map((item) => {
               return item.name === formData.role.value ? (
-                item.data.map((e) => {
-                  return <div
-                    className={`${stylesReg.conInputs} mb-4`}
-                    key={e.id}
-                  >
-                    <Inputs
-                      {...e}
-                      formData={formData}
-                      formError={formError}
-                      onChange={handleChange}
-                    />
-                  </div>;
-                })
+                item.data.map((e) =>
+                  e.name === "regionId" ? (
+                    <div>
+                      <label className={stylesReg.label}>Регион</label>
+                      <div
+                        className={`${styles.loginInput} ${stylesReg.requred} pt-2`}
+                        onClick={() => setIsShowRegion(!isShowRegion)}
+                      >
+                        {formData.regionId?.value
+                          ? regions.find((r) => r.id == formData.regionId.value)
+                              ?.name
+                          : "Выберите регион"}
+                        <span
+                          className={stylesReg.arrow}
+                          key="role-selected"
+                        >
+                          {!isShowRegion ? <ArrowDown /> : <ArrowUp />}
+                        </span>
+                        {isShowRegion && (
+                          <div
+                            className={`${stylesReg.requredOptinsCOntainer} ${stylesReg.rq}`}
+                          >
+                            {regions.map((option, index) => (
+                              <div key={option.id}>
+                                <div
+                                  className={stylesReg.option}
+                                  onClick={() => {
+                                    handleChange(String(option.id), "regionId");
+                                    setIsShowRegion(false);
+                                  }}
+                                >
+                                  {option.name}
+                                </div>
+                                {index < regions.length - 1 && (
+                                  <hr className={stylesReg.hr} />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className={`${stylesReg.conInputs} mb-4`}
+                      key={e.id}
+                    >
+                      <Inputs
+                        {...e}
+                        formData={formData}
+                        formError={formError}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  )
+                )
               ) : item.label ? (
                 <div
                   className={`${stylesReg.conInputs} mb-4`}
@@ -239,7 +351,10 @@ export default function Registration() {
       ) : (
         <ModalWindow
           {...MODAL.REGISTRATION_FORM_HAS_BEEN_SENT}
-          setIsShow={() => setIsShowModal(false)}
+          setIsShow={() => {
+            setIsShowModal(false);
+            navigate("/");
+          }}
         />
       )}
     </LayoutLogin>
