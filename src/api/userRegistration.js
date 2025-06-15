@@ -24,7 +24,6 @@ export default async function userRegistration(data) {
 
   // В зависимости от роли добавляем специфичные данные
   const newData = { ...baseData };
-  console.log("data", data);
 
   if (data.role.value === "participant") {
     newData.participant = {
@@ -39,11 +38,6 @@ export default async function userRegistration(data) {
     };
   }
 
-  console.log("Prepared data:", newData);
-  try {
-    const response = await HTTP.post("/users", newData);
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
+  const response = await HTTP.post("/users", newData);
+  return response;
 }

@@ -1,5 +1,6 @@
 const REQUIRED = "Заполните поле.";
 const EMAIL_ERROR = "Некорректный формат email.";
+const LENGHT_ERROR = "Должен содержать минимум 2 символа.";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^\+?(\d{1,3})?[- .]?\(?\d{3}\)?[- .]?\d{3}[- .]?\d{4}$/;
 const PHONE_ERROR = "Некорректный номер телефона.";
@@ -25,6 +26,8 @@ export function validateForm(formData, formError, setFormError) {
 }
 
 export function validateField(value, type, name, setFormError) {
+  if (name === "regionId") return true;
+
   if (type === "checkbox") {
     if (!value) {
       setFormError((prevError) => ({ ...prevError, [name]: APPROVAL }));
@@ -34,6 +37,11 @@ export function validateField(value, type, name, setFormError) {
 
   if (!value.trim()) {
     setFormError((prevError) => ({ ...prevError, [name]: REQUIRED }));
+    return false;
+  }
+
+  if (value.length < 2) {
+    setFormError((prevError) => ({ ...prevError, [name]: LENGHT_ERROR }));
     return false;
   }
 

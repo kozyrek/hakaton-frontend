@@ -23,6 +23,7 @@ import "./bootstrap.css";
 import UserId from "./pages/profile/user-by-id/id";
 // import TeamMembers from "./pages/profile/components/teams-profile/teamMembers/teamMembers";
 import TeamPage from "./pages/team-page";
+import { ToastContainer } from "react-toastify";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -80,6 +81,7 @@ root.render(
               />
             </Routes>
             <Footer />
+            <ToastContainer />
           </div>
         </BrowserRouter>
       </PersistGate>
