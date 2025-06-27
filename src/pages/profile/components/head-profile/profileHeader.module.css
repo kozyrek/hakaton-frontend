@@ -1,68 +1,126 @@
 .userInfoBlock {
-  display: flex;
-  align-items: center;
-  height: 360px;
+  padding: 120px 0 90px;
   background: transparent;
-  color: #fff;
+  color: #ffffff;
   margin-top: 80px;
-  width: 100%;
-  /* padding: 20px; */
+
+  @media (max-width: 1400px) {
+    padding: 80px 0 60px;
+  }
+
+  @media (max-width: 1024px) {
+    margin-top: 70px;
+    padding: 60px 0 60px;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 60px;
+    padding: 40px 0 40px;
+  }
 }
 
 .userInfoHeader {
-  display: flex;
-  align-items: stretch;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  column-gap: 36px;
+
+  @media (max-width: 1024px) {
+    column-gap: 23px;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.profilePhotoBlock {
+  width: 203px;
   height: 180px;
-  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  grid-row: 1 / 4;
+
+  @media (max-width: 768px) {
+    width: 150px;
+    height: 132px;
+    grid-row: 2 / 3;
+  }
 }
 
 .profilePhotoPlaceholder {
-  border-radius: 8px;
-  height: 100%;
-  width: auto;
-  max-width: 203px;
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
 }
 
-.textContent {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  flex: 1;
+.titleBlock {
+  margin-top: -10px;
+  display: grid;
+  grid-template-columns: minmax(min-content, max-content) min-content;
+  column-gap: 20px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 10px;
+  }
 }
 
 .userName {
-  font-weight: 500;
-  font-size: 52px;
-  /* margin: 0; */
-  /* margin-top: -12px !important; */
-}
+  
+  margin-bottom: 0;
+  color: #ffffff;
 
-.userNameResponsive {
-  display: none;
+  
 }
 
 .userBirthDate {
-  font-weight: 400;
-  font-size: 16px;
-  margin: 0;
+  /* margin: -10px 0 0; */
+  color: #ffffff;
+
+  @media (max-width: 768px) {
+    margin: 0;
+  }
+}
+
+.bottomText {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 16px;
+
+  @media (max-width: 1024px) {
+    row-gap: 10px;
+  }
+
+  @media (max-width: 768px) {
+    row-gap: 8px;
+  }
 }
 
 .userDetails {
   margin: 0;
-  font-size: 16px;
+  color: #ffffff;
 }
 
 .contact {
   display: flex;
-
   gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 4px;
+  }
 }
 
 .contactItem {
   display: flex;
   align-items: center;
+
+  p {
+    margin: 0;
+  }
 }
 
 .icon {
@@ -71,70 +129,9 @@
   margin-right: 5px;
 }
 
-@media (max-width: 868px) {
-  .userInfoBlock {
-    max-height: 300px;
-    /* padding: 15px; */
-  }
-  .userName {
-    font-size: 42px;
-  }
-  .userBirthDate,
-  .userDetails {
-    font-size: 14px;
-  }
-  .contact {
-    gap: 10px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 608px) {
-  .userInfoBlock {
-    flex-direction: column;
-    max-height: 417px;
-    margin-top: 80px;
-  }
-  .contact {
-    flex-direction: column;
-    gap: 0;
-    justify-content: left;
-  }
-
-  .userName {
-    display: none;
-  }
-
-  .userNameResponsive {
-    display: flex;
-    justify-content: left;
-    font-size: 28px;
-    font-weight: 500;
-    margin: 0;
-  }
-
-  .userInfoHeader {
-    flex-direction: column;
-    justify-content: center;
-    height: auto;
-    gap: 10px;
-  }
-
-  .profilePhotoPlaceholder {
-    width: 152px;
-    height: 132px;
-    max-height: 180px;
-  }
-
-  .icon {
-    width: 14px;
-    height: 14px;
-  }
-}
-@media (max-width: 428px){
-  .profilePhotoPlaceholder {
-    width: 152px;
-    height: 132px;
-    max-height: 180px;
-  }
+.editButton {
+  padding: 3px;
+  background: none;
+  border: none;
+  transition: opacity 0.2s;
 }

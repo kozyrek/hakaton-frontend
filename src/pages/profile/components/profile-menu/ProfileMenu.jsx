@@ -41,15 +41,18 @@ const ProfileMenu = ({ activeTab, onTabChange, onLogout, user }) => {
 
   return (
     <div className={styles.profileMenu}>
-      {menuItems.map(({ key, label }) => (
-        <Button
-          key={key}
-          menu
-          text={label}
-          isActive={activeTab === key}
-          onClick={() => onTabChange(key)}
-        />
-      ))}
+      <ul className={styles.profileTabs}>
+        {menuItems.map(({ key, label }) => (
+          <li key={key}>
+            <Button
+              menu
+              text={label}
+              isActive={activeTab === key}
+              onClick={() => onTabChange(key)}
+            />
+          </li>
+        ))}
+      </ul>
       <LogoutButton
         onClick={onLogout}
         text="Выйти из профиля"

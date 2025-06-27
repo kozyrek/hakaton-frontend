@@ -1,11 +1,13 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import PropTypes from "prop-types";
 
 import styles from "./profileHeader.module.css";
 
-import profilePhoto from "../../../../assests/images/photo/ivanIvanovProfile.png";
+import profilePhotoAvatar from "../../../../assests/images/photo/profilePhotoAvatar.svg";
 import phoneSvg from "../../../../assests/images/svg/phone.svg";
 import emailSvg from "../../../../assests/images/svg/email.svg";
+import Pencil from "../personal-info/images/Pencil";
+import { useResize } from "../../../../hooks/useResize";
 import { ROLES } from "../../../../utils/constants";
 
 const ContactItem = ({ icon, text }) => (
@@ -27,8 +29,9 @@ export const getRole = (user) => {
   return ROLES.UNDEFINED;
 };
 
-const ProfileHeader = ({ user }) => {
+const ProfileHeader = ({ user, setEditRegInfo }) => {
   const role = useMemo(() => getRole(user), [user]);
+  const width = useResize();
 
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("ru-RU", {
@@ -44,40 +47,50 @@ const ProfileHeader = ({ user }) => {
   return (
     <div className={styles.userInfoBlock}>
       <div className={styles.userInfoHeader}>
-        <img
-          src={user.photoPath || profilePhoto}
-          alt={`Аватар ${user.firstName} ${user.lastName}`}
-          className={styles.profilePhotoPlaceholder}
-        />
-        <div className={styles.textContent}>
-          <div>
-            <h2 className={styles.userName}>
-              {user.lastName} {user.firstName}
-              {user.patronymic && ` ${user.patronymic}`}
-            </h2>
-            {user.birthDate && (
-              <p className={styles.userBirthDate}>
-                {formatDate(user.birthDate)}
-              </p>
-            )}
-          </div>
-          <div className={styles.bottomText}>
-            <p className={styles.userDetails}>
-              {role} | {user.eduOrganization || "Организация не указана"} |{" "}
-              {user.isMentor
-                ? user.mentor?.specialization || "Специализация не указана"
-                : user.participant?.schoolGrade || "Класс не указан"}
-            </p>
-            <div className={styles.contact}>
-              <ContactItem
-                icon={phoneSvg}
-                text={user.phoneNumber}
-              />
-              <ContactItem
-                icon={emailSvg}
-                text={user.email}
-              />
-            </div>
+        <div className={styles.profilePhotoBlock}> 
+          <img
+            src={user.photoPath || profilePhotoAvatar}
+            alt={`Аватар ${user.firstName} ${user.lastName}`}
+            className={styles.profilePhotoPlaceholder}
+          />
+        </div>
+        <div className={styles.titleBlock}>
+          <h2 className={`titleH2 ${styles.userName}`}>
+            {user.lastName} {user.firstName}
+            {user.patronymic && ` ${user.patronymic}`}
+          </h2>
+          <button 
+            className={styles.editButton}
+            onClick={() => setEditRegInfo(true)}
+            aria-label="Редактировать регистрационные данные">
+            <Pencil
+              width={width < 769 ? 18 : 28}
+              height={width < 769 ? 18 : 28}
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+        {user.birthDate && (
+          <p className={`text1 ${styles.userBirthDate}`}>
+            {formatDate(user.birthDate)}
+          </p>
+        )}
+        <div className={styles.bottomText}>
+          <p className={`text1 ${styles.userDetails}`}>
+            {role} | {user.eduOrganization || "Организация не указана"} |{" "}
+            {user.isMentor
+              ? user.mentor?.specialization || "Специализация не указана"
+              : user.participant?.schoolGrade || "Класс не указан"}
+          </p>
+          <div className={styles.contact}>
+            <ContactItem
+              icon={phoneSvg}
+              text={user.phoneNumber}
+            />
+            <ContactItem
+              icon={emailSvg}
+              text={user.email}
+            />
           </div>
         </div>
       </div>

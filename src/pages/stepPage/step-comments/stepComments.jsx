@@ -141,7 +141,8 @@ export default function StepProjectComment({
                     text="Скачать комментарии" 
                     onClick={handleDownloadComments} 
                     addClass={styles.buttonDownload}
-                    disabled={stepStatus.notStarted || !stepStatus.inProgress}
+                    // disabled={stepStatus.notStarted || !stepStatus.inProgress}
+                    disabled={stepStatus.notStarted}
                 />}
             </div>
             {!isMentor && !stepStatus.isAccept && <Button 
