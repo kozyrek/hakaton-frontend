@@ -9,7 +9,7 @@ const SearchInput = ({ value, onChange }) => {
         placeholder="Поиск"
         value={value}
         onChange={onChange}
-        className={styles.inputFieldSmall}
+        className={`text4 ${styles.inputFieldSmall}`}
       />
       <div className={styles.searchIconRight}>
         <img

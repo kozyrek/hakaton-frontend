@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./profileMembers.module.css";
 import SearchInput from "../../ui/searchInput/searchInput";
 import Pagination from "../../ui/pagination/pagination";
@@ -41,6 +41,7 @@ const ProfileMembers = ({ user }) => {
           totalPages: response.totalPages || 1,
           currentPage: response.currentPage || 1,
         });
+        console.log(response.items)
       } catch (err) {
         console.error("Failed to fetch users:", err.message);
       } finally {
@@ -133,8 +134,8 @@ const ProfileMembers = ({ user }) => {
   };
 
   return (
-    <div className={styles.participantsList}>
-      <h2 className={styles.profileTabTitle}>Участники</h2>
+    <>
+      <h2 className="titleH2">Участники</h2>
       <SearchInput
         value={searchQuery}
         onChange={handleSearchChange}
@@ -149,7 +150,8 @@ const ProfileMembers = ({ user }) => {
           usersData.items
             .filter((participant) => {
               const isAdmin = user.mentor?.isAdmin ?? false;
-              const isVerified = participant.verified ?? false;
+            //   const isVerified = participant.verified ?? false;
+            const isVerified = user.verified ?? false;
               return isAdmin || isVerified;
             })
             .map((participant) => (
@@ -159,28 +161,22 @@ const ProfileMembers = ({ user }) => {
                   !participant.verified && styles.notVerified
                 }`}
               >
-                <div className={styles.participantInfo}>
-                  <Link
-                    to={`${ROUTES.PROFILE}/${participant.id}`}
-                    className={styles.link}
-                  >
-                    {participant.lastName} {participant.firstName}{" "}
-                    {participant.patronymic}
-                  </Link>
-                </div>
-                <div className={styles.rightZone}>
-                  <span className={styles.noUnderline}>
-                    {getRole(participant)}
-                  </span>
-                </div>
-                <div>
-                  <DeleteButton
-                    className={styles.removeButton}
-                    onClick={() => openModal(participant)}
-                  >
-                    Удалить
-                  </DeleteButton>
-                </div>
+                <Link
+                  to={`${ROUTES.PROFILE}/${participant.id}`}
+                  className={`text1 ${styles.participantInfo}`}
+                >
+                  {participant.lastName} {participant.firstName}{" "}
+                  {participant.patronymic}
+                </Link>
+                <span className={`text1 ${styles.participantRole}`}>
+                  {getRole(participant)}
+                </span>
+                <DeleteButton
+                  className={`text2 ${styles.removeButton}`}
+                  onClick={() => openModal(participant)}
+                >
+                  Удалить
+                </DeleteButton>
               </li>
             ))
         )}
@@ -218,7 +214,7 @@ const ProfileMembers = ({ user }) => {
           </ModalWindow>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

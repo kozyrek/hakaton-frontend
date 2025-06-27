@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container } from "react-bootstrap";
 import LayoutProfileBg from "./styles/layoutProfileBg";
 import styles from "./styles/profile.module.css";
-// import ProfileForm from "./profile-form/ProfileForm";
+import ProfileForm from "./components/profile-form/ProfileForm";
 import ProfileHeader from "./components/head-profile/profileHeader";
 import ProfileMenu from "./components/profile-menu/ProfileMenu";
 import ProfileMembers from "./components/list-members/profileMembers";
@@ -25,8 +25,12 @@ export default function Profile() {
 
   // Управление вкладками
   const [activeTab, setActiveTab] = useState("profile");
-  const handleTabChange = (tab) => setActiveTab(tab);
-
+  const [editRegInfo, setEditRegInfo] = useState(false);
+  const handleTabChange = (tab) => {
+    setEditRegInfo(false);
+    setActiveTab(tab);
+  };
+  
   const handleLogout = () => {
     dispatch(logout());
     navigate("/");
@@ -40,12 +44,12 @@ export default function Profile() {
     <>
       <div className={styles.userHeader}>
         <LayoutProfileBg>
-          <ProfileHeader user={user.user} />
+          <ProfileHeader user={user.user} setEditRegInfo={setEditRegInfo} />
         </LayoutProfileBg>
       </div>
       <div className={styles.profileWrapper}>
         <Container fluid="xxl">
-          <div className={styles.mt80}>
+          <div className={styles.pt80}>
             <ProfileMenu
               user={user.user}
               activeTab={activeTab}
@@ -55,21 +59,22 @@ export default function Profile() {
           </div>
           <div className={styles.contentBox}>
             {/* {activeTab === "profile" && <ProfileForm formData={user} />} */}
-            {activeTab === "profile" && <PersonalInfo isViewied />}
-            {activeTab === "users" && (
+            {editRegInfo && <ProfileForm formData={user.user} />}
+            {activeTab === "profile" && !editRegInfo && <PersonalInfo isViewied />}
+            {activeTab === "users" && !editRegInfo && (
               <ProfileMembers
                 user={user.user}
                 participants={participants}
                 onRemoveParticipant={handleRemoveParticipant}
               />
             )}
-            {activeTab === "teams" && (
+            {activeTab === "teams" && !editRegInfo && (
               <TeamsProfile
                 myTeams={myTeams}
                 allTeams={allTeams}
               />
             )}
-            {activeTab === "projects" && (
+            {activeTab === "projects" && !editRegInfo && (
               <ProjectsProfile projects={projects || []} />
             )}
           </div>

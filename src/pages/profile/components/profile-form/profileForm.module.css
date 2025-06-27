@@ -1,54 +1,50 @@
+/* .profileTabTitle{
 
-.profileTabTitle{
-  font-weight: 500;
-  font-size: 52px;
-  margin-top: 8vh;
-  margin-bottom: 5vh;
+} */
+
+.userRegDataChange {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 20px;
+  color: #1a1f1f;
 }
 
-
-.profileTabContent {
-    border-radius: 8px;
-    background-color: #fff;
-  }
-  
-
 .formRow {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .formGroup {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-  }
-  .formGroup label {
-    font-weight: 600;
-    margin-bottom: 5px;
-  }
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
 
+.formGroup {
+  /* display: flex;
+  flex-direction: column; */
 
-
-
-  .passwordHint {
-    font-size: 0.85rem;
-    color: #666;
-    margin-top: 5px;
+  label {
+    margin-bottom: 4px;
   }
+}
+
+.passwordHint {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+}
   
 
-  .profilePhotoSection {
-    margin-bottom: 20px;
-  }
+.profilePhotoSection {
   
-  .profilePhotoPreview {
-    width: 150px;
-    height: 150px;
-    border-radius: 8px;
-    object-fit: cover;
-    margin-bottom: 10px;
-  }
+}
+
+.btnSave {
+  margin-top: 48px;
+
+  /* адаптив */
+}
   
-
-
+/* .profilePhotoPreview {
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 10px;
+} */

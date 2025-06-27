@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./deleteButton.module.css";
 
 const DeleteButton = ({ onClick, children, className = "", ...props }) => {

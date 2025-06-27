@@ -63,15 +63,14 @@ const TeamsProfile = () => {
   };
 
   return (
-    <div className={styles.teamsGrid}>
-      <h2 className={styles.profileTabTitle}>Команды</h2>
+    <>
+      <h2 className="titleH2">Команды</h2>
       <div className={styles.profileMenu}>
         {menuItems.map(({ key, label }) => (
           <Button
             key={key}
             bigmenu
             text={label}
-            addClass={styles.secondMenuButton}
             isActive={activeTab === key}
             onClick={() => setActiveTab(key)}
           />
@@ -161,7 +160,7 @@ const TeamsProfile = () => {
           ]}
         />
       </ModalWrapper>
-    </div>
+    </>
   );
 };
 

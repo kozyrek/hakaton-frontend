@@ -16,14 +16,20 @@ const ProjectsProfile = () => {
   const [isDeleteProject, setIsDeleteProject] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: { value: "", type: "text" },
-    description: { value: "", type: "text", },
-    document: { value: null, type: "file"},
+    name: "",
+    description: "",
+    document: null,
   });
-  const [formError, setFormError] = useState({
-    // projectName: "",
-    // projectDescription: "",
-  });
+
+  // const [formData, setFormData] = useState({
+  //   name: { value: "", type: "text" },
+  //   description: { value: "", type: "text", },
+  //   document: { value: null, type: "file"},
+  // });
+  // const [formError, setFormError] = useState({
+  //   // projectName: "",
+  //   // projectDescription: "",
+  // });
 
   const fetchProjects = async () => {
     try {
@@ -121,24 +127,24 @@ const ProjectsProfile = () => {
           <Inputs
             name="name"
             type="text"
-            formData={formData}
-            formError={formError}
+            // formData={formData}
+            // formError={formError}
             placeholder="Название кейса"
             onChange={handleChange}
           />
           <Inputs
             name="description"
             type="textarea"
-            formData={formData}
-            formError={formError}
+            // formData={formData}
+            // formError={formError}
             placeholder="Описание кейса"
             onChange={handleChange}
           />
           <Inputs
             name="document"
             type="download"
-            formData={formData}
-            formError={formError}
+            // formData={formData}
+            // formError={formError}
             placeholder="Загрузите документ кейса"
             onChange={handleChange}
           />

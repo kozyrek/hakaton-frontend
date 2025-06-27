@@ -1,11 +1,11 @@
 import React from "react";
 import styles from "./profileForm.module.css";
-import profilePhoto from "../../../assests/images/photo/ivanIvanovProfile.png";
+import profilePhotoAvatar from "../../../../assests/images/photo/profilePhotoAvatar.svg";
 
-import TextInput from "../ui/input/textInput";
-import TextArea from "../ui/textarea/textArea";
-import Button from "../../../components/button/button";
-import DownloadButton from "../ui/downloadBtn/downloadButton";
+import TextInput from "../../ui/input/textInput";
+import TextArea from "../../ui/textarea/textArea";
+import Button from "../../../../components/button/button";
+import DownloadButton from "../../ui/downloadBtn/downloadButton";
 
 
 const ProfileForm = ({
@@ -16,25 +16,26 @@ const ProfileForm = ({
   handleSaveProfile
 }) => {
   return (
-    <div className={styles.profileTabContent}>
-      <h2 className={styles.profileTabTitle}>Регистрационные данные</h2>
-      <div className={styles.userRegDataChange}>
+    <>
+      <h2 className={`titleH2 ${styles.profileTabTitle}`}>Регистрационные данные</h2>
+      <div className={`text2 ${styles.userRegDataChange}`}>
         <div className={styles.formRow}>
           <div className={styles.formGroup}>
             <label>Фамилия</label>
             <TextInput
               type="text"
               name="last_name"
-              value={formData.last_name}
+              value={formData.lastName}
               onChange={handleChange}
             />
           </div>
+
           <div className={styles.formGroup}>
             <label>Имя</label>
             <TextInput
               type="text"
               name="first_name"
-              value={formData.first_name}
+              value={formData.firstName}
               onChange={handleChange}
             />
           </div>
@@ -43,16 +44,7 @@ const ProfileForm = ({
             <TextInput
               type="text"
               name="middle_name"
-              value={formData.middle_name}
-              onChange={handleChange}
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Дата рождения</label>
-            <TextInput
-              type="text"
-              name="birth_date"
-              value={formData.birth_date}
+              value={formData.patronymic}
               onChange={handleChange}
             />
           </div>
@@ -60,32 +52,71 @@ const ProfileForm = ({
 
         <div className={styles.formRow}>
           <div className={styles.formGroup}>
-            <label>Организация</label>
+            <label>Дата рождения</label>
             <TextInput
               type="text"
-              name="organization"
-              value={formData.organization}
+              name="birth_date"
+              value={formData.birthDate}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        {formData.participant && 
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label>Регион</label>
+            <TextInput
+              type="text"
+              name="region"
+              value={formData.participant.regionId}
               onChange={handleChange}
             />
           </div>
           <div className={styles.formGroup}>
-            <label>Пост</label>
+            <label>Населенный пункт</label>
             <TextInput
               type="text"
-              name="role"
-              value={formData.role}
+              name="city"
+              value={formData.participant.city}
               onChange={handleChange}
             />
           </div>
+        </div>}
+
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label>Образовательная организация</label>
+            <TextInput
+              type="text"
+              name="organization"
+              value={formData.eduOrganization}
+              onChange={handleChange}
+            />
+          </div>
+          
+          {formData.isMentor ?
           <div className={styles.formGroup}>
             <label>Должность</label>
             <TextInput
               type="text"
               name="position"
-              value={formData.position}
+              value={formData.mentor.jobTitle}
               onChange={handleChange}
             />
           </div>
+          : <div className={styles.formGroup}>
+            <label>Класс/группа</label>
+            <TextInput
+              type="text"
+              name="class"
+              value={formData.participant.schoolGrade}
+              onChange={handleChange}
+            />
+          </div>}
+        </div>
+
+        <div className={styles.formRow}>
           <div className={styles.formGroup}>
             <label>Электронная почта</label>
             <TextInput
@@ -100,15 +131,15 @@ const ProfileForm = ({
             <TextInput
               type="tel"
               name="phone"
-              value={formData.phone}
+              value={formData.phoneNumber}
               onChange={handleChange}
             />
           </div>
         </div>
 
-        <div className={styles.formGroup}>
-          <label>Пароль</label>
-          <div className={styles.flexRow}>
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label>Пароль</label>
             <TextInput
               type="password"
               name="password"
@@ -116,42 +147,43 @@ const ProfileForm = ({
               onChange={handleChange}
               className={styles.inputFieldSmall}
             />
-            <Button large text="Сменить пароль" onClick={() => alert("Сменить пароль")}/>
-
+            <small className={styles.passwordHint}>
+              Пароль должен содержать не&nbsp;менее 8&nbsp;символов, используйте латиницу, спецсимволы (@#$%&amp;*!), заглавные и&nbsp;прописные буквы, цифры.
+            </small>
           </div>
-          <small className={styles.passwordHint}>
-            Пароль должен содержать не менее 8 символов...
-          </small>
+          <div className={styles.formGroup}>
+            <Button large text="Сменить пароль" onClick={() => alert("Сменить пароль")}/>
+          </div>
         </div>
-      </div>
 
-      <div className={styles.profilePhotoSection}>
-        <label>Фото пользователя (до 2 МБ):</label>
-        <div>
-          <img
-            src={formData.photo_url || profilePhoto}
-            alt="avatar"
-            className={styles.profilePhotoPreview}
+        <div className={styles.profilePhotoSection}>
+          {/* <label>Фото пользователя (до 2 МБ):</label>
+          <div>
+            <img
+              src={formData.photo_url || profilePhotoAvatar}
+              alt="avatar"
+              className={styles.profilePhotoPreview}
+            />
+          </div> */}
+          <div>
+            <label htmlFor="photoInput">
+              {formData.photo_url ? "Файл загружен" : "Загрузите файл"}
+            </label>
+            <DownloadButton onClick={() => document.getElementById("photoInput").click()}>
+              Загрузить
+            </DownloadButton>
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            id="photoInput"
+            onChange={handlePhotoChange}
+            // style={{ display: "none" }}
           />
         </div>
-        <div>
-          <label htmlFor="photoInput">
-            {formData.photo_url ? "Файл загружен" : "Загрузите файл"}
-          </label>
-          <DownloadButton onClick={() => document.getElementById("photoInput").click()}>
-            Загрузить
-          </DownloadButton>
-        </div>
-        <input
-          type="file"
-          accept="image/*"
-          id="photoInput"
-          onChange={handlePhotoChange}
-          style={{ display: "none" }}
-        />
       </div>
 
-      <h3>Персональные данные</h3>
+      {/* <h3>Персональные данные</h3>
       <div>
        
           <div className={styles.formGroup}>
@@ -195,9 +227,9 @@ const ProfileForm = ({
             />
           </div>
 
-      </div>
+      </div> */}
 
-      <div className={styles.formGroup}>
+      {/* <div className={styles.formGroup}>
         <label>Загрузить PDF (сертификаты.pdf)</label>
         <div>
           <label htmlFor="pdfInput">
@@ -214,10 +246,15 @@ const ProfileForm = ({
           onChange={handlePdfChange}
           style={{ display: "none" }}
         />
-      </div>
+      </div> */}
 
-      <Button large text="Сохранить" onClick={() => alert("Сменить пароль")}/>
-    </div>
+      <Button 
+        large 
+        text="Сохранить" 
+        onClick={() => alert("Сменить пароль")}
+        addClass={styles.btnSave}
+      />
+    </>
   );
 };
 
