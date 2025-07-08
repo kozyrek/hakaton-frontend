@@ -9,12 +9,15 @@
 
 .commentBlock {
   padding: 40px 120px 40px 40px;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 12px;
   background-color: #f6edff;
   border-radius: 8px;
 }
 
 .buttonSend {
-  margin-top: 28px;
+  margin-top: 16px;
   margin-bottom: 40px;
 }
 

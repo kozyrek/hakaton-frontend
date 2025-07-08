@@ -17,6 +17,7 @@ const HELPER_TEXT_PASSWORD =
 
 export default function Inputs(props) {
   const documents = useSelector((state) => state.user?.documents);
+  const [filesList, setFilesList] = useState(null);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const {
     name,
@@ -26,6 +27,8 @@ export default function Inputs(props) {
     formError,
     onChange,
     maxLength = 500,
+    notUser = false,
+    disabled,
     ...other
   } = props;
   const isError = formError[name] || null;
@@ -45,10 +48,24 @@ export default function Inputs(props) {
         break;
     }
   };
+
+  const handleChangeFile = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      e.preventDefault();
+      onChange(e.target.files[0], name);
+      setFilesList(e.target.files[0]);
+    }
+  }
+
+  const handleDeleteFile = (i) => {
+    onChange("", name);
+    setFilesList(null);
+  }
+
   return (
     <div className={styles.container}>
       {type === "download" ? (
-        <Row>
+        !notUser ? <Row>
           {Array.isArray(documents) &&
             documents.map((item) => (
               <DownloadField
@@ -58,6 +75,12 @@ export default function Inputs(props) {
             ))}
           <DownloadField />
         </Row>
+        : <DownloadFile 
+          onChange={handleChangeFile}
+          onClick={handleDeleteFile}
+          filesList={filesList}
+          disabled={disabled}
+        />
       ) : (
         <>
           <label
@@ -74,6 +97,7 @@ export default function Inputs(props) {
                 onChange={(e) => onChange(e.target.value, name)}
                 {...other}
                 maxLength={maxLength}
+                disabled={disabled}
               ></textarea>
               <div className={styles.length}>
                 {formData[name]?.value.length || 0}/{maxLength}
@@ -86,6 +110,7 @@ export default function Inputs(props) {
               value={formData[name]?.value || ""}
               onChange={(e) => onChange(e.target.value, name)}
               required
+              disabled={disabled}
               {...other}
             />
           )}
@@ -159,4 +184,52 @@ export function DownloadField({ files = null }) {
       )}
     </Col>
   );
+}
+
+export function DownloadFile({
+  name, 
+  filesList,
+  onChange, 
+  onClick, 
+  disabled}) {
+  const fileInputRef = useRef(null);
+
+  const handleAddClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  return (
+    <div className={styles.inputContainer}>
+      <div className={styles.inputFileWrapper}>
+        <label className={`${styles.inputFile}`}>
+          <span className={`text4 ${styles.inputFileText} ${filesList && styles.inputFileName}`}>
+            {filesList ? filesList.name : "Выберите файл"}
+          </span>
+          {/* <span className={styles.inputFileIcon}></span> */}
+          <input 
+            type="file" 
+            ref={fileInputRef}
+            name={name}
+            onChange={onChange} 
+            className={styles.visuallyHidden}
+            disabled={disabled}
+          />
+        </label>
+        <button
+          className={`${styles.delete}`}
+          onClick={onClick}
+        >
+          <SvgDelete />
+        </button>
+      </div>
+
+      <Button 
+        text="Загрузить"
+        violet
+        onClick={handleAddClick} 
+      >
+        Загрузить
+      </Button>
+    </div> 
+  )
 }

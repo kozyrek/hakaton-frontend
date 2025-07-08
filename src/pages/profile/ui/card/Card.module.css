@@ -6,11 +6,11 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  height: 240px;
+  min-height: 240px;
   width: 100%;
 
   @media (max-width: 1024px) {
-    max-height: 172px;
+    min-height: 172px;
   }
 
   &.default {

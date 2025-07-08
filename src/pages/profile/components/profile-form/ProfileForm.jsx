@@ -1,170 +1,188 @@
-import React from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./profileForm.module.css";
 import profilePhotoAvatar from "../../../../assests/images/photo/profilePhotoAvatar.svg";
+import Inputs from "../../../../components/inputs/inputs";
+import { formFields } from "../../../auth/utils/utils";
+import {
+  // passwordMatchValidation,
+  validateField,
+  // validateForm,
+} from "../../../auth/utils/validateForm";
+import ArrowDown from "../../../../assests/images/icon/arrowdown";
+import ArrowUp from "../../../../assests/images/icon/arrowup";
 
 import TextInput from "../../ui/input/textInput";
 import TextArea from "../../ui/textarea/textArea";
 import Button from "../../../../components/button/button";
 import DownloadButton from "../../ui/downloadBtn/downloadButton";
 
+import stylesReg from "../../../auth/styles/registration.module.css";
 
 const ProfileForm = ({
-  formData,
-  handleChange,
+  // formData,
+  // handleChange,
   handlePhotoChange,
   handlePdfChange,
   handleSaveProfile
 }) => {
+  const [regions, setRegions] = useState([]);
+  const timerRef = useRef(null);
+
+  const [isShowRegion, setIsShowRegion] = useState(false);
+  const [formData, setFormData] = useState({
+    role: { value: "participant", type: "role" },
+    policy: { value: false, type: "checkbox" },
+    regulations: { value: false, type: "checkbox" },
+  });
+  const [formError, setFormError] = useState({});
+
+  console.log('фрмдата',formData)//---------------------------------
+
+  useEffect(() => {
+    const { applicableFields, errorFields } = formFields.reduce(
+      (acc, field) => {
+        if (field.name === formData.role.value) {
+          field.data.map((val) => {
+            acc.applicableFields[val.name] = {
+              value: "",
+              type: val.type,
+            };
+            acc.errorFields[val.name] = "";
+          });
+        } else {
+          acc.applicableFields[field.name] = {
+            value: "",
+            type: field.type,
+          };
+          acc.errorFields[field.name] = "";
+        }
+        return acc;
+      },
+      { applicableFields: {}, errorFields: {} }
+    );
+    console.log(applicableFields);
+
+    setFormData((prev) => ({
+      ...prev,
+      ...applicableFields,
+    }));
+
+    setFormError(errorFields);
+
+  }, [formData.role.value]);
+
+  const handleChange = (value, name) => {
+      const processedValue =
+        name === "phoneNumber" ? value.replace(/^\+/, "") : value;
+  
+      setFormData({
+        ...formData,
+        [name]: { value: processedValue, type: formData[name].type },
+      });
+  
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+  
+      timerRef.current = setTimeout(() => {
+        validateField(processedValue, formData[name].type, name, setFormError);
+      }, 1500);
+    };
+
   return (
     <>
       <h2 className={`titleH2 ${styles.profileTabTitle}`}>Регистрационные данные</h2>
       <div className={`text2 ${styles.userRegDataChange}`}>
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label>Фамилия</label>
-            <TextInput
-              type="text"
-              name="last_name"
-              value={formData.lastName}
-              onChange={handleChange}
-            />
-          </div>
+        {formFields.map((item) => {
+          return item.name === formData.role.value ? (
+            item.data.map((e) =>
+              e.name === "regionId" ? (
+                <div className={styles.regionId}>
+                  <label className={stylesReg.label}>Регион</label>
+                  <div
+                    className={`${styles.loginInput} ${stylesReg.requred} pt-2`}
+                    onClick={() => setIsShowRegion(!isShowRegion)}
+                  >
+                    {formData.regionId?.value
+                      ? regions.find((r) => r.id == formData.regionId.value)
+                          ?.name
+                      : "Выберите регион"}
+                    <span
+                      className={stylesReg.arrow}
+                      key="role-selected"
+                    >
+                      {!isShowRegion ? <ArrowDown /> : <ArrowUp />}
+                    </span>
+                    {isShowRegion && (
+                      <div
+                        className={`${stylesReg.requredOptinsCOntainer} ${stylesReg.rq}`}
+                      >
+                        {regions.map((option, index) => (
+                          <div key={option.id}>
+                            <div
+                              className={stylesReg.option}
+                              onClick={() => {
+                                handleChange(String(option.id), "regionId");
+                                setIsShowRegion(false);
+                              }}
+                            >
+                              {option.name}
+                            </div>
+                            {index < regions.length - 1 && (
+                              <hr className={stylesReg.hr} />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className={`${stylesReg.conInputs} ${styles[item.data[e.id-8].name]}`}
+                  key={e.id}
+                >
+                  <Inputs
+                    {...e}
+                    formData={formData}
+                    formError={formError}
+                    onChange={handleChange}
+                  />
+                </div>
+              )
+            )
+          ) : item.label ? (
+            <div
+              className={`${stylesReg.conInputs} ${styles[item.name]}`}
+              key={item.id}
+            >
+              <Inputs
+                {...item}
+                formData={formData}
+                formError={formError}
+                onChange={handleChange}
+              />
+            </div>
+          ) : null;
+        })}
 
-          <div className={styles.formGroup}>
-            <label>Имя</label>
-            <TextInput
-              type="text"
-              name="first_name"
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Отчество</label>
-            <TextInput
-              type="text"
-              name="middle_name"
-              value={formData.patronymic}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
+        <Button 
+          large 
+          text="Сменить пароль" 
+          onClick={() => alert("Сменить пароль")}
+          addClass={styles.btnChangePassword}
+        />
+      </div>
 
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label>Дата рождения</label>
-            <TextInput
-              type="text"
-              name="birth_date"
-              value={formData.birthDate}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        {formData.participant && 
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label>Регион</label>
-            <TextInput
-              type="text"
-              name="region"
-              value={formData.participant.regionId}
-              onChange={handleChange}
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Населенный пункт</label>
-            <TextInput
-              type="text"
-              name="city"
-              value={formData.participant.city}
-              onChange={handleChange}
-            />
-          </div>
-        </div>}
-
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label>Образовательная организация</label>
-            <TextInput
-              type="text"
-              name="organization"
-              value={formData.eduOrganization}
-              onChange={handleChange}
-            />
-          </div>
-          
-          {formData.isMentor ?
-          <div className={styles.formGroup}>
-            <label>Должность</label>
-            <TextInput
-              type="text"
-              name="position"
-              value={formData.mentor.jobTitle}
-              onChange={handleChange}
-            />
-          </div>
-          : <div className={styles.formGroup}>
-            <label>Класс/группа</label>
-            <TextInput
-              type="text"
-              name="class"
-              value={formData.participant.schoolGrade}
-              onChange={handleChange}
-            />
-          </div>}
-        </div>
-
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label>Электронная почта</label>
-            <TextInput
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Номер телефона</label>
-            <TextInput
-              type="tel"
-              name="phone"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label>Пароль</label>
-            <TextInput
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={styles.inputFieldSmall}
-            />
-            <small className={styles.passwordHint}>
-              Пароль должен содержать не&nbsp;менее 8&nbsp;символов, используйте латиницу, спецсимволы (@#$%&amp;*!), заглавные и&nbsp;прописные буквы, цифры.
-            </small>
-          </div>
-          <div className={styles.formGroup}>
-            <Button large text="Сменить пароль" onClick={() => alert("Сменить пароль")}/>
-          </div>
-        </div>
-
-        <div className={styles.profilePhotoSection}>
-          {/* <label>Фото пользователя (до 2 МБ):</label>
+      <div className={styles.profilePhotoSection}>
+          <label>Фото пользователя (до 2 МБ):</label>
           <div>
             <img
               src={formData.photo_url || profilePhotoAvatar}
               alt="avatar"
               className={styles.profilePhotoPreview}
             />
-          </div> */}
+          </div>
           <div>
             <label htmlFor="photoInput">
               {formData.photo_url ? "Файл загружен" : "Загрузите файл"}
@@ -181,72 +199,6 @@ const ProfileForm = ({
             // style={{ display: "none" }}
           />
         </div>
-      </div>
-
-      {/* <h3>Персональные данные</h3>
-      <div>
-       
-          <div className={styles.formGroup}>
-            <label>Статьи</label>
-            <TextArea
-              name="articles"
-              value={formData.articles}
-              onChange={handleChange}
-              className={styles.inputFieldLarge}
-              rows={5}
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Круг научных интересов</label>
-            <TextArea
-              type="text"
-              name="interests"
-              value={formData.interests}
-              onChange={handleChange}
-              className={styles.inputFieldLarge}
-            />
-     
-        </div>
-      
-          <div className={styles.formGroup}>
-            <label>Преподаваемые предметы</label>
-            <TextArea
-              type="text"
-              name="subjects"
-              value={formData.subjects}
-              onChange={handleChange}
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Тематика научных работ</label>
-            <TextArea
-              type="text"
-              name="research"
-              value={formData.research}
-              onChange={handleChange}
-            />
-          </div>
-
-      </div> */}
-
-      {/* <div className={styles.formGroup}>
-        <label>Загрузить PDF (сертификаты.pdf)</label>
-        <div>
-          <label htmlFor="pdfInput">
-            {formData.certificatesPdf || "Загрузите файл"}
-          </label>
-          <DownloadButton onClick={() => document.getElementById("pdfInput").click()}>
-            Загрузить
-          </DownloadButton>
-        </div>
-        <input
-          type="file"
-          accept=".pdf"
-          id="pdfInput"
-          onChange={handlePdfChange}
-          style={{ display: "none" }}
-        />
-      </div> */}
 
       <Button 
         large 

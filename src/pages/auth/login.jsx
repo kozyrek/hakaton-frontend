@@ -4,6 +4,7 @@ import LayoutLogin from "./layoutLogin";
 import { Link, useNavigate } from "react-router-dom";
 import { loginFields } from "./utils/utils";
 import Inputs from "../../components/inputs/inputs";
+import Loader from "../../components/loader/loader";
 import { validateField, validateForm } from "./utils/validateForm";
 import { useDispatch } from "react-redux";
 import { add_token, set_user } from "../../store/user/userSlice";
@@ -91,9 +92,9 @@ export default function Login() {
       >
         <div className={styles.form}>
           {loading ? (
-            <h2 style={{ position: "absolute", top: "50%", left: "47%" }}>
-              Loading...
-            </h2>
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+              <Loader />
+            </div>
           ) : (
             <>
               <h3 className={styles.h3}>Вход</h3>

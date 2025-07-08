@@ -8,6 +8,7 @@ import getAllTeams from "../../../../api/team/getAllTeam";
 import Inputs from "../../../../components/inputs/inputs";
 import createTeam from "../../../../api/team/createTeam";
 import deleteTeam from "../../../../api/team/deleteTeam";
+import Loader from "../../../../components/loader/loader";
 
 const TeamsProfile = () => {
   const [activeTab, setActiveTab] = useState("myTeams");
@@ -77,6 +78,7 @@ const TeamsProfile = () => {
         ))}
       </div>
       {activeTab === "myTeams" && (
+        !myTeamsState.length ? <Loader /> : (
         <div className={styles.cardsContainer}>
           {myTeamsState.map((team) => (
             <Card
@@ -86,11 +88,11 @@ const TeamsProfile = () => {
               // onClick={() => navigate(`/team/${team.id}`)}
             />
           ))}
-        </div>
+        </div>)
       )}
 
       {activeTab === "allTeams" && (
-        <div className={styles.cardsContainer}>
+        !allTeamsState.length ? <Loader /> : (<div className={styles.cardsContainer}>
           {allTeamsState.map((team, index) => (
             <Card
               key={index}
@@ -99,7 +101,7 @@ const TeamsProfile = () => {
               logoVariant="default"
             />
           ))}
-        </div>
+        </div>)
       )}
       <div className={styles.createButton}>
         <Button

@@ -58,6 +58,10 @@ code {
   }
 }
 
+.loaderBox {
+  padding: 160px 0;
+}
+
 .titleH1 {
   margin-bottom: 40px;
   font-family: "Gotham";
