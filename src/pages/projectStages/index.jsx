@@ -6,6 +6,7 @@ import HeadStages from "./head-stages/headStages";
 import TeamInfo from "./team-info/teamInfo";
 import ProjectDocuments from "./project-documents/projectDocuments";
 import StagesList from "./stages/stagesList";
+import Loader from "../../components/loader/loader";
 
 import { HTTP } from "../../api/http";
 import getAnyDataDeleteAfterDev from "../../api/projects/getAnyDataDeleteAfterDev";
@@ -125,34 +126,41 @@ export default function ProjectStages() {
         }
     }
     /*------------------------------------------------------------------------------*/
-    return (
-        <>
-            <LayoutLogin>
+    return (        
+        !(project && files && teamInfo)
+        ?   <div className="loaderBox">
+                <Loader />
+            </div> 
+        :   <>
+                <LayoutLogin>
+                    <Container fluid="xxl">
+                        <HeadStages 
+                            obj={project}
+                            setProject={setProject}
+                        />     
+
+    {/* <button type="button" onClick={handleChange}>добавить участника в команду</button> */}
+
+    {/* <input type="file" onChange={handleChange}/> */}
+
+                    </Container>      
+                </LayoutLogin>
                 <Container fluid="xxl">
-                    <HeadStages obj={project}/>     
-
-{/* <button type="button" onClick={handleChange}>добавить участника в команду</button> */}
-
-{/* <input type="file" onChange={handleChange}/> */}
-
-                </Container>      
-            </LayoutLogin>
-            <Container fluid="xxl">
-                <TeamInfo 
-                    obj={teamInfo} 
-                    arr={project.steps}
-                />
-                <ProjectDocuments 
-                    files={files} 
-                    projectId={project.id} 
-                    isCompleteProject={isCompleteProject} 
-                />
-                <StagesList 
-                    arr={project.steps} 
-                    projectId={project.id} 
-                    isCompleteProject={isCompleteProject} 
-                />
-            </Container>
-        </>
+                    <TeamInfo 
+                        obj={teamInfo} 
+                        arr={project.steps}
+                    />
+                    <ProjectDocuments 
+                        files={files} 
+                        projectId={project.id} 
+                        isCompleteProject={isCompleteProject} 
+                    />
+                    <StagesList 
+                        arr={project.steps} 
+                        projectId={project.id} 
+                        isCompleteProject={isCompleteProject} 
+                    />
+                </Container>
+            </>
     )
 }

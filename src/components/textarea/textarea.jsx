@@ -18,8 +18,10 @@ export default function Textarea({value, maxLength, onChange, placeholder, ...ot
                 {value.length || 0}/{maxLength}
             </div>
             {!other.disabled && <button
+                type="button"
                 className={styles.buttonDelete}
-                onClick={() => handleClick}
+                onClick={handleClick}
+                aria-label="Удалить текст"
             >
                 <SvgDelete />
             </button>}

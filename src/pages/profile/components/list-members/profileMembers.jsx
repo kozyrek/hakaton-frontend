@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
 import deleteUser from "../../../../api/deleteUser";
 import { useDebounce } from "../../../../hooks/useDebounce";
+import Loader from "../../../../components/loader/loader";
 
 const ProfileMembers = ({ user }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -108,7 +109,8 @@ const ProfileMembers = ({ user }) => {
       try {
         await deleteUser(selectedParticipant);
         const params = { search: debouncedSearchQuery || null };
-        const response = await getAllUser(params, false, currentPage);
+        const response = await getAllUser(params, currentPage, participantsPerPage);
+
         setUsersData({
           items: response.items || [],
           totalPages: response.totalPages || 1,
@@ -143,7 +145,7 @@ const ProfileMembers = ({ user }) => {
       />
 
       <ul className={styles.participantsListContainer}>
-        {loading && <div className={styles.loading}>Загрузка...</div>}
+        {loading && <Loader />}
         {!loading && usersData.items.length === 0 ? (
           <div className={styles.emptyList}>Список участников пуст</div>
         ) : (

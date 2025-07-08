@@ -4,16 +4,39 @@
 
 .userRegDataChange {
   display: grid;
-  grid-template-columns: 1fr;
-  row-gap: 20px;
+  grid-template-areas: 
+    "lastName firstName patronymic"
+    "dateBirth . ."
+    "regionId city ."
+    "eduOrganization schoolGrade ."
+    "email phoneNumber ."
+    "password retryPassword btnChangePassword";
+  gap: 20px 31px;
   color: #1a1f1f;
 }
 
-.formRow {
+.lastName { grid-area: lastName;}
+.firstName {grid-area: firstName;}
+.patronymic {grid-area: patronymic;}
+.dateBirth {grid-area: dateBirth;}
+.regionId {grid-area: regionId;}
+.city {grid-area: city;}
+.eduOrganization {grid-area: eduOrganization;}
+.schoolGrade {grid-area: schoolGrade;}
+.email {grid-area: email;}
+.phoneNumber {grid-area: phoneNumber;}
+.password {grid-area: password;}
+.retryPassword {grid-area: retryPassword;}
+.btnChangePassword {
+  grid-area: btnChangePassword;
+  align-self: center;
+}
+
+/* .formRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
-}
+} */
 
 .formGroup {
   /* display: flex;
@@ -24,21 +47,19 @@
   }
 }
 
-.passwordHint {
+/* .passwordHint {
   font-size: 0.85rem;
   color: #666;
   margin-top: 5px;
-}
+} */
   
 
-.profilePhotoSection {
+/* .profilePhotoSection {
   
-}
+} */
 
 .btnSave {
   margin-top: 48px;
-
-  /* адаптив */
 }
   
 /* .profilePhotoPreview {

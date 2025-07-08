@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import StepProjectInfo from "./step-info/stepInfo";
 import StepProjectComment from "./step-comments/stepComments";
+import Loader from "../../components/loader/loader";
 import getStep from "../../api/steps/getStep";
 import getStepComments from "../../api/steps/getStepComments";
 import { STEP_PROJECT_STATUS } from "../../utils/constants";
@@ -12,8 +13,8 @@ export default function StepProjectPage() {
     const stepTitle = useLocation().state.stepTitle;
     const projectId = useLocation().state.projectId;
     const [error, setError] = useState(undefined);
-    const [step, setStep] = useState({});
-    const [comments, setComments] = useState([]);
+    const [step, setStep] = useState(null);
+    const [comments, setComments] = useState(null);
     const [addComment, setAddComment] = useState(false);
     const [stepStatus, setStepStatus] = useState({
         notStarted: false,
@@ -88,19 +89,27 @@ export default function StepProjectPage() {
     return (
         <>
             <Container fluid="xxl">
-                <StepProjectInfo 
-                    step={step}
-                    stepTitle={stepTitle} 
-                    stepStatus={stepStatus}
-                    handleSwitchStatus={handleSwitchStatus}
-                />
-                <StepProjectComment 
-                    step={step} 
-                    comments={comments} 
-                    handleAddNewComment={handleAddNewComment} 
-                    stepStatus={stepStatus}
-                    handleSwitchStatus={handleSwitchStatus}
-                />
+                {!(step && comments)
+                ? <div className="loaderBox">
+                    <Loader />
+                </div> 
+                : (
+                    <>
+                        <StepProjectInfo 
+                            step={step}
+                            stepTitle={stepTitle} 
+                            stepStatus={stepStatus}
+                            handleSwitchStatus={handleSwitchStatus}
+                        />
+                        <StepProjectComment 
+                            step={step} 
+                            comments={comments} 
+                            handleAddNewComment={handleAddNewComment} 
+                            stepStatus={stepStatus}
+                            handleSwitchStatus={handleSwitchStatus}
+                        />
+                    </>
+                )}
             </Container>
         </>
     )
