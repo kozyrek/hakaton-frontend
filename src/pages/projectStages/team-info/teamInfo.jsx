@@ -5,7 +5,6 @@ import styles from "./teamInfo.module.css";
 
 export default function TeamInfo({obj, arr}) {
     const [isCompleteText, setIsCompleteText]= useState(false);
-    const [overallRating, setOverallRating] = useState(0);
 
     useEffect(() => {
         if (arr) {
@@ -20,18 +19,6 @@ export default function TeamInfo({obj, arr}) {
                 })
             }
             addText();
-        }
-    }, [arr])
-
-    useEffect(() => {
-        if (arr) {
-            setOverallRating(
-                arr.reduce((prev, item) => {
-                    const sum = prev + item.score;
-                    // console.log('рейтинг команды', sum)
-                    return sum;
-                }, 0)
-            );
         }
     }, [arr])
 
@@ -50,7 +37,7 @@ export default function TeamInfo({obj, arr}) {
                     </ul>
                     : <p className="text1">Вы&nbsp;пока не&nbsp;загрузили текст</p>}
                 </div>         
-                <TeamRating overallRating={overallRating}/>
+                <TeamRating arr={arr} />
             </>}
             {!obj && <p className="text1">Команда ещё не назначена</p>}
         </div>

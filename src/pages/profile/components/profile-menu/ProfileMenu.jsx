@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './profileMenu.module.css';
 import Button from '../../../../components/button/button';
+import { Link } from 'react-router-dom';
+import stylesLink from "../../../../components/button/button.module.css";
 import LogoutButton from '../../../../components/logoutButton/logoutButton';
 
 const MENU_ITEMS = {
@@ -19,8 +21,8 @@ const MENU_ITEMS = {
   ],
   STUDENT: [
     { key: 'profile', label: 'Мой профиль' },
-    { key: 'teams', label: 'Команда' },
-    { key: 'projects', label: 'Проект' }
+    { key: 'teams', label: 'Моя команда' },
+    { key: 'projects', label: 'Мой проект' }
   ]
 };
 
@@ -44,12 +46,24 @@ const ProfileMenu = ({ activeTab, onTabChange, onLogout, user }) => {
       <ul className={styles.profileTabs}>
         {menuItems.map(({ key, label }) => (
           <li key={key}>
+            {(user.isMentor || (!user.isMentor && key === 'profile')) ? 
             <Button
               menu
               text={label}
               isActive={activeTab === key}
               onClick={() => onTabChange(key)}
-            />
+            /> :
+            <Link
+              to={key === "teams" && `/team/${user.teamId}`}
+
+              // to={key === "teams" ? `/team/${user.teamId}` : `/project/9`}
+              // state={{
+              //   projectId: 9,
+              // }}
+              className={`${stylesLink.menuButton} ${stylesLink.menuBtn}`}
+            >
+              {label}
+            </Link>}
           </li>
         ))}
       </ul>
