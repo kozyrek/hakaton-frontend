@@ -10,7 +10,7 @@ import { inflectWords } from "../../../utils/inflectWords";
 import setTimerStep from "../../../api/steps/setTimerStep";//----------------------------------
 
 export default function TeamRating({
-    overallRating, 
+    arr,
     step, 
     setScoreValue, 
     setTimer,
@@ -33,11 +33,17 @@ export default function TeamRating({
         if (isStepPage) {
             setRatingValue(step ? step.score : 0);
         } else {
-            setRatingValue(overallRating);
-            // console.log(Number(overallRating % 10));
+            if (arr) {
+            setRatingValue(
+                arr.reduce((prev, item) => {
+                    const sum = prev + item.score;
+                    // console.log('рейтинг команды', sum)
+                    return sum;
+                }, 0));
+            }
         }
         // eslint-disable-next-line
-    }, [step])
+    }, [arr, step])
 
     useEffect(() => {
         setMinutes(step ? step.timerMinutes : 30);//--------------------
