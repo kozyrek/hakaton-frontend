@@ -19,6 +19,7 @@ export default function StepProjectComment({
     handleAddNewComment,
     stepStatus,
     handleSwitchStatus,
+    handleChangeTimer
 }) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
     const [commentValue, setCommentValue] = useState('');
@@ -57,6 +58,7 @@ export default function StepProjectComment({
         if (response.status === 200) {
             console.log("старт работы на шаге", response.data);
             handleSwitchStatus(stepStatus.inProgress);
+            handleChangeTimer();
         }
     }
 

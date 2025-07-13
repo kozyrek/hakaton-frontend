@@ -20,6 +20,10 @@ export default function TeamRating({
     const [isEditScore, setIsEditScore] = useState(false);
     const [isStepPage, setIsStepPage] = useState(useLocation().pathname.includes("step"));
 
+    const [startTime, setStartTime] = useState(isStepPage && getSortArr(step.attempts, "startedAt"));
+    const [endTime, setEndTime] = useState(isStepPage && getSortArr(step.attempts, "endTimeAt"));
+    const [submitTime, setSubmitTime] = useState(isStepPage && getSortArr(step.attempts, "submittedAt"));
+    const [time, setTime] = useState(0);
     const [minutes, setMinutes] = useState(0);
     const [seconds, setSeconds] = useState(0);
 
@@ -28,6 +32,56 @@ export default function TeamRating({
     const [ratingValue, setRatingValue] = useState(0);
     const [isError, setIsError] = useState({ score: false, time: false});
     const [isErrorMessage, setIsErrorMessage] = useState("");
+
+    const addTimer = () => {
+        setTimeout(setTime, 1000, time - 1000);
+    }
+
+    function getSortArr(arr, field) {
+        // console.log(arr.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt)), arr.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt))[0])
+        return arr.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt))[0][field];
+    }
+
+    useEffect(() => {
+        if (isStepPage) {
+            if (stepStatus.notStarted) {
+                addTimer && clearTimeout(addTimer);
+
+                setTime(step.timerMinutes*60*1000);
+                console.log("111", time, step.timerMinutes*60*1000);
+            }
+
+            if (stepStatus.inProgress) {
+                // if (time > 0) {
+                    setTime(new Date(endTime) - Date.now())
+                    addTimer();
+                    console.log("222", time);
+                // } else {
+                //     
+                // }
+            }
+
+            if (stepStatus.isSubmitted || stepStatus.isAccept) {
+                addTimer && clearTimeout(addTimer);
+
+                setTime(new Date(submitTime) - new Date(startTime));
+                console.log("333", time, new Date(submitTime));
+            }
+
+            if (stepStatus.timeExceeded) {
+                addTimer && clearTimeout(addTimer);
+
+                setTime(0)
+            }
+
+            const localTime = new Date(time + new Date(time).getTimezoneOffset()*60*1000);
+            setMinutes(localTime.getHours()*60 + localTime.getMinutes());
+            setSeconds(localTime.getSeconds());
+            // console.log("осталось/прошло времени", localTime/1000, localTime/1000/60)//----------
+            // console.log("осталось/прошло времени3", minutes, seconds)//-----------
+        }
+        // eslint-disable-next-line
+    }, [step, time, isStepPage, stepStatus])
 
     useEffect(() => {
         if (isStepPage) {
@@ -44,15 +98,6 @@ export default function TeamRating({
         }
         // eslint-disable-next-line
     }, [arr, step])
-
-    useEffect(() => {
-        setMinutes(step ? step.timerMinutes : 30);//--------------------
-        if (isStepPage) {
-            setTimer(step ? step.timerMinutes : 30);//-----------------
-        }
-        console.log("таймер", minutes)
-        // eslint-disable-next-line
-    }, [step])
 
     const handleClickEditScore = () => {
         setIsEditScore(!isEditScore);
@@ -93,6 +138,7 @@ export default function TeamRating({
     const handleChangeTime = (event) => {
         event.preventDefault();
         setMinutes(event.target.value);
+        setSeconds(0);
         setTimer(Number(event.target.value));
 
         if (!event.target.validity.valid) {
@@ -123,6 +169,10 @@ export default function TeamRating({
 
     return (
         <div className={styles.wrapper}>
+            <div style={{backgroundColor: "violet",}}>
+            {step?.status}
+            </div>
+
             <div className={className}>
                 {isStepPage
                 ? <span>Оценка команды за&nbsp;шаг</span>

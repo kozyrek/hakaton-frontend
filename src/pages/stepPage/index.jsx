@@ -23,15 +23,16 @@ export default function StepProjectPage() {
         isAccept: false,
     })
 
-    useEffect(() => {
-        const fetchDataStep = async () => {
-            try {
-                const requestStep = await getStep(projectId, stepNumber);
-                setStep(requestStep.data);
-            } catch (e) {
-                setError(e.message);
-            }
+    const fetchDataStep = async () => {
+        try {
+            const requestStep = await getStep(projectId, stepNumber);
+            setStep(requestStep.data);
+        } catch (e) {
+            setError(e.message);
         }
+    }
+
+    useEffect(() => {
         fetchDataStep();
         // eslint-disable-next-line
     }, [])
@@ -67,19 +68,31 @@ export default function StepProjectPage() {
         setAddComment(!addComment);
     }
 
+    const handleChangeTimer = () => {
+        fetchDataStep();
+    }
+
     const handleSwitchStatus = (status) => {
         switch (status) {
             case stepStatus.notStarted:
-                setStepStatus({isSubmitted: false, notStarted: true});
+                setStepStatus({
+                    ...stepStatus,
+                    isSubmitted: false, notStarted: true});
                 break;
             case stepStatus.inProgress:
-                setStepStatus({notStarted: false, inProgress: true})
+                setStepStatus({
+                    ...stepStatus,
+                    notStarted: false, inProgress: true})
                 break;
             case stepStatus.isSubmitted:
-                setStepStatus({inProgress: false, isSubmitted: true})
+                setStepStatus({
+                    ...stepStatus,
+                    inProgress: false, isSubmitted: true})
                 break;
             case stepStatus.isAccept:
-                setStepStatus({isSubmitted: false, isAccept: true})
+                setStepStatus({
+                    ...stepStatus,
+                    isSubmitted: false, isAccept: true})
                 break;
             default:
                 break;
@@ -100,6 +113,7 @@ export default function StepProjectPage() {
                             stepTitle={stepTitle} 
                             stepStatus={stepStatus}
                             handleSwitchStatus={handleSwitchStatus}
+                            handleChangeTimer={handleChangeTimer}
                         />
                         <StepProjectComment 
                             step={step} 
@@ -107,6 +121,7 @@ export default function StepProjectPage() {
                             handleAddNewComment={handleAddNewComment} 
                             stepStatus={stepStatus}
                             handleSwitchStatus={handleSwitchStatus}
+                            handleChangeTimer={handleChangeTimer}
                         />
                     </>
                 )}
