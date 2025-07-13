@@ -15,22 +15,13 @@ export default function StepProjectInfo({
     stepTitle,
     handleSwitchStatus,
     stepStatus,
+    handleChangeTimer
 }) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
     const [textValue, setTextValue] = useState(step.text ? JSON.parse(step.text).text : "");
     const [scoreValue, setScoreValue] = useState(0);
     const [timer, setTimer] = useState(0);
     const [fileDownload, setFileDownload] = useState(null);
-
-    // const [time, setTime] = useState(5);//-----------------------
-    // useEffect(() => {
-    //     if (time > 0) {
-    //         setTimeout(setTime, 1000, time - 1);
-    //         console.log(time)//----------------------
-    //     } else {
-    //         console.log("таймер стоп")//-------------
-    //     }
-    // }, [time])
 
     useEffect(() => {
         setTextValue(step.text ? JSON.parse(step.text).text : "");
@@ -67,6 +58,7 @@ export default function StepProjectInfo({
             if (response.status === 200) {
                 console.log("шаг отправлен на ревью", response.data);
                 handleSwitchStatus(stepStatus.isSubmitted);
+                handleChangeTimer();
             }
         }
     }
@@ -99,8 +91,6 @@ export default function StepProjectInfo({
 
     return (
         <div className={`contentBox ${styles.wrapper}`}>
-
-            {/* <span>{time}</span> */}
             <div className={styles.infoWrapper}>
                 <h1 className={`titleH2 ${styles.title}`}>{stepTitle}</h1>
                 <h2 className={`titleH3 ${styles.stepTitle}`}>Шаг {step.stepNumber}</h2>

@@ -22,8 +22,8 @@ export default function StagesItem({item, projectId, isAcceptPrevStep}) {
         if (item) {
             setInProgress(
                 item.status === STEP_PROJECT_STATUS.IN_PROGRESS 
-                || item.status === STEP_PROJECT_STATUS.TIME_EXCEEDED //------уточнить статус
-                || item.status === STEP_PROJECT_STATUS.SUBMITTED //------уточнить статус
+                || item.status === STEP_PROJECT_STATUS.TIME_EXCEEDED
+                || item.status === STEP_PROJECT_STATUS.SUBMITTED
             );
             setIsAccept(item.status === STEP_PROJECT_STATUS.ACCEPTED);
             setNotStarted(item.status === STEP_PROJECT_STATUS.NOT_STARTED)

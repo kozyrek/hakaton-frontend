@@ -54,12 +54,12 @@ const ProfileMenu = ({ activeTab, onTabChange, onLogout, user }) => {
               onClick={() => onTabChange(key)}
             /> :
             <Link
-              to={key === "teams" && `/team/${user.teamId}`}
+              // to={key === "teams" && `/team/${user.teamId}`}
 
-              // to={key === "teams" ? `/team/${user.teamId}` : `/project/9`}
-              // state={{
-              //   projectId: 9,
-              // }}
+              to={key === "teams" ? `/team/${user.teamId}` : `/project/9`}
+              state={{
+                projectId: 9,
+              }}
               className={`${stylesLink.menuButton} ${stylesLink.menuBtn}`}
             >
               {label}
