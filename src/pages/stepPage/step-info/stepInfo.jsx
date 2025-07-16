@@ -102,6 +102,7 @@ export default function StepProjectInfo({
                     maxLength={10000}
                     value={textValue}
                     onChange={handleChangeText}
+                    onClick={() => setTextValue("")}
                     disabled={
                         stepStatus.notStarted 
                         || !stepStatus.inProgress 

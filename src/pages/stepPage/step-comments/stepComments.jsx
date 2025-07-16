@@ -92,6 +92,7 @@ export default function StepProjectComment({
                             maxLength={500}
                             value={commentValue}
                             onChange={handleChangeTextComment}
+                            onClick={() => setCommentValue("")}
                             // disabled={
                             //     stepStatus.notStarted
                             //     || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))

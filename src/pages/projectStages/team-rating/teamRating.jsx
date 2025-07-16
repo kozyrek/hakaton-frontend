@@ -18,11 +18,19 @@ export default function TeamRating({
 }) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
     const [isEditScore, setIsEditScore] = useState(false);
-    const [isStepPage, setIsStepPage] = useState(useLocation().pathname.includes("step"));
+    const [isStepPage, setIsStepPage] = useState(
+        useLocation().pathname.includes("step")
+    );
 
-    const [startTime, setStartTime] = useState(isStepPage && getSortArr(step.attempts, "startedAt"));
-    const [endTime, setEndTime] = useState(isStepPage && getSortArr(step.attempts, "endTimeAt"));
-    const [submitTime, setSubmitTime] = useState(isStepPage && getSortArr(step.attempts, "submittedAt"));
+    const [startTime, setStartTime] = useState(
+        isStepPage && getSortArr(step.attempts, "startedAt")
+    );
+    const [endTime, setEndTime] = useState(
+        isStepPage && getSortArr(step.attempts, "endTimeAt")
+    );
+    const [submitTime, setSubmitTime] = useState(
+        isStepPage && getSortArr(step.attempts, "submittedAt")
+    );
     const [time, setTime] = useState(0);
     const [minutes, setMinutes] = useState(0);
     const [seconds, setSeconds] = useState(0);
@@ -33,55 +41,60 @@ export default function TeamRating({
     const [isError, setIsError] = useState({ score: false, time: false});
     const [isErrorMessage, setIsErrorMessage] = useState("");
 
-    const addTimer = () => {
-        setTimeout(setTime, 1000, time - 1000);
-    }
-
-    function getSortArr(arr, field) {
-        // console.log(arr.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt)), arr.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt))[0])
-        return arr.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt))[0][field];
+    function getSortArr(array, field) {
+        if (step?.attempts.length) {
+            // console.log(
+            //     array.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt)),
+            //     array.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt))[0]
+            // );
+            return array.sort(
+            (a, b) => +new Date(b.startedAt) - +new Date(a.startedAt)
+        )[0][field];
+        }
     }
 
     useEffect(() => {
-        if (isStepPage) {
-            if (stepStatus.notStarted) {
-                addTimer && clearTimeout(addTimer);
+        if (!isStepPage) return;
 
-                setTime(step.timerMinutes*60*1000);
-                console.log("111", time, step.timerMinutes*60*1000);
+        let timerId;
+
+        if (stepStatus.notStarted) {
+            setTime(step.timerMinutes * 60000);
+            console.log("111", time);//--
+        } else if (stepStatus.inProgress) {
+            const remaining = new Date(endTime) - new Date();
+            setTime(remaining > 0 ? remaining : 0);
+
+            if (remaining > 0) {
+                timerId = setInterval(() => {
+                    setTime(prev => {
+                        const newTime = prev - 1000;
+                        return newTime > 0 ? newTime : 0
+                    });
+                }, 1000);
             }
-
-            if (stepStatus.inProgress) {
-                // if (time > 0) {
-                    setTime(new Date(endTime) - Date.now())
-                    addTimer();
-                    console.log("222", time);
-                // } else {
-                //     
-                // }
-            }
-
-            if (stepStatus.isSubmitted || stepStatus.isAccept) {
-                addTimer && clearTimeout(addTimer);
-
-                setTime(new Date(submitTime) - new Date(startTime));
-                console.log("333", time, new Date(submitTime));
-            }
-
-            if (stepStatus.timeExceeded) {
-                addTimer && clearTimeout(addTimer);
-
-                setTime(0)
-            }
-
-            const localTime = new Date(time + new Date(time).getTimezoneOffset()*60*1000);
-            setMinutes(localTime.getHours()*60 + localTime.getMinutes());
-            setSeconds(localTime.getSeconds());
-            // console.log("осталось/прошло времени", localTime/1000, localTime/1000/60)//----------
-            // console.log("осталось/прошло времени3", minutes, seconds)//-----------
+            console.log("222", time);//--
+        } else if (
+            stepStatus.isSubmitted || stepStatus.isAccept
+        ) {
+            setTime(new Date(endTime) - new Date(submitTime));
+            console.log("333", time);//--
+        } else if (stepStatus.timeExceeded) {
+            setTime(0);
         }
+        return () => clearInterval(timerId);
+
         // eslint-disable-next-line
-    }, [step, time, isStepPage, stepStatus])
+    }, [isStepPage, stepStatus, step, endTime, submitTime, startTime]);
+
+    useEffect(() => {
+        const totalSeconds = Math.floor(time / 1000);
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        
+        setMinutes(mins);
+        setSeconds(secs);
+    }, [time]);
 
     useEffect(() => {
         if (isStepPage) {

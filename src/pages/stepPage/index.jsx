@@ -21,6 +21,7 @@ export default function StepProjectPage() {
         inProgress: false,
         isSubmitted: false,
         isAccept: false,
+        timeExceeded: false,
     })
 
     const fetchDataStep = async () => {
@@ -46,6 +47,7 @@ export default function StepProjectPage() {
                 isAccept: step.status === STEP_PROJECT_STATUS.ACCEPTED,
                 timeExceeded: step.status === STEP_PROJECT_STATUS.TIME_EXCEEDED,
             });
+            handleSwitchStatus(step.status);
             console.log("текущий статус шага", stepStatus);//---
         }
         // eslint-disable-next-line
@@ -68,8 +70,16 @@ export default function StepProjectPage() {
         setAddComment(!addComment);
     }
 
-    const handleChangeTimer = () => {
-        fetchDataStep();
+    const handleChangeTimer = async () => {
+        try {
+            const requestStep = await getStep(projectId, stepNumber);
+            if (requestStep.status === 200) {
+                setStep(requestStep.data);
+                console.lof("обновление данных шага")
+            }
+        } catch (e) {
+            setError(e.message);
+        }        
     }
 
     const handleSwitchStatus = (status) => {
@@ -93,6 +103,11 @@ export default function StepProjectPage() {
                 setStepStatus({
                     ...stepStatus,
                     isSubmitted: false, isAccept: true})
+                break;
+            case stepStatus.timeExceeded:
+                setStepStatus({
+                    ...stepStatus,
+                    inProgress: false, timeExceeded: true})
                 break;
             default:
                 break;
