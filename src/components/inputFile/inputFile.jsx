@@ -5,7 +5,7 @@ import IconPaperclip from "../../assests/images/icon/icon-paperclip";
 
 import styles from "./inputFile.module.css";
 
-export default function InputFile({fileDownload, setFileDownload, stepStatus, multiple, isComment}) {
+export default function InputFile({fileDownload, setFileDownload, stepStatus, multiple, accept, isComment, disabledButton}) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
     const [files, setFiles] = useState([]);
 
@@ -35,16 +35,18 @@ export default function InputFile({fileDownload, setFileDownload, stepStatus, mu
     return (
         <div className={files?.length && styles.inputWrapper}>
             {(!isMentor || isComment) && <label className={`${styles.inputFile} ${(
-                (stepStatus.notStarted || !stepStatus.inProgress || stepStatus.isSubmitted) && !isComment) 
+                // (stepStatus.notStarted || !stepStatus.inProgress || stepStatus.isSubmitted) && !isComment)
+                !stepStatus.inProgress) 
                 ? `${styles.disabled}` 
-                : ""}`}>
-                <span className={`text4 ${styles.inputFileText}`}>Выберите файл</span>
+                : ""} ${isComment ? styles.inputFileMobile : ""}`}>
+                <span className={`text4 ${styles.inputFileText} ${!isComment ? styles.inputWidth : ""}`}>Выберите файл</span>
                 <input 
                     type="file" 
                     name="file" 
                     multiple={multiple}
                     onChange={handleAddFile} 
                     className={styles.visuallyHidden}
+                    accept={accept}
                 />        
                 <span className={`text2 ${styles.inputFileBtn}`}>Загрузить</span>
             </label>}
@@ -71,6 +73,7 @@ export default function InputFile({fileDownload, setFileDownload, stepStatus, mu
                             className={styles.buttonDeleteFile}
                             onClick={() => handleDeleteFile(i)}
                             aria-label="Удалить файл"
+                            disabled={disabledButton}
                         >
                             <IconDelete/>
                         </button>}

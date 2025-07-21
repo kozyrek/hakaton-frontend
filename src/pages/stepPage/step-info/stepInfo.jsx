@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Button from "../../../components/button/button";
 import Textarea from "../../../components/textarea/textarea";
 import InputFile from "../../../components/inputFile/inputFile";
@@ -7,6 +9,7 @@ import TeamRating from "../../projectStages/team-rating/teamRating";
 import sendDataStepProject from "../../../api/projects/sendDataStepProject";
 import acceptStep from "../../../api/steps/acceptStep";
 import rejectStep from "../../../api/steps/rejectStep";
+import { FILENAME_EXTENSION_FULL } from "../../../utils/constants";
 
 import styles from "./stepInfo.module.css";
 
@@ -47,7 +50,15 @@ export default function StepProjectInfo({
     try {
       // Валидация полей
       if (!textValue && !fileDownload?.length) {
-        alert("Заполните текст шага или добавьте файлы");
+        toast.error("Заполните текст шага или добавьте файлы", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         return;
       }
 
@@ -76,6 +87,7 @@ export default function StepProjectInfo({
             console.warn("Неподдерживаемый тип файла:", file);
             continue;
           }
+
         }
       }
 
@@ -92,32 +104,44 @@ export default function StepProjectInfo({
         handleChangeTimer();
       } else {
         console.error("Ошибка при отправке шага", response);
-        alert("Произошла ошибка при отправке шага");
       }
     } catch (error) {
       console.error("Ошибка в handleSendDataStep:", error);
-      alert(`Ошибка при отправке: ${error.message}`);
     }
   };
 
   //Взаимодействие ментора со страницей
-
   const handleAcceptStep = async () => {
-    if (
-      scoreValue < 0 ||
-      scoreValue > 10 ||
-      isNaN(scoreValue) ||
+    if (scoreValue === 0) {
+      toast("Поставьте, пожалуйста, оценку команде", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
+    } else if (
+      scoreValue < 0 || 
+      scoreValue > 10 || 
+      isNaN(scoreValue) || 
       !Number.isInteger(scoreValue)
     ) {
-      alert(
-        "Установите баллы (от 0 до 10) в поле «Оценка», используйте целые числа"
-      ); //----------
+      toast.error("Установите баллы (от 0 до 10) в поле «Оценка», используя целые числа", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
     } else {
       const response = await acceptStep(
-        step.projectId,
-        step.stepNumber,
-        scoreValue
-      );
+        step.projectId, 
+        step.stepNumber, 
+        scoreValue);
       if (response.status === 200) {
         console.log("шаг согласован", response.data);
         handleSwitchStatus(stepStatus.isAccept);
@@ -125,9 +149,17 @@ export default function StepProjectInfo({
     }
   };
 
-  const handleRejectStep = async () => {
+  const handleRejectStep = async() => {
     if (timer <= 0 || isNaN(timer) || !Number.isInteger(timer)) {
-      alert("Установите таймер, используйте целые числа"); //------------
+      toast.error("Установите таймер, используя целые числа", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
     } else {
       const response = await rejectStep(step.projectId, step.stepNumber, timer);
       if (response.status === 200) {
@@ -135,7 +167,7 @@ export default function StepProjectInfo({
         handleSwitchStatus(stepStatus.notStarted);
       }
     }
-  };
+  }
 
   return (
     <div className={`contentBox ${styles.wrapper}`}>
@@ -175,7 +207,6 @@ export default function StepProjectInfo({
             ? "Загрузите файлы проекта"
             : "Файлы проекта"}
         </h3>
-
         <p className="text1">Документы, презентации, картинки, видео</p>
 
         <InputFile
@@ -183,6 +214,7 @@ export default function StepProjectInfo({
           setFileDownload={setFileDownload}
           stepStatus={stepStatus}
           multiple
+          accept={FILENAME_EXTENSION_FULL.join(", ")}
         />
       </div>
       {isMentor && (

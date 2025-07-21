@@ -8,6 +8,7 @@ import getProjects from "../../../../api/projects/getProjects";
 import createProject from "../../../../api/projects/createProject";
 import deleteProject from "../../../../api/projects/deleteProject";
 import Loader from "../../../../components/loader/loader";
+import { FILENAME_EXTENSION } from "../../../../utils/constants";
 
 import styles from "./projectsProfile.module.css";
 
@@ -118,6 +119,7 @@ const ProjectsProfile = () => {
             formError={formError}
             placeholder="Название кейса"
             onChange={handleChange}
+            maxLength={50}
           />
           <Inputs
             name="description"
@@ -135,6 +137,7 @@ const ProjectsProfile = () => {
             placeholder="Загрузите документ кейса"
             notUser
             onChange={handleChange}
+            accept={FILENAME_EXTENSION.join(", ")}
           />
         </ModalWindow>
       </ModalWrapper>

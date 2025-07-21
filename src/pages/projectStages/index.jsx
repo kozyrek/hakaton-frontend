@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import LayoutLogin from "../auth/layoutLogin";
 import HeadStages from "./head-stages/headStages";
@@ -19,7 +19,7 @@ import { STEP_PROJECT_STATUS } from "../../utils/constants";
 
 export default function ProjectStages() {
     const [error, setError] = useState(undefined);
-    const projectId = useLocation().state.projectId;
+    const { projectId } = useParams();
     const [project, setProject] = useState({});
     const [files, setFiles] = useState([]);
     const [teamInfo, setTeamInfo] = useState(null);
@@ -127,7 +127,7 @@ export default function ProjectStages() {
     }
     /*------------------------------------------------------------------------------*/
     return (        
-        !(project && files && teamInfo)
+        Object.keys(project).length === 0
         ?   <div className="loaderBox">
                 <Loader />
             </div> 

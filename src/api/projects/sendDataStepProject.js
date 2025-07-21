@@ -1,4 +1,6 @@
 import { HTTP } from "../http";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { ERROR_TEXT } from "../../api/utils/constants";
 
 /**
@@ -21,19 +23,39 @@ import { ERROR_TEXT } from "../../api/utils/constants";
  */
 
 export default async function sendDataStepProject(projectId, stepNumber, data) {
+    const errors = {
+        "Too many files to send. Maximum is 10": "Максимальное количество файлов для отправки 10",
+    }
+
     try {
         const response = await HTTP.post(`/projects/${projectId}/steps/${stepNumber}/attempts/submission`, data);
         return response;
     } catch (error) {
         if (!error.response) {
-            throw new Error(ERROR_TEXT.NETWORK_ERROR);
+            toast.error(ERROR_TEXT.NETWORK_ERROR,
+                {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                }
+            );
+        } else {
+            toast.error(
+                errors[error.response?.data?.detail] || "Произошла неизвестная ошибка",
+                {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                }
+            );
         }
-
-        const message =
-        error.response.data?.detail ||
-        error.response.data?.message ||
-        ERROR_TEXT.AUTHENTICATION_FAILED;
-
-        throw new Error(message);
     }
 };

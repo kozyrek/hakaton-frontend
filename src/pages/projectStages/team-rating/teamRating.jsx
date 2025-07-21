@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Pencil from "../images/Pencil";
 import Button from "../../../components/button/button";
 import styles from "./teamRating.module.css";
@@ -40,6 +42,14 @@ export default function TeamRating({
     const [ratingValue, setRatingValue] = useState(0);
     const [isError, setIsError] = useState({ score: false, time: false});
     const [isErrorMessage, setIsErrorMessage] = useState("");
+
+    const STATUS = {
+        "Not started": "Не начато",
+        "In progress": "В процессе выполнения",
+        "Submitted for review": "Готово к проверке",
+        "Accepted": "Согласовано",
+        "Time exceeded": "Время превышено",
+    }
 
     function getSortArr(array, field) {
         if (step?.attempts.length) {
@@ -165,7 +175,15 @@ export default function TeamRating({
 
     const handleSetTimer = async () => {
         if (minutes <= 0 || !Number.isInteger(Number(minutes))) {
-            alert("Установите таймер, используйте целые числа");//---------------------------
+            toast.error("Установите таймер, используя целые числа", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            })
         } else {
             const response = await setTimerStep(step.projectId, step.stepNumber, minutes);
             if (response.status === 200) {
@@ -182,9 +200,9 @@ export default function TeamRating({
 
     return (
         <div className={styles.wrapper}>
-            <div style={{backgroundColor: "violet",}}>
-            {step?.status}
-            </div>
+            {isStepPage && <div className={styles.status}>
+                {STATUS[step?.status]}
+            </div>}
 
             <div className={className}>
                 {isStepPage

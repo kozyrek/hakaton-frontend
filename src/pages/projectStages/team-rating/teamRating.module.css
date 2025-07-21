@@ -5,6 +5,13 @@
     align-items: center;
 }
 
+.status {
+    padding: 8px;
+    text-align: center;
+    border-radius: 4px;
+    background-color: rgba(190, 27, 134, 0.5);
+}
+
 .valueBlock {
     position: relative;
     width: 221px;
