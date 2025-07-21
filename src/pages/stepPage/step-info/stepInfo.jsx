@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Button from "../../../components/button/button";
 import Textarea from "../../../components/textarea/textarea";
 import InputFile from "../../../components/inputFile/inputFile";
@@ -7,6 +9,7 @@ import TeamRating from "../../projectStages/team-rating/teamRating";
 import sendDataStepProject from "../../../api/projects/sendDataStepProject";
 import acceptStep from "../../../api/steps/acceptStep";
 import rejectStep from "../../../api/steps/rejectStep";
+import { FILENAME_EXTENSION_FULL } from "../../../utils/constants";
 
 import styles from "./stepInfo.module.css";
 
@@ -42,7 +45,15 @@ export default function StepProjectInfo({
     const handleSendDataStep = async () => {
         // валидация полей
         if (!(textValue || fileDownload?.length)) {
-            alert("Заполните текст шага или добавьте файлы");
+            toast.error("Заполните текст шага или добавьте файлы", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         } else {
             let formData = new FormData();
             const data = {
@@ -50,12 +61,33 @@ export default function StepProjectInfo({
             };
             formData.append('text', JSON.stringify(data));
             //------------------------------------------------
-            for (let file of fileDownload) {
-                formData.append('files', file);
+            
+            // for (let file of fileDownload) {
+            //     formData.append('files', file);
+            // }
+
+            if (fileDownload?.length) {
+                for (const file of fileDownload) {
+                    // Проверяем, является ли элемент объектом File
+                    if (file instanceof File) {
+                        formData.append("files", file);
+                    }
+                    // Если файл пришел с сервера (имеет filePath)
+                    else if (file?.filePath) {
+                        // Для существующих файлов можно либо:
+                        // а) Отправить только ссылку (если бэкенд умеет их обрабатывать)
+                        // б) Перезагрузить файл с сервера
+                        // Здесь вариант а)
+                        formData.append("file_references", file.filePath);
+                    } else {
+                        console.warn("Неподдерживаемый тип файла:", file);
+                        continue;
+                    }
+                }
             }
 
             const response = await sendDataStepProject(step.projectId, step.stepNumber, formData);
-            if (response.status === 200) {
+            if (response && response.status === 200) {
                 console.log("шаг отправлен на ревью", response.data);
                 handleSwitchStatus(stepStatus.isSubmitted);
                 handleChangeTimer();
@@ -66,8 +98,27 @@ export default function StepProjectInfo({
     //Взаимодействие ментора со страницей 
 
     const handleAcceptStep = async () => {
-        if (scoreValue < 0 || scoreValue > 10 || isNaN(scoreValue) || !Number.isInteger(scoreValue)) {
-            alert("Установите баллы (от 0 до 10) в поле «Оценка», используйте целые числа");//----------
+        if (scoreValue === 0) {
+            toast("Поставьте, пожалуйста, оценку команде", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            })
+        }
+        else if (scoreValue < 0 || scoreValue > 10 || isNaN(scoreValue) || !Number.isInteger(scoreValue)) {
+            toast.error("Установите баллы (от 0 до 10) в поле «Оценка», используя целые числа", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            })
         } else {
             const response = await acceptStep(step.projectId, step.stepNumber, scoreValue);
             if (response.status === 200) {
@@ -79,7 +130,15 @@ export default function StepProjectInfo({
 
     const handleRejectStep = async() => {
         if (timer <= 0 || isNaN(timer) || !Number.isInteger(timer)) {
-            alert("Установите таймер, используйте целые числа");//------------
+            toast.error("Установите таймер, используя целые числа", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            })
         } else {
             const response = await rejectStep(step.projectId, step.stepNumber, timer);
             if (response.status === 200) {
@@ -133,6 +192,10 @@ export default function StepProjectInfo({
                     setFileDownload={setFileDownload}
                     stepStatus={stepStatus} 
                     multiple
+                    disabledButton={stepStatus.notStarted 
+                    || !stepStatus.inProgress 
+                    || stepStatus.isSubmitted}
+                    accept={FILENAME_EXTENSION_FULL.join(", ")}
                 />
             </div>
             {isMentor && 
@@ -177,6 +240,7 @@ export default function StepProjectInfo({
                     || !stepStatus.inProgress 
                     || stepStatus.isSubmitted
                 } 
+                addClass={styles.buttonComplete}
             />
             } 
         </div>

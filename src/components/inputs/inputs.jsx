@@ -29,6 +29,7 @@ export default function Inputs(props) {
     maxLength = 500,
     notUser = false,
     disabled,
+    accept,
     ...other
   } = props;
   const isError = formError[name] || null;
@@ -80,6 +81,7 @@ export default function Inputs(props) {
           onClick={handleDeleteFile}
           filesList={filesList}
           disabled={disabled}
+          accept={accept}
         />
       ) : (
         <>
@@ -110,6 +112,7 @@ export default function Inputs(props) {
               value={formData[name]?.value || ""}
               onChange={(e) => onChange(e.target.value, name)}
               required
+              maxLength={maxLength}
               disabled={disabled}
               {...other}
             />
@@ -191,7 +194,9 @@ export function DownloadFile({
   filesList,
   onChange, 
   onClick, 
-  disabled}) {
+  disabled,
+  accept,
+}) {
   const fileInputRef = useRef(null);
 
   const handleAddClick = () => {
@@ -213,6 +218,7 @@ export function DownloadFile({
             onChange={onChange} 
             className={styles.visuallyHidden}
             disabled={disabled}
+            accept={accept}
           />
         </label>
         <button

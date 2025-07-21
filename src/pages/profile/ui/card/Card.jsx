@@ -26,7 +26,6 @@ export default function Card({
         <Link 
           className={styles.itemLink} 
           to={`${isProject ? "/project/" : "/team/"}${team.id}`}
-          state={{projectId: team.id,}}
         >
           {isProject
           ? <p className={`text3 ${styles.teamTitle}`}>«{team.name}»</p>

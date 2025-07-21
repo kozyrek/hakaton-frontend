@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Button from "../../../components/button/button";
 import PaperClip from "../../profile/components/personal-info/textView/images/PaperClip";
 import Textarea from "../../../components/textarea/textarea";
@@ -8,6 +10,7 @@ import startWorkOnStep from "../../../api/steps/startWorkOnStep";
 import addStepComment from "../../../api/steps/addStepComment";
 import downloadComments from "../../../api/steps/downloadComments";
 import { getDate } from "../../../utils/getDate";
+import { FILENAME_EXTENSION_FULL } from "../../../utils/constants";
 
 import styles from "./stepComments.module.css";
 
@@ -23,7 +26,7 @@ export default function StepProjectComment({
 }) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
     const [commentValue, setCommentValue] = useState('');
-    const [fileDownload, setFileDownload] = useState(null);
+    const [fileDownload, setFileDownload] = useState([]);
 
     const handleChangeTextComment = (e) => {
         e.preventDefault();
@@ -43,11 +46,19 @@ export default function StepProjectComment({
         }
 
         const response = await addStepComment(step.projectId, step.stepNumber, formData);
-        if (response.status === 201) {
-            console.log("комментарий отправлен", response);
+        if (response && response.status === 201) {
+            toast.success("Ваш комментарий отправлен", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
             handleAddNewComment();
             setCommentValue("");
-            setFileDownload(null);
+            setFileDownload([]);
         }
     }
 
@@ -97,6 +108,7 @@ export default function StepProjectComment({
                             //     stepStatus.notStarted
                             //     || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
                             // }
+                            disabled={!stepStatus.inProgress}
                         />
 
                         <InputFile 
@@ -105,6 +117,8 @@ export default function StepProjectComment({
                             stepStatus={stepStatus} 
                             multiple
                             isComment
+                            disabled={!stepStatus.inProgress}
+                            accept={FILENAME_EXTENSION_FULL.join(", ")}
                         />
 
                         <Button 

@@ -8,6 +8,7 @@ import ModalWindow from "../../../components/modalWindow";
 import Inputs from "../../../components/inputs/inputs";
 import updateProject from "../../../api/projects/updateProject";
 import getProjectById from "../../../api/projects/getProjectById";
+import { FILENAME_EXTENSION } from "../../../utils/constants";
 
 import styles from "./headStages.module.css";
 
@@ -18,9 +19,9 @@ export default function HeadStages({obj, setProject}) {
     const timerRef = useRef(null);
 
     const [formData, setFormData] = useState({
-        name: { value: obj && obj.name, type: "text" },
-        description: { value: obj && obj.description, type: "text" },
-        document: { value: obj && obj.documentPath, type: "file"},
+        name: { value: obj.name, type: "text" },
+        description: { value: obj.description, type: "text" },
+        document: { value: obj.documentPath, type: "file"},
     });
     const [formError, setFormError] = useState({});
 
@@ -117,6 +118,7 @@ export default function HeadStages({obj, setProject}) {
                     formError={formError}
                     placeholder="Новое название кейса"
                     onChange={handleChange}
+                    maxLength={50}
                 />
                 <Inputs
                     name="description"
@@ -134,6 +136,7 @@ export default function HeadStages({obj, setProject}) {
                     placeholder="Документ кейса"
                     notUser
                     onChange={handleChange}
+                    accept={FILENAME_EXTENSION.join(", ")}
                 />
                 </ModalWindow>
             </ModalWrapper>
