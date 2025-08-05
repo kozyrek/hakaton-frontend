@@ -127,6 +127,10 @@
 .menuBtn {
     width: 174px;
     height: 38px;
+
+    @media (max-width: 1024px) {
+        width: 100%;
+    }
 }
 
 /* Ховер эффект */

@@ -15,7 +15,7 @@ export default function ReviewCard({ item, setModalIsOpen, addClass }) {
       const height = refText.current.getBoundingClientRect().height;
       setIsVisibleButton(setModalIsOpen && height > 191);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
   
   const playVideo = () => {
