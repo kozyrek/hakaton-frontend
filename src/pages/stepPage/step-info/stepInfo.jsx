@@ -215,6 +215,7 @@ export default function StepProjectInfo({
           stepStatus={stepStatus}
           multiple
           accept={FILENAME_EXTENSION_FULL.join(", ")}
+          disabledButton={!stepStatus.inProgress}
         />
       </div>
       {isMentor && (
@@ -260,6 +261,7 @@ export default function StepProjectInfo({
             !stepStatus.inProgress ||
             stepStatus.isSubmitted
           }
+          addClass={styles.buttonComplete}
         />
       )}
     </div>
