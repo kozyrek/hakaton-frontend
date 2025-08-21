@@ -15,7 +15,9 @@ import { logout } from "../../store/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => {
+    return state.user;
+  });
   const [participants, setParticipants] = useState();
   const [myTeams] = useState();
   const [allTeams] = useState();

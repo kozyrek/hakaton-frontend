@@ -25,7 +25,10 @@ export const LABELS = {
 export default function PersonalInfo({ isViewied = false }) {
   const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user ?? {});
+  const user = useSelector((state) => {
+    console.log("🚀 ~ PersonalInfo ~ state:", state)
+    return state.user ?? {}
+  });
   const isMentor = user.user.isMentor;
   const width = useResize();
   const [data, setData] = useState();

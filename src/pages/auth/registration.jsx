@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import LayoutLogin from "./layoutLogin";
 import Inputs from "../../components/inputs/inputs";
 import ModalWindow from "../../components/modalWindow";
-import { formFields } from "./utils/utils";
+import { getFormFields } from "./utils/utils";
+import { debounce } from "./utils/debounce";
 import {
   passwordMatchValidation,
   validateField,
@@ -14,74 +15,83 @@ import {
 import styles from "./styles/formLogin.module.css";
 import stylesReg from "./styles/registration.module.css";
 
-import ArrowDown from "./images/arrowdown";
-import ArrowUp from "./images/arrowup";
 import { MODAL } from "../../components/modalWindow/utils/constants";
+import Select from "../../components/select";
 import userRegistration from "../../api/userRegistration";
+import getRegions from "../../api/getRegions";
 
 export default function Registration() {
-  const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     role: { value: "participant", type: "role" },
     policy: { value: false, type: "checkbox" },
     regulations: { value: false, type: "checkbox" },
   });
-  const timerRef = useRef(null);
+
   const [formError, setFormError] = useState({});
   const [isShowModal, setIsShowModal] = useState(false);
-  const options = [
-    { role: "mentor", value: "Ментор" },
-    { role: "participant", value: "Участник" },
-  ];
+  const [regions, setRegions] = useState([]);
+  const [fieldsByRole, setFieldsByRole] = useState([]);
+  console.log("🚀 ~ Registration ~ fieldsByRole:", fieldsByRole)
+  console.log("🚀 ~ Registration ~ formData:", formData)
 
   useEffect(() => {
-    const { applicableFields, errorFields } = formFields.reduce(
+    const formFields = getFormFields(regions);
+    const { applicableFields, errorFields, fields } = formFields.reduce(
       (acc, field) => {
-        if (field.name === formData.role.value) {
-          field.data.map((val) => {
-            acc.applicableFields[val.name] = {
-              value: "",
-              type: val.type,
-            };
-            acc.errorFields[val.name] = "";
-          });
+        if (field.data) {
+          if (field.name === formData.role.value) {
+            field.data.map((val) => {
+              acc.applicableFields[val.name] = {
+                value: "",
+                type: val.type,
+              };
+              acc.errorFields[val.name] = "";
+              acc.fields.push(val);
+            });
+          }
         } else {
           acc.applicableFields[field.name] = {
             value: "",
             type: field.type,
           };
           acc.errorFields[field.name] = "";
+          acc.fields.push(field);
         }
         return acc;
       },
-      { applicableFields: {}, errorFields: {} }
+      { applicableFields: {}, errorFields: {}, fields: [] }
     );
-
-    console.log(applicableFields);
 
     setFormData((prev) => ({
       ...prev,
       ...applicableFields,
     }));
 
-    setFormError(errorFields);
-  }, [formData.role.value]);
+    setFieldsByRole(fields);
 
-  console.log("fo", formData);
+    setFormError(errorFields);
+  }, [formData.role.value, regions]);
+
+  useEffect(() => {
+    const fetchRegions = async () => {
+      try {
+        const requestProject = await getRegions();
+        setRegions(requestProject);
+      } catch (e) {
+        console.error(e.message);
+      }
+    }
+    fetchRegions();
+  }, []);
+
+  const debonceValidate = debounce(validateField, 100);
 
   const handleChange = (value, name) => {
     setFormData({
       ...formData,
       [name]: { value: value, type: formData[name].type },
     });
-
-    if (timerRef.current) {
-      clearTimeout(timerRef);
-    }
-
-    timerRef.current = setTimeout(() => {
-      validateField(value, formData[name].type, name, setFormError);
-    }, 1500);
+    debonceValidate(value, formData[name].type, name, setFormError);
   };
 
   const handleSubmit = () => {
@@ -113,65 +123,44 @@ export default function Registration() {
             <div className={stylesReg.choosingRoleText}>
               Все поля обязательны для заполнения.
             </div>
+
             <div
-              className={`${styles.loginInput} ${stylesReg.requred} pt-2`}
-              onClick={() => setIsOpen(!isOpen)}
+              className={`${stylesReg.conInputs} mb-4`}
             >
-              {options.find((e) => e.role === formData.role.value).value}
-              <span className={stylesReg.arrow} key="role-selected">
-                {!isOpen ? <ArrowDown /> : <ArrowUp />}
-              </span>
+              <Select
+                label={"Роль"}
+                name={"role"}
+                selectedValue={formData["role"].value}
+                onChange={handleChange}
+                options={[
+                  { id: "mentor", name: "Ментор" },
+                  { id: "participant", name: "Участник" },
+                ]}
+              />
             </div>
 
-            {isOpen && (
-              <div className={stylesReg.requredOptinsCOntainer}>
-                {options.map((option, index) => (
-                  <>
-                    {" "}
-                    <div
-                      className={stylesReg.option}
-                      key={index}
-                      onClick={() => {
-                        handleChange(option.role, "role");
-                        setIsOpen(false);
-                      }}
-                    >
-                      {option.value}
-                    </div>
-                    {index === 0 && <hr className={stylesReg.hr} />}
-                  </>
-                ))}
-              </div>
-            )}
-
-            {formFields.map((item) => {
-              return item.name === formData.role.value ? (
-                item.data.map((e) => {
-                  return <div
-                    className={`${stylesReg.conInputs} mb-4`}
-                    key={e.id}
-                  >
-                    <Inputs
-                      {...e}
-                      formData={formData}
-                      formError={formError}
-                      onChange={handleChange}
-                    />
-                  </div>;
-                })
-              ) : item.label ? (
+            {fieldsByRole.map((item) => {
+              return (
                 <div
                   className={`${stylesReg.conInputs} mb-4`}
                   key={item.id}
                 >
-                  <Inputs
-                    {...item}
-                    formData={formData}
-                    formError={formError}
-                    onChange={handleChange}
-                  />
+                  {item.type === "select"
+                    ? <Select
+                      {...item}
+                      isClearable={true}
+                      selectedValue={formData[item.name].value}
+                      onChange={handleChange}
+                    />
+                    : <Inputs
+                      {...item}
+                      formData={formData}
+                      formError={formError}
+                      onChange={handleChange}
+                    />
+                  }
                 </div>
-              ) : null;
+              );
             })}
 
             <div className={stylesReg.consent}>
@@ -187,14 +176,14 @@ export default function Registration() {
                 />
               </span>
               <span className={stylesReg.policy}>
-                Я подтверждаю ознакомление с 
+                Я подтверждаю ознакомление с
                 <Link
                   to="/"
                   className={stylesReg.link}
                 >
                   Политикой
                 </Link>
-                 и даю согласие на обработку персональных данных в порядке
+                и даю согласие на обработку персональных данных в порядке
                 и на условиях, указанных в Политике.
               </span>
             </div>
