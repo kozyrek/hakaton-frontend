@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import styles from "./profileForm.module.css";
 import profilePhotoAvatar from "../../../../assests/images/photo/profilePhotoAvatar.svg";
 import Inputs from "../../../../components/inputs/inputs";
-import { formFields } from "../../../auth/utils/utils";
+import { getFormFields } from "../../../auth/utils/utils";
 import {
   // passwordMatchValidation,
   validateField,
@@ -35,7 +35,7 @@ const ProfileForm = ({
     regulations: { value: false, type: "checkbox" },
   });
   const [formError, setFormError] = useState({});
-
+  const formFields = useMemo(() => getFormFields(regions), [regions]);
   console.log('фрмдата',formData)//---------------------------------
 
   useEffect(() => {

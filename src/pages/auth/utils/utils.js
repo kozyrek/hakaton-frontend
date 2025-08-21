@@ -1,4 +1,4 @@
-export const formFields = [
+export const getFormFields = (regionOptions) => [
   {
     id: 1,
     name: "lastName",
@@ -32,7 +32,7 @@ export const formFields = [
     name: "phoneNumber",
     label: "Номер телефона",
     type: "tel",
-    placeholder: "+7 (999) 999 99 99",
+    placeholder: "7 (999) 999 99 99",
   },
   {
     id: 6,
@@ -50,8 +50,9 @@ export const formFields = [
         id: 8,
         name: "regionId",
         label: "Регион",
-        type: "text",
-        placeholder: "Введите название",
+        options: regionOptions,
+        type: "select",
+        placeholder: "Выберите регион",
       },
       {
         id: 9,

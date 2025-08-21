@@ -27,10 +27,9 @@ export default async function userRegistration(data) {
 
   if (data.role.value === "participant") {
     newData.participant = {
-      regionId: data.city.value ? parseInt(data.city.value) || 1 : 1,
-      // regionId: data.regionId.value ? parseInt(data.regionId.value) || 0 : 0,
+      city: data.city.value || "",
+      regionId: data.regionId.value ? parseInt(data.regionId.value) || 0 : 0,
       schoolGrade: data.schoolGrade.value,
-      city: data.regionId.value,
     };
   } else if (data.role.value === "mentor") {
     newData.mentor = {
