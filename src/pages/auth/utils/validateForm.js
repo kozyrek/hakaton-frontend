@@ -2,7 +2,7 @@ const REQUIRED = "Заполните поле.";
 const EMAIL_ERROR = "Некорректный формат email.";
 const LENGHT_ERROR = "Должен содержать минимум 2 символа.";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^\+?(\d{1,3})?[- .]?\(?\d{3}\)?[- .]?\d{3}[- .]?\d{4}$/;
+const PHONE_REGEX = /^(7)\d{10}$/;
 const PHONE_ERROR = "Некорректный номер телефона.";
 const FORBIDEN_CHARS = /[<>$#@!%^&*=]/;
 const FORBIDEN_ERROR = `Содержит запрещенные спецсимволы: /[<>$#@!%^&*=]/`;
