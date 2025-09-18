@@ -10,8 +10,8 @@ export default function ArrowDown() {
       <path
         d="M4.5 6.5L8.5 10.5L12.5 6.5"
         stroke="#1A1F1F"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

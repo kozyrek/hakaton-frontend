@@ -2,8 +2,8 @@ const REQUIRED = "Заполните поле.";
 const EMAIL_ERROR = "Некорректный формат email.";
 const LENGHT_ERROR = "Должен содержать минимум 2 символа.";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^\+?(\d{1,3})?[- .]?\(?\d{3}\)?[- .]?\d{3}[- .]?\d{4}$/;
-const PHONE_ERROR = "Некорректный номер телефона.";
+const PHONE_REGEX = /^\+?[78][-(]?\d{3}\)?-?\d{3}-?\d{2}-?\d{2}$/;
+const PHONE_ERROR = "Некорректный номер телефона. Формат: +7 (999) 999-99-99";
 const FORBIDEN_CHARS = /[<>$#@!%^&*=]/;
 const FORBIDEN_ERROR = `Содержит запрещенные спецсимволы: /[<>$#@!%^&*=]/`;
 const APPROVAL = `Дайте согласие на обработку персональных данных и ознакомьтесь с правилами проведения Хакатона.`;
@@ -40,7 +40,7 @@ export function validateField(value, type, name, setFormError) {
     return false;
   }
 
-  if (value.length < 2) {
+  if (value.length < 2 && name !== "phoneNumber") {
     setFormError((prevError) => ({ ...prevError, [name]: LENGHT_ERROR }));
     return false;
   }
@@ -53,7 +53,11 @@ export function validateField(value, type, name, setFormError) {
   }
 
   if (type === "tel") {
-    if (!PHONE_REGEX.test(value)) {
+    // Удаляем все нецифровые символы, кроме + в начале
+    const phoneDigits = value.replace(/[^\d]/g, '');
+    
+    // Проверяем, что номер начинается с 7 или 8 и имеет 11 цифр
+    if (!/^[78]\d{10}$/.test(phoneDigits)) {
       setFormError((prevError) => ({ ...prevError, [name]: PHONE_ERROR }));
       return false;
     }
@@ -184,12 +188,6 @@ function validatePassword(password) {
     errors.message = "Добавьте минимум одну прописную букву (a-z)";
     return errors;
   }
-
-  // Проверка цифр
-  // if (!/\d/.test(password)) {
-  //   errors.message = "Добавьте минимум одну цифру (0-9)";
-  //   return errors;
-  // }
 
   // Проверка спецсимволов
   if (!specialChars.test(password)) {

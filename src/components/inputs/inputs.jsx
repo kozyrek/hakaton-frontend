@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { IMaskInput } from 'react-imask';
 import Button from "../button/button";
 
 import styles from "./index.module.css";
@@ -74,7 +75,7 @@ export default function Inputs(props) {
                 files={item}
               />
             ))}
-          <DownloadField />
+          <DownloadField key="new-file" />
         </Row>
         : <DownloadFile 
           onChange={handleChangeFile}
@@ -105,6 +106,25 @@ export default function Inputs(props) {
                 {formData[name]?.value.length || 0}/{maxLength}
               </div>
             </>
+          ) : type === "tel" ? (
+            <>
+              <IMaskInput
+                mask="+7 (000) 000-00-00"
+                value={formData[name]?.value || ""}
+                onAccept={(value) => onChange(value, name)}
+                className={`${styles.loginInput} ${isError && styles.errorInput}`}
+                required
+                maxLength={maxLength}
+                disabled={disabled}
+                {...other}
+              />
+              <button
+                className={`${styles.delete} ${!label && styles.notLabel}`}
+                onClick={() => handelClick(type)}
+              >
+                <SvgDelete />
+              </button>
+            </>
           ) : (
             <input
               type={isShowPassword ? "text" : type}
@@ -117,12 +137,14 @@ export default function Inputs(props) {
               {...other}
             />
           )}
-          <button
-            className={`${styles.delete} ${!label && styles.notLabel}`}
-            onClick={() => handelClick(type)}
-          >
-            {type === "password" ? <ShowPassword /> : <SvgDelete />}
-          </button>
+          {type !== "tel" && (
+            <button
+              className={`${styles.delete} ${!label && styles.notLabel}`}
+              onClick={() => handelClick(type)}
+            >
+              {type === "password" ? <ShowPassword /> : <SvgDelete />}
+            </button>
+          )}
           {isError ? (
             <span className={styles.helherTextError}>{formError[name]}</span>
           ) : (
@@ -210,7 +232,6 @@ export function DownloadFile({
           <span className={`text4 ${styles.inputFileText} ${filesList && styles.inputFileName}`}>
             {filesList ? filesList.name : "Выберите файл"}
           </span>
-          {/* <span className={styles.inputFileIcon}></span> */}
           <input 
             type="file" 
             ref={fileInputRef}

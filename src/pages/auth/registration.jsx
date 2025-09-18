@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Fragment } from "react"; // Добавлен импорт Fragment
 import { Container } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import LayoutLogin from "./layoutLogin";
@@ -71,8 +71,6 @@ export default function Registration() {
       { applicableFields: {}, errorFields: {} }
     );
 
-    // console.log(applicableFields);
-
     setFormData((prev) => ({
       ...prev,
       ...applicableFields,
@@ -80,8 +78,6 @@ export default function Registration() {
 
     setFormError(errorFields);
   }, [formData.role.value]);
-
-  // console.log("fo", formData);
 
   const handleChange = (value, name) => {
     const processedValue =
@@ -195,11 +191,10 @@ export default function Registration() {
             {isOpen && (
               <div className={stylesReg.requredOptinsCOntainer}>
                 {options.map((option, index) => (
-                  <>
+                  <Fragment key={option.role}> {/* Добавлен ключ */}
                     {" "}
                     <div
                       className={stylesReg.option}
-                      key={index}
                       onClick={() => {
                         handleChange(option.role, "role");
                         setIsOpen(false);
@@ -208,7 +203,7 @@ export default function Registration() {
                       {option.value}
                     </div>
                     {index === 0 && <hr className={stylesReg.hr} />}
-                  </>
+                  </Fragment>
                 ))}
               </div>
             )}
@@ -217,7 +212,7 @@ export default function Registration() {
               return item.name === formData.role.value ? (
                 item.data.map((e) =>
                   e.name === "regionId" ? (
-                    <div>
+                    <div key={e.id}> {/* Добавлен ключ */}
                       <label className={stylesReg.label}>Регион</label>
                       <div
                         className={`${styles.loginInput} ${stylesReg.requred} pt-2`}
@@ -238,7 +233,7 @@ export default function Registration() {
                             className={`${stylesReg.requredOptinsCOntainer} ${stylesReg.rq}`}
                           >
                             {regions.map((option, index) => (
-                              <div key={option.id}>
+                              <div key={option.id}> {/* Добавлен ключ */}
                                 <div
                                   className={stylesReg.option}
                                   onClick={() => {
