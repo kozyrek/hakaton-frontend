@@ -10,14 +10,14 @@ export default function CloseIcon() {
       <path
         d="M17.5 2.5L2.5 17.5"
         stroke="#1A1F1F"
-        stroke-width="2"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M2.5 2.5L17.5 17.5"
         stroke="#1A1F1F"
-        stroke-width="2"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
