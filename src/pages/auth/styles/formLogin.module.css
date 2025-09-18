@@ -21,7 +21,7 @@
   background: white;
   width: 688px;
   min-height: 488px;
-  display: flexbox;
+  display: grid;
   justify-items: center;
   padding-top: 60px;
 }
