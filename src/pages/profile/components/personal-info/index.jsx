@@ -52,14 +52,21 @@ export default function PersonalInfo({ isViewied = false }) {
     // eslint-disable-next-line
   }, [isMentor]);
 
-  useEffect(() => {
-    const getDocuments = async () => {
-      const docs = await getUserDocuments(user.user.id, user.token.accessToken);
-      dispatch(set_user_files(docs));
-    };
-    getDocuments();
-    // eslint-disable-next-line
-  }, []);
+ useEffect(() => {
+  const getDocuments = async () => {
+    // Проверяем, что user существует и у него есть корректный ID
+    if (user.user && user.user.id) {
+      try {
+        const docs = await getUserDocuments(user.user.id);
+        dispatch(set_user_files(docs));
+      } catch (error) {
+        console.error('Ошибка при загрузке документов:', error);
+      }
+    }
+  };
+  getDocuments();
+  // eslint-disable-next-line
+}, [user.user.id]); // Добавляем user.user.id в зависимости
 
   if (!data) return <>Loading...</>;
 
