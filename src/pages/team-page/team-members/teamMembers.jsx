@@ -61,38 +61,6 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     if (isAddMemberOpen) fetchParticipant();
   }, [isAddMemberOpen]);
 
-  // const modalList = useMemo(
-  //   () =>
-  //     [].map((item, idx) => ({
-  //       id: item.id ?? idx,
-  //       name: item.name ?? item.full_name,
-  //       role: item.role,
-  //     })),
-  //   []
-  // );
-
-  // const handleAddSelected = (ids) => {
-  //   const toAdd = modalList
-  //     .filter((p) => ids.includes(p.id))
-  //     .map((p) => ({ full_name: p.name, role: "участник" }));
-
-  //   if (members.length + toAdd.length > 10) {
-  //     setLimitReachedOpen(true);
-  //     return;
-  //   }
-
-  //   setMembers((prev) => [...prev, ...toAdd]);
-  //   setAddMemberOpen(false);
-  // };
-
-  // const confirmDelete = () => {
-  //   if (selectedIndex !== null) {
-  //     setMembers((prev) => prev.filter((_, i) => i !== selectedIndex));
-  //   }
-  //   setDeleteOpen(false);
-  //   setSelectedIndex(null);
-  // };
-
   const handleDeleteClick = async (teamId, memberId) => {
     setIsLoading(true);
     try {
@@ -171,26 +139,15 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     }
   };
 
-  // const handleMakeCaptain = (idx, e) => {
-  //   e.stopPropagation();
-  //   // setMembers((prev) =>
-  //   //   prev.map((m, i) => ({
-  //   //     ...m,
-  //   //     role:
-  //   //       i === idx ? "капитан" : m.role === "капитан" ? "участник" : m.role,
-  //   //   }))
-  //   // );
-  // };
-
   return (
     <>
       <div className={`contentBox ${styles.participantsBlock}`}>
         <h2 className="titleH2">Участники команды</h2>
 
         <ul className={styles.participantsList}>
-          {members.map((member) => (
+          {members.map((member, index) => (
             <li
-              key={member.id}
+              key={member.id || `member-${index}`} // Добавлен ключ
               className={`${styles.participantItem} ${
                 member.roleName === "капитан" ? styles.isActive : ""
               }`}
@@ -263,9 +220,9 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
           >
             <SearchInput />
             <div style={{ marginTop: "28px" }}>
-              {participantWithoutTeam.map((item) => (
+              {participantWithoutTeam.map((item, index) => (
                 <UserDisplay
-                  key={item.id}
+                  key={item.id || `participant-${index}`} // Добавлен ключ
                   item={item}
                   onSubmit={handleAddMember}
                   disabled={isLoading}
@@ -341,43 +298,6 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
             <p>Команда уже содержит максимальное количество участников (10).</p>
           </ModalWindow>
         </ModalWrapper>
-
-        {/* 
-          <InputModal
-            title="Изменить роль участника"
-            placeholder="Новая роль"
-            cancelText="Отменить"
-            createText="Сохранить"
-            isOpen={isEditRoleOpen}
-            onClose={() => setEditRoleOpen(false)}
-            inputData={roleInput}
-            error=""
-            onChangeInputData={setRoleInput}
-            onConfirm={confirmRoleEdit}
-          />
-
-          <ConfirmDeleteModal
-            isOpen={isDeleteOpen}
-            onCancel={() => setDeleteOpen(false)}
-            onConfirm={confirmDelete}
-            title="Действительно хотите удалить данного участника из команды?"
-            description={
-              selectedIndex !== null ? members[selectedIndex].full_name : ""
-            }
-          />
-
-          <AddMemberInTeam
-            title="Добавить участника"
-            isOpen={isAddMemberOpen}
-            onClose={() => setAddMemberOpen(false)}
-            list={modalList}
-            onAddSelected={handleAddSelected}
-          />
-          <MessageModal
-            title="Добавление невозможно. Команда уже содержит 10 участников"
-            isOpen={isLimitReachedOpen}
-            onClose={() => setLimitReachedOpen(false)}
-          /> */}
       </div>
     </>
   );

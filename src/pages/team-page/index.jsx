@@ -63,7 +63,29 @@ export default function TeamPage() {
           setMembers(teamData.teamMembers);
         }} 
       />
-      <TeamProject project={project} />
+      <TeamProject 
+    project={project} 
+    teamId={teamId}
+    onTeamUpdate={(teamData) => {
+        setTeam(teamData);
+        setMembers(teamData.teamMembers);
+        
+        // Если у команды есть projectId, загружаем проект
+        if (teamData.projectId) {
+            const fetchTeamProject = async () => {
+                try {
+                    const requestProject = await getProjectById(teamData.projectId);
+                    setProject(requestProject.data);
+                } catch (e) {
+                    setError(e.message);
+                }
+            }
+            fetchTeamProject();
+        } else {
+            setProject(null);
+        }
+    }} 
+/>
     </Container>
   </>
     )
