@@ -14,6 +14,8 @@ import UserDisplay from "../../profile/components/teams-profile/teamMembers/comp
 import addMembers from "../../../api/team/addMembers";
 import getAllUser from "../../../api/getAllUsers";
 import deleteMembers from "../../../api/team/deleteMembers";
+import changeRole from "../../../api/team/changeRole";
+import getTeamById from "../../../api/team/getTeamById";
 
 // import {
 //   ConfirmDeleteModal,
@@ -22,7 +24,7 @@ import deleteMembers from "../../../api/team/deleteMembers";
 //   MessageModal,
 // } from "../../../profileModals/ModalsList";
 
-const TeamMembers = ({ members }) => {
+const TeamMembers = ({ members, onTeamUpdate }) => {
   const { teamId } = useParams();
   const [isEditRoleOpen, setEditRoleOpen] = useState(false);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
@@ -32,8 +34,20 @@ const TeamMembers = ({ members }) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [roleInput, setRoleInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const width = useResize();
+
+  const fetchTeamData = async () => {
+    try {
+      const teamData = await getTeamById(teamId);
+      if (onTeamUpdate) {
+        onTeamUpdate(teamData);
+      }
+    } catch (error) {
+      console.error("Ошибка при получении данных команды:", error);
+    }
+  };
 
   const fetchParticipant = async () => {
     const response = await getAllUser({
@@ -42,6 +56,7 @@ const TeamMembers = ({ members }) => {
     });
     setParticipantWithoutTeam(response.items);
   };
+  
   useEffect(() => {
     if (isAddMemberOpen) fetchParticipant();
   }, [isAddMemberOpen]);
@@ -79,8 +94,17 @@ const TeamMembers = ({ members }) => {
   // };
 
   const handleDeleteClick = async (teamId, memberId) => {
-    const response = await deleteMembers(teamId, memberId);
-    setDeleteOpen(true);
+    setIsLoading(true);
+    try {
+      await deleteMembers(teamId, memberId);
+      setDeleteOpen(true);
+      // Обновляем данные команды после удаления участника
+      await fetchTeamData();
+    } catch (error) {
+      console.error("Ошибка при удалении участника:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleAddMemberClick = () => {
@@ -92,12 +116,21 @@ const TeamMembers = ({ members }) => {
   };
 
   const handleAddMember = async (item) => {
-    const response = await addMembers(teamId, [
-      {
-        participantId: item.participant.id,
-      },
-    ]);
-    fetchParticipant();
+    setIsLoading(true);
+    try {
+      await addMembers(teamId, [
+        {
+          participantId: item.participant.id,
+        },
+      ]);
+      fetchParticipant();
+      // Обновляем данные команды после добавления участника
+      await fetchTeamData();
+    } catch (error) {
+      console.error("Ошибка при добавлении участника:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleRoleClick = (member, idx, e) => {
@@ -107,26 +140,47 @@ const TeamMembers = ({ members }) => {
     setEditRoleOpen(true);
   };
 
-  // const confirmRoleEdit = () => {
-  //   const newRole = roleInput.trim();
-  //   if (!newRole) return;
-  //   setMembers((prev) =>
-  //     prev.map((m, i) => (i === editingIndex ? { ...m, role: newRole } : m))
-  //   );
-  //   setEditRoleOpen(false);
-  //   setEditingIndex(null);
-  // };
-
-  const handleMakeCaptain = (idx, e) => {
+  const handleMakeCaptain = async (memberId, e) => {
     e.stopPropagation();
-    // setMembers((prev) =>
-    //   prev.map((m, i) => ({
-    //     ...m,
-    //     role:
-    //       i === idx ? "капитан" : m.role === "капитан" ? "участник" : m.role,
-    //   }))
-    // );
+    setIsLoading(true);
+    try {
+      await changeRole(teamId, memberId, "капитан");
+      // Обновляем данные команды после изменения роли
+      await fetchTeamData();
+    } catch (error) {
+      console.error("Ошибка при изменении роли:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const confirmRoleEdit = async () => {
+    if (!roleInput.trim() || editingIndex === null) return;
+    
+    setIsLoading(true);
+    try {
+      await changeRole(teamId, editingIndex, roleInput.trim());
+      setEditRoleOpen(false);
+      setEditingIndex(null);
+      // Обновляем данные команды после изменения роли
+      await fetchTeamData();
+    } catch (error) {
+      console.error("Ошибка при изменении роли:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // const handleMakeCaptain = (idx, e) => {
+  //   e.stopPropagation();
+  //   // setMembers((prev) =>
+  //   //   prev.map((m, i) => ({
+  //   //     ...m,
+  //   //     role:
+  //   //       i === idx ? "капитан" : m.role === "капитан" ? "участник" : m.role,
+  //   //   }))
+  //   // );
+  // };
 
   return (
     <>
@@ -173,6 +227,7 @@ const TeamMembers = ({ members }) => {
                   <button
                     className={`text2 ${styles.textBtn}`}
                     onClick={(e) => handleMakeCaptain(member.id, e)}
+                    disabled={isLoading}
                   >
                     Сделать&nbsp;капитаном
                   </button>
@@ -181,6 +236,7 @@ const TeamMembers = ({ members }) => {
               <button
                 className={`text2 ${styles.textBtn}`}
                 onClick={(e) => handleDeleteClick(teamId, member.id)}
+                disabled={isLoading}
               >
                 Удалить&nbsp;участника
               </button>
@@ -192,6 +248,7 @@ const TeamMembers = ({ members }) => {
           large
           text="Добавить участника"
           onClick={handleAddMemberClick}
+          disabled={isLoading}
         />
 
         {/* Модальное окно не работает */}
@@ -201,7 +258,7 @@ const TeamMembers = ({ members }) => {
         >
           <ModalWindow
             title="Добавить участника"
-            buttonArea={[<Button text="Добавить выбранных" />]}
+            buttonArea={[<Button text="Добавить выбранных" disabled={isLoading} />]}
             // onClick={}
           >
             <SearchInput />
@@ -211,9 +268,77 @@ const TeamMembers = ({ members }) => {
                   key={item.id}
                   item={item}
                   onSubmit={handleAddMember}
+                  disabled={isLoading}
                 />
               ))}
             </div>
+          </ModalWindow>
+        </ModalWrapper>
+
+        {/* Модальное окно для изменения роли */}
+        <ModalWrapper
+          isOpen={isEditRoleOpen}
+          onClose={() => setEditRoleOpen(false)}
+        >
+          <ModalWindow
+            title="Изменить роль участника"
+            buttonArea={[
+              <Button 
+                text="Отменить" 
+                onClick={() => setEditRoleOpen(false)} 
+                disabled={isLoading}
+              />,
+              <Button 
+                text="Сохранить" 
+                onClick={confirmRoleEdit} 
+                disabled={isLoading}
+              />
+            ]}
+          >
+            <input
+              type="text"
+              value={roleInput}
+              onChange={(e) => setRoleInput(e.target.value)}
+              placeholder="Новая роль"
+              disabled={isLoading}
+              className={styles.roleInput}
+            />
+          </ModalWindow>
+        </ModalWrapper>
+
+        {/* Модальное окно для подтверждения удаления */}
+        <ModalWrapper
+          isOpen={isDeleteOpen}
+          onClose={() => setDeleteOpen(false)}
+        >
+          <ModalWindow
+            title="Участник удален"
+            buttonArea={[
+              <Button 
+                text="ОК" 
+                onClick={() => setDeleteOpen(false)} 
+              />
+            ]}
+          >
+            <p>Участник успешно удален из команды.</p>
+          </ModalWindow>
+        </ModalWrapper>
+
+        {/* Модальное окно для ограничения участников */}
+        <ModalWrapper
+          isOpen={isLimitReachedOpen}
+          onClose={() => setLimitReachedOpen(false)}
+        >
+          <ModalWindow
+            title="Достигнут лимит участников"
+            buttonArea={[
+              <Button 
+                text="ОК" 
+                onClick={() => setLimitReachedOpen(false)} 
+              />
+            ]}
+          >
+            <p>Команда уже содержит максимальное количество участников (10).</p>
           </ModalWindow>
         </ModalWrapper>
 

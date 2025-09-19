@@ -48,17 +48,23 @@ export default function TeamPage() {
     }, [team.projectId])
 
     return (
-        <>
-            <LayoutLogin>
-                <Container fluid="xxl">
-                    <HeadTeam team={team} />     
-                </Container>      
-            </LayoutLogin>
+ <>
+    <LayoutLogin>
+      <Container fluid="xxl">
+        <HeadTeam team={team} />     
+      </Container>      
+    </LayoutLogin>
 
-            <Container fluid="xxl">
-                <TeamMembers members={members} />
-                <TeamProject project={project} />
-            </Container>
-        </>
+    <Container fluid="xxl">
+      <TeamMembers 
+        members={members} 
+        onTeamUpdate={(teamData) => {
+          setTeam(teamData);
+          setMembers(teamData.teamMembers);
+        }} 
+      />
+      <TeamProject project={project} />
+    </Container>
+  </>
     )
 }
