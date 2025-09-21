@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useEffect, useRef, useState, Fragment } from "react"; // Добавлен импорт Fragment
+import { useEffect, useRef, useState, Fragment } from "react";
 import { Container } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import LayoutLogin from "./layoutLogin";
@@ -25,14 +25,44 @@ import getRegion from "../../api/regions/getRegions";
 export default function Registration() {
   const [isOpen, setIsOpen] = useState(false);
   const [isShowRegion, setIsShowRegion] = useState(false);
-  const [formData, setFormData] = useState({
+  
+  // Инициализируем все поля сразу
+  const initialFormData = {
     role: { value: "participant", type: "role" },
     policy: { value: false, type: "checkbox" },
     regulations: { value: false, type: "checkbox" },
+  };
+  
+  // Добавляем все поля из formFields
+  formFields.forEach(field => {
+    if (field.data) {
+      field.data.forEach(subField => {
+        initialFormData[subField.name] = { value: '', type: subField.type };
+      });
+    } else {
+      initialFormData[field.name] = { value: '', type: field.type };
+    }
   });
+
+  const [formData, setFormData] = useState(initialFormData);
   const [regions, setRegions] = useState([]);
   const timerRef = useRef(null);
-  const [formError, setFormError] = useState({});
+  
+  // Инициализируем ошибки для всех полей
+  const initialFormError = {};
+  formFields.forEach(field => {
+    if (field.data) {
+      field.data.forEach(subField => {
+        initialFormError[subField.name] = '';
+      });
+    } else {
+      initialFormError[field.name] = '';
+    }
+  });
+  initialFormError.policy = '';
+  initialFormError.regulations = '';
+  
+  const [formError, setFormError] = useState(initialFormError);
   const [isShowModal, setIsShowModal] = useState(false);
   const options = [
     { role: "mentor", value: "Ментор" },
@@ -48,38 +78,12 @@ export default function Registration() {
     fetchRegion();
   }, []);
 
-  useEffect(() => {
-    const { applicableFields, errorFields } = formFields.reduce(
-      (acc, field) => {
-        if (field.name === formData.role.value) {
-          field.data.map((val) => {
-            acc.applicableFields[val.name] = {
-              value: "",
-              type: val.type,
-            };
-            acc.errorFields[val.name] = "";
-          });
-        } else {
-          acc.applicableFields[field.name] = {
-            value: "",
-            type: field.type,
-          };
-          acc.errorFields[field.name] = "";
-        }
-        return acc;
-      },
-      { applicableFields: {}, errorFields: {} }
-    );
-
-    setFormData((prev) => ({
-      ...prev,
-      ...applicableFields,
-    }));
-
-    setFormError(errorFields);
-  }, [formData.role.value]);
-
   const handleChange = (value, name) => {
+    // Защищаемся от несуществующих полей
+    if (!formData[name]) {
+      return;
+    }
+
     const processedValue =
       name === "phoneNumber" ? value.replace(/^\+/, "") : value;
 
@@ -120,11 +124,9 @@ export default function Registration() {
     } catch (error) {
       console.error("Ошибка регистрации:", error);
 
-      // Обработка конфликта 409
       if (error.response?.status === 409) {
         const errorMessage = error.response.data.detail;
 
-        // Проверяем конкретную причину конфликта
         if (errorMessage.includes("User with this email already exists")) {
           setFormError((prev) => ({
             ...prev,
@@ -191,7 +193,7 @@ export default function Registration() {
             {isOpen && (
               <div className={stylesReg.requredOptinsCOntainer}>
                 {options.map((option, index) => (
-                  <Fragment key={option.role}> {/* Добавлен ключ */}
+                  <Fragment key={option.role}>
                     {" "}
                     <div
                       className={stylesReg.option}
@@ -212,7 +214,7 @@ export default function Registration() {
               return item.name === formData.role.value ? (
                 item.data.map((e) =>
                   e.name === "regionId" ? (
-                    <div key={e.id}> {/* Добавлен ключ */}
+                    <div key={e.id}>
                       <label className={stylesReg.label}>Регион</label>
                       <div
                         className={`${styles.loginInput} ${stylesReg.requred} pt-2`}
@@ -233,7 +235,7 @@ export default function Registration() {
                             className={`${stylesReg.requredOptinsCOntainer} ${stylesReg.rq}`}
                           >
                             {regions.map((option, index) => (
-                              <div key={option.id}> {/* Добавлен ключ */}
+                              <div key={option.id}>
                                 <div
                                   className={stylesReg.option}
                                   onClick={() => {

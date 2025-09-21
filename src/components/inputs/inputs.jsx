@@ -20,6 +20,7 @@ export default function Inputs(props) {
   const documents = useSelector((state) => state.user?.documents);
   const [filesList, setFilesList] = useState(null);
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const [focused, setFocused] = useState(false);
   const {
     name,
     label,
@@ -107,12 +108,38 @@ export default function Inputs(props) {
               </div>
             </>
           ) : type === "tel" ? (
-            <>
+            <div className={styles.phoneInputWrapper}>
               <IMaskInput
                 mask="+7 (000) 000-00-00"
+                placeholderChar="_"
+                placeholder="+7 (999) 999-99-99"
+                lazy={!formData[name]?.value}
                 value={formData[name]?.value || ""}
                 onAccept={(value) => onChange(value, name)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                className={`${styles.loginInput} ${isError && styles.errorInput} ${
+                  !formData[name]?.value && !focused ? styles.transparentInput : ''
+                }`}
+                required
+                maxLength={maxLength}
+                disabled={disabled}
+                {...other}
+              />
+              <button
+                className={`${styles.delete} ${styles.phoneDelete} ${!label && styles.notLabel}`}
+                onClick={() => handelClick(type)}
+              >
+                <SvgDelete />
+              </button>
+            </div>
+          ) : (
+            <>
+              <input
+                type={isShowPassword ? "text" : type}
                 className={`${styles.loginInput} ${isError && styles.errorInput}`}
+                value={formData[name]?.value || ""}
+                onChange={(e) => onChange(e.target.value, name)}
                 required
                 maxLength={maxLength}
                 disabled={disabled}
@@ -122,28 +149,9 @@ export default function Inputs(props) {
                 className={`${styles.delete} ${!label && styles.notLabel}`}
                 onClick={() => handelClick(type)}
               >
-                <SvgDelete />
+                {type === "password" ? <ShowPassword /> : <SvgDelete />}
               </button>
             </>
-          ) : (
-            <input
-              type={isShowPassword ? "text" : type}
-              className={`${styles.loginInput} ${isError && styles.errorInput}`}
-              value={formData[name]?.value || ""}
-              onChange={(e) => onChange(e.target.value, name)}
-              required
-              maxLength={maxLength}
-              disabled={disabled}
-              {...other}
-            />
-          )}
-          {type !== "tel" && (
-            <button
-              className={`${styles.delete} ${!label && styles.notLabel}`}
-              onClick={() => handelClick(type)}
-            >
-              {type === "password" ? <ShowPassword /> : <SvgDelete />}
-            </button>
           )}
           {isError ? (
             <span className={styles.helherTextError}>{formError[name]}</span>
