@@ -16,7 +16,6 @@ import getProjectFiles from "../../api/projects/getProjectFiles";
 import getTeamById from "../../api/team/getTeamById";
 import { STEP_PROJECT_STATUS } from "../../utils/constants";
 
-
 export default function ProjectStages() {
     const [error, setError] = useState(undefined);
     const { projectId } = useParams();
@@ -26,11 +25,13 @@ export default function ProjectStages() {
     const [isCompleteProject, setIsCompleteProject] = useState(false);
 
     useEffect(() => {
+        console.log('Fetching project with ID:', projectId); // Добавлено для отладки
         const fetchDataProject = async () => {
             try {
                 const requestProject = await getProjectById(projectId);
                 setProject(requestProject.data);
             } catch (e) {
+                console.error('Error fetching project:', e.message); // Добавлено для отладки
                 setError(e.message);
             }
         }
@@ -44,6 +45,7 @@ export default function ProjectStages() {
                 const requestFiles = await getProjectFiles(projectId);
                 setFiles(requestFiles.data);
             } catch (e) {
+                console.error('Error fetching files:', e.message); // Добавлено для отладки
                 setError(e.message);
             }
         }
@@ -58,10 +60,11 @@ export default function ProjectStages() {
                     const requestTeam = await getTeamById(project.teamId);
                     setTeamInfo(requestTeam);
                 } catch (e) {
+                    console.error('Error fetching team info:', e.message); // Добавлено для отладки
                     setError(e.message);
                 }
             }
-            console.log(project);//------------------
+            console.log('Fetching team info for teamId:', project.teamId); // Добавлено для отладки
             fetchTeamInfo();
         }
         // eslint-disable-next-line
@@ -79,22 +82,7 @@ export default function ProjectStages() {
     /*Тестовый код------------------------------------------------------------------*/ 
 
     // getAnyDataDeleteAfterDev();
-    
-    const handleChange = (event) => {
-        let formData = new FormData();
-        const data = {
-            name: 'тестирования!',
-            description: 'Здесь должно быть описание проекта'
-        }
-
-        formData.append('data', JSON.stringify(data))
-        formData.append('document', event.target.files[0])
-
-        // console.log(event.target.files[0])
-       
-        try {
-            const response = HTTP.post("/projects/", formData);
-            // const response = HTTP.post(`/teams/39/members`,
+                // const response = HTTP.post(`/teams/39/members`,
             //     [
             //         {
             //             participantId: 20,
@@ -110,7 +98,21 @@ export default function ProjectStages() {
             //         }
             //     // ]
             // );
+            
+    const handleChange = (event) => {
+        let formData = new FormData();
+        const data = {
+            name: 'тестирования!',
+            description: 'Здесь должно быть описание проекта'
+        }
 
+        formData.append('data', JSON.stringify(data))
+        formData.append('document', event.target.files[0])
+
+        // console.log(event.target.files[0])
+       
+        try {
+            const response = HTTP.post("/projects/", formData);
             return response.data
         } catch (error) {
             if (!error.response) {
@@ -125,6 +127,51 @@ export default function ProjectStages() {
             throw new Error(message);
         }
     }
+
+    // ДОБАВЛЕНО: Обработка случая, когда проект не найден
+    if (error) {
+        return (
+            <LayoutLogin>
+                <Container fluid="xxl">
+                    <div style={{ 
+                        padding: '2rem', 
+                        textAlign: 'center',
+                        backgroundColor: '#fff',
+                        borderRadius: '8px',
+                        margin: '2rem 0',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        position: 'relative',
+                        zIndex: 10
+                    }}>
+                        <h2 style={{ color: '#d32f2f', marginBottom: '1rem' }}>
+                            Ошибка загрузки проекта
+                        </h2>
+                        <p style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>
+                            {error}
+                        </p>
+                        <p style={{ color: '#666' }}>
+                            Project ID: {projectId}
+                        </p>
+                        <button 
+                            onClick={() => window.history.back()}
+                            style={{
+                                marginTop: '1rem',
+                                padding: '0.5rem 1rem',
+                                backgroundColor: '#1976d2',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Вернуться назад
+                        </button>
+                    </div>
+                </Container>
+            </LayoutLogin>
+        );
+    }
+
     /*------------------------------------------------------------------------------*/
     return (        
         Object.keys(project).length === 0
@@ -138,10 +185,6 @@ export default function ProjectStages() {
                             obj={project}
                             setProject={setProject}
                         />     
-
-    {/* <button type="button" onClick={handleChange}>добавить участника в команду</button> */}
-
-    {/* <input type="file" onChange={handleChange}/> */}
 
                     </Container>      
                 </LayoutLogin>
@@ -163,4 +206,4 @@ export default function ProjectStages() {
                 </Container>
             </>
     )
-}
+}   

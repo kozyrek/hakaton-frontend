@@ -19,20 +19,32 @@ import { ERROR_TEXT } from "../../api/utils/constants";
  *   console.error('Ошибка аутентификации:', error.message);
  * }
  */
+export default async function getTeamById(id) {
+    // ДОБАВЛЕНО: Валидация ID
+    if (!id || id === "null" || id === "undefined") {
+        throw new Error("Неверный ID команды");
+    }
+    
+    if (isNaN(parseInt(id))) {
+        throw new Error("ID команды должен быть числом");
+    }
 
-export default async function getProjectById(id) {
     try {
-        const response = await HTTP.get(`/projects/${id}`);
+        const response = await HTTP.get(`/teams/${id}`);
         return response;
     } catch (error) {
         if (!error.response) {
             throw new Error(ERROR_TEXT.NETWORK_ERROR);
         }
 
-        const message =
-        error.response.data?.detail ||
-        error.response.data?.message ||
-        ERROR_TEXT.AUTHENTICATION_FAILED;
+        // Более точная обработка 422 ошибки
+        if (error.response.status === 422) {
+            throw new Error("Неверный формат ID команды");
+        }
+
+        const message = error.response.data?.detail ||
+                       error.response.data?.message ||
+                       ERROR_TEXT.AUTHENTICATION_FAILED;
 
         throw new Error(message);
     }
