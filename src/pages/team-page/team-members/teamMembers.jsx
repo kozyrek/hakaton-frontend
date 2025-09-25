@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-// import ROUTES from "../../../../../utils/constants";
 import Button from "../../../components/button/button";
 import Pencil from "../../profile/components/personal-info/images/Pencil";
 import { useResize } from "../../../hooks/useResize";
@@ -17,24 +16,20 @@ import deleteMembers from "../../../api/team/deleteMembers";
 import changeRole from "../../../api/team/changeRole";
 import getTeamById from "../../../api/team/getTeamById";
 
-// import {
-//   ConfirmDeleteModal,
-//   InputModal,
-//   AddMemberInTeam,
-//   MessageModal,
-// } from "../../../profileModals/ModalsList";
-
 const TeamMembers = ({ members, onTeamUpdate }) => {
   const { teamId } = useParams();
   const [isEditRoleOpen, setEditRoleOpen] = useState(false);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [isAddMemberOpen, setAddMemberOpen] = useState(false);
   const [isLimitReachedOpen, setLimitReachedOpen] = useState(false);
+  const [isAddSuccessOpen, setAddSuccessOpen] = useState(false); // ДОБАВЛЕНО: для успешного добавления
   const [participantWithoutTeam, setParticipantWithoutTeam] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [roleInput, setRoleInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  
+  const [selectedParticipants, setSelectedParticipants] = useState([]);
 
   const width = useResize();
 
@@ -55,18 +50,93 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
       is_mentor: false,
     });
     setParticipantWithoutTeam(response.items);
+    setSelectedParticipants([]);
   };
   
   useEffect(() => {
     if (isAddMemberOpen) fetchParticipant();
   }, [isAddMemberOpen]);
 
+  // ИСПРАВЛЕНО: обработчик добавления выбранных участников
+  const handleAddSelectedMembers = async () => {
+    console.log("Добавление выбранных участников:", selectedParticipants);
+    
+    if (selectedParticipants.length === 0) {
+      console.log("Нет выбранных участников для добавления");
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const membersToAdd = selectedParticipants.map(participantId => ({
+        participantId: participantId
+      }));
+
+      console.log("Данные для отправки:", membersToAdd);
+      
+      await addMembers(teamId, membersToAdd);
+      
+      setAddMemberOpen(false);
+      await fetchTeamData();
+      
+      // ИСПРАВЛЕНО: показываем окно успешного добавления вместо удаления
+      setAddSuccessOpen(true);
+    } catch (error) {
+      console.error("Ошибка при добавлении участников:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ИСПРАВЛЕНО: обработчик одиночного добавления
+  const handleAddSingleMember = async (item) => {
+    setIsLoading(true);
+    try {
+      await addMembers(teamId, [
+        {
+          participantId: item.participant.id
+        }
+      ]);
+      
+      await fetchTeamData();
+      await fetchParticipant();
+      
+      // ИСПРАВЛЕНО: показываем окно успешного добавления
+      setAddSuccessOpen(true);
+    } catch (error) {
+      console.error("Ошибка при добавлении участника:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUserSelect = (participantId) => {
+    setSelectedParticipants(prev => {
+      if (prev.includes(participantId)) {
+        return prev.filter(id => id !== participantId);
+      } else {
+        return [...prev, participantId];
+      }
+    });
+  };
+
+  const handleCheckboxChange = (participantId, isChecked) => {
+    setSelectedParticipants(prev => {
+      if (isChecked) {
+        return [...prev, participantId];
+      } else {
+        return prev.filter(id => id !== participantId);
+      }
+    });
+  };
+
+  // ИСПРАВЛЕНО: обработчик удаления участника
   const handleDeleteClick = async (teamId, memberId) => {
     setIsLoading(true);
     try {
       await deleteMembers(teamId, memberId);
+      // ИСПРАВЛЕНО: показываем окно удаления
       setDeleteOpen(true);
-      // Обновляем данные команды после удаления участника
       await fetchTeamData();
     } catch (error) {
       console.error("Ошибка при удалении участника:", error);
@@ -83,24 +153,6 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     }
   };
 
-  const handleAddMember = async (item) => {
-    setIsLoading(true);
-    try {
-      await addMembers(teamId, [
-        {
-          participantId: item.participant.id,
-        },
-      ]);
-      fetchParticipant();
-      // Обновляем данные команды после добавления участника
-      await fetchTeamData();
-    } catch (error) {
-      console.error("Ошибка при добавлении участника:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleRoleClick = (member, idx, e) => {
     e.stopPropagation();
     setEditingIndex(idx);
@@ -113,7 +165,6 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     setIsLoading(true);
     try {
       await changeRole(teamId, memberId, "капитан");
-      // Обновляем данные команды после изменения роли
       await fetchTeamData();
     } catch (error) {
       console.error("Ошибка при изменении роли:", error);
@@ -130,7 +181,6 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
       await changeRole(teamId, editingIndex, roleInput.trim());
       setEditRoleOpen(false);
       setEditingIndex(null);
-      // Обновляем данные команды после изменения роли
       await fetchTeamData();
     } catch (error) {
       console.error("Ошибка при изменении роли:", error);
@@ -147,7 +197,7 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
         <ul className={styles.participantsList}>
           {members.map((member, index) => (
             <li
-              key={member.id || `member-${index}`} // Добавлен ключ
+              key={member.id || `member-${index}`}
               className={`${styles.participantItem} ${
                 member.roleName === "капитан" ? styles.isActive : ""
               }`}
@@ -192,7 +242,7 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
               </div>
               <button
                 className={`text2 ${styles.textBtn}`}
-                onClick={(e) => handleDeleteClick(teamId, member.id)}
+                onClick={() => handleDeleteClick(teamId, member.id)}
                 disabled={isLoading}
               >
                 Удалить&nbsp;участника
@@ -208,23 +258,30 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
           disabled={isLoading}
         />
 
-        {/* Модальное окно не работает */}
+        {/* Модальное окно добавления участников */}
         <ModalWrapper
           isOpen={isAddMemberOpen}
           onClose={() => setAddMemberOpen(false)}
         >
           <ModalWindow
             title="Добавить участника"
-            buttonArea={[<Button text="Добавить выбранных" disabled={isLoading} />]}
-            // onClick={}
+            buttonArea={[
+              <Button 
+                text={`Добавить выбранных (${selectedParticipants.length})`} 
+                onClick={handleAddSelectedMembers}
+                disabled={isLoading || selectedParticipants.length === 0}
+              />
+            ]}
           >
             <SearchInput />
             <div style={{ marginTop: "28px" }}>
               {participantWithoutTeam.map((item, index) => (
                 <UserDisplay
-                  key={item.id || `participant-${index}`} // Добавлен ключ
+                  key={item.id || `participant-${index}`}
                   item={item}
-                  onSubmit={handleAddMember}
+                  onSubmit={handleAddSingleMember}
+                  onCheckboxChange={(isChecked) => handleCheckboxChange(item.participant.id, isChecked)}
+                  isChecked={selectedParticipants.includes(item.participant.id)}
                   disabled={isLoading}
                 />
               ))}
@@ -232,7 +289,43 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
           </ModalWindow>
         </ModalWrapper>
 
-        {/* Модальное окно для изменения роли */}
+        {/* ДОБАВЛЕНО: Модальное окно успешного добавления */}
+        <ModalWrapper
+          isOpen={isAddSuccessOpen}
+          onClose={() => setAddSuccessOpen(false)}
+        >
+          <ModalWindow
+            title="Участники добавлены"
+            buttonArea={[
+              <Button 
+                text="ОК" 
+                onClick={() => setAddSuccessOpen(false)} 
+              />
+            ]}
+          >
+            <p>Участник(и) успешно добавлены в команду.</p>
+          </ModalWindow>
+        </ModalWrapper>
+
+        {/* Модальное окно удаления участника */}
+        <ModalWrapper
+          isOpen={isDeleteOpen}
+          onClose={() => setDeleteOpen(false)}
+        >
+          <ModalWindow
+            title="Участник удален"
+            buttonArea={[
+              <Button 
+                text="ОК" 
+                onClick={() => setDeleteOpen(false)} 
+              />
+            ]}
+          >
+            <p>Участник успешно удален из команды.</p>
+          </ModalWindow>
+        </ModalWrapper>
+
+        {/* Остальные модальные окна без изменений */}
         <ModalWrapper
           isOpen={isEditRoleOpen}
           onClose={() => setEditRoleOpen(false)}
@@ -263,25 +356,6 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
           </ModalWindow>
         </ModalWrapper>
 
-        {/* Модальное окно для подтверждения удаления */}
-        <ModalWrapper
-          isOpen={isDeleteOpen}
-          onClose={() => setDeleteOpen(false)}
-        >
-          <ModalWindow
-            title="Участник удален"
-            buttonArea={[
-              <Button 
-                text="ОК" 
-                onClick={() => setDeleteOpen(false)} 
-              />
-            ]}
-          >
-            <p>Участник успешно удален из команды.</p>
-          </ModalWindow>
-        </ModalWrapper>
-
-        {/* Модальное окно для ограничения участников */}
         <ModalWrapper
           isOpen={isLimitReachedOpen}
           onClose={() => setLimitReachedOpen(false)}
