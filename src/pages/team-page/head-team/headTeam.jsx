@@ -35,8 +35,9 @@ export default function HeadTeam({team}) {
 
     return (
         <section className={styles.wrapper}>
-            <div>
-                <h1 className="titleH1">Команда {team.name}</h1>
+            {/* ИСПРАВЛЕНО: добавлен контейнер с flex для заголовка и кнопки */}
+            <div className={styles.titleContainer}>
+                <h1 className="titleH1" style={{marginBottom:"0px"}}>Команда {team.name}</h1>
                 <button
                 className={styles.btnEdit}
                     type="button"
