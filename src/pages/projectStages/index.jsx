@@ -9,7 +9,6 @@ import StagesList from "./stages/stagesList";
 import Loader from "../../components/loader/loader";
 
 import { HTTP } from "../../api/http";
-import getAnyDataDeleteAfterDev from "../../api/projects/getAnyDataDeleteAfterDev";
 
 import getProjectById from "../../api/projects/getProjectById";
 import getProjectFiles from "../../api/projects/getProjectFiles";
@@ -78,27 +77,6 @@ export default function ProjectStages() {
         }
         // eslint-disable-next-line
     }, [project.steps])
-
-    /*Тестовый код------------------------------------------------------------------*/ 
-
-    // getAnyDataDeleteAfterDev();
-                // const response = HTTP.post(`/teams/39/members`,
-            //     [
-            //         {
-            //             participantId: 20,
-            //             roleName: "капитан",
-            //         }
-            //     ]
-            // );
-
-            // const response = HTTP.post(`/teams`, 
-            //     // [
-            //         {
-            //             name: "Тестовая команда. НЕ удалять!"
-            //         }
-            //     // ]
-            // );
-            
     const handleChange = (event) => {
         let formData = new FormData();
         const data = {

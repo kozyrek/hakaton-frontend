@@ -68,15 +68,12 @@ export default function Profile() {
                 onRemoveParticipant={handleRemoveParticipant}
               />
             )}
-            {activeTab === "teams" && user.user.isMentor && !editRegInfo && (
-              <TeamsProfile
-                myTeams={myTeams}
-                allTeams={allTeams}
-              />
-            )}
-            {activeTab === "projects" && !editRegInfo && (
-              <ProjectsProfile projects={projects || []} />
-            )}
+{activeTab === "teams" && user.user.isMentor && !editRegInfo && (
+  <TeamsProfile user={user.user} />
+)}
+{activeTab === "projects" && !editRegInfo && (
+  <ProjectsProfile user={user.user} />
+)}
           </div>
         </Container>
       </div>
