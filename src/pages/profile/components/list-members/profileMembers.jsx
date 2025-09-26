@@ -64,29 +64,23 @@ const ProfileMembers = ({ user }) => {
         pages.push(i);
       }
     } else {
-      // Always show first page
       pages.push(1);
 
-      // Calculate start and end pages
       let startPage = Math.max(2, currentPage - 1);
       let endPage = Math.min(totalPages - 1, currentPage + 1);
 
-      // Add ellipsis if needed
       if (startPage > 2) {
         pages.push("...");
       }
 
-      // Add middle pages
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
 
-      // Add ellipsis if needed
       if (endPage < totalPages - 1) {
         pages.push("...");
       }
 
-      // Always show last page
       pages.push(totalPages);
     }
 
@@ -135,6 +129,9 @@ const ProfileMembers = ({ user }) => {
     setCurrentPage(1);
   };
 
+  // ИСПРАВЛЕНИЕ: Проверяем, является ли пользователь администратором
+  const isAdmin = user?.mentor?.isAdmin ?? false;
+
   return (
     <>
       <h2 className="titleH2">Участники</h2>
@@ -151,36 +148,63 @@ const ProfileMembers = ({ user }) => {
         ) : (
           usersData.items
             .filter((participant) => {
-              const isAdmin = user.mentor?.isAdmin ?? false;
-            //   const isVerified = participant.verified ?? false;
-            const isVerified = user.verified ?? false;
-              return isAdmin || isVerified;
+              // ИСПРАВЛЕНИЕ: Админ видит всех пользователей, обычные пользователи - только подтвержденных
+              if (isAdmin) {
+                return true; // Админ видит всех
+              } else {
+                // Обычные пользователи видят только подтвержденных участников
+                const participantVerified = participant?.verified ?? false;
+                return participantVerified;
+              }
             })
-            .map((participant) => (
-              <li
-                key={participant.id}
-                className={`${styles.participantItem} ${
-                  !participant.verified && styles.notVerified
-                }`}
-              >
-                <Link
-                  to={`${ROUTES.PROFILE}/${participant.id}`}
-                  className={`text1 ${styles.participantInfo}`}
+            .map((participant) => {
+              // ИСПРАВЛЕНИЕ: Добавляем проверку на существование participant
+              if (!participant) return null;
+              
+              const participantVerified = participant.verified ?? false;
+              
+              return (
+                <li
+                  key={participant.id}
+                  className={`${styles.participantItem} ${
+                    !participantVerified && styles.notVerified
+                  }`}
                 >
-                  {participant.lastName} {participant.firstName}{" "}
-                  {participant.patronymic}
-                </Link>
-                <span className={`text1 ${styles.participantRole}`}>
-                  {getRole(participant)}
-                </span>
-                <DeleteButton
-                  className={`text2 ${styles.removeButton}`}
-                  onClick={() => openModal(participant)}
-                >
-                  Удалить
-                </DeleteButton>
-              </li>
-            ))
+                  <Link
+                    to={`${ROUTES.PROFILE}/${participant.id}`}
+                    className={`text1 ${styles.participantInfo}`}
+                    style={{textDecoration:"none"}}
+                    // ИСПРАВЛЕНИЕ: Блокируем переход только для неподтвержденных участников у не-админов
+                    onClick={(e) => {
+                      // Если участник не подтвержден и пользователь не админ - блокируем переход
+                      if (!participantVerified && !isAdmin) {
+                        e.preventDefault();
+                        console.log("Доступ к неподтвержденному участнику запрещен");
+                      }
+                    }}
+                  >
+                    {participant.lastName} {participant.firstName}{" "}
+                    {participant.patronymic}
+                    {/* ИСПРАВЛЕНИЕ: Показываем пометку для неподтвержденных пользователей (только для админа) */}
+                    {isAdmin && !participantVerified && (
+                      <span style={{color: 'red', marginLeft: '10px'}}>(Не подтвержден)</span>
+                    )}
+                  </Link>
+                  <span className={`text1 ${styles.participantRole}`}>
+                    {getRole(participant)}
+                  </span>
+                  {/* Кнопку удаления показываем всем */}
+                  { (
+                    <DeleteButton
+                      className={`text2 ${styles.removeButton}`}
+                      onClick={() => openModal(participant)}
+                    >
+                      Удалить
+                    </DeleteButton>
+                  )}
+                </li>
+              );
+            })
         )}
       </ul>
 
