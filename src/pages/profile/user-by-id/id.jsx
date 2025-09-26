@@ -18,6 +18,9 @@ import stylesView from "../components/personal-info/index.module.css";
 import stylesID from "./index.module.css";
 import TextView from "../components/personal-info/textView";
 import verifyUser from "../../../api/verify-user";
+import rejectUser from "../../../api/mock_reject-user"; // ДОБАВЛЕНО: API для отклонения
+import ModalWrapper from "../../../components/modalOverlay"; // ДОБАВЛЕНО: модальное окно
+import ModalWindow from "../../../components/modalWindow"; // ДОБАВЛЕНО: модальное окно
 
 export default function UserId() {
   const user = useSelector((state) => state.user.user);
@@ -28,6 +31,12 @@ export default function UserId() {
   const navigate = useNavigate();
   const token = useSelector((state) => state.user.token.accessToken);
   const [data, setData] = useState({});
+
+  // ДОБАВЛЕНО: состояния для модальных окон
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isActionSuccess, setIsActionSuccess] = useState(false);
+  const [actionMessage, setActionMessage] = useState("");
 
   useEffect(() => {
     if (userProfile) {
@@ -50,8 +59,37 @@ export default function UserId() {
     }
   }, [userProfile]);
 
+  // ДОБАВЛЕНО: функция подтверждения регистрации
   const handleVerify = async () => {
-    await verifyUser(userId);
+    try {
+      await verifyUser(userId);
+      setActionMessage("Пользователь успешно подтвержден");
+      setIsActionSuccess(true);
+      setIsVerifyModalOpen(false);
+    } catch (error) {
+      console.error("Ошибка при подтверждении пользователя:", error);
+      setActionMessage("Ошибка при подтверждении пользователя");
+      setIsActionSuccess(true);
+    }
+  };
+
+  // ДОБАВЛЕНО: функция отклонения регистрации
+  const handleReject = async () => {
+    try {
+      await rejectUser(userId);
+      setActionMessage("Пользователь успешно отклонен");
+      setIsActionSuccess(true);
+      setIsRejectModalOpen(false);
+    } catch (error) {
+      console.error("Ошибка при отклонении пользователя:", error);
+      setActionMessage("Ошибка при отклонении пользователя");
+      setIsActionSuccess(true);
+    }
+  };
+
+  // ДОБАВЛЕНО: функция возврата к списку пользователей
+  const handleBackToUsers = () => {
+    navigate(ROUTES.PROFILE); // Возвращаемся к профилю (на вкладку users)
   };
 
   useEffect(() => {
@@ -73,6 +111,7 @@ export default function UserId() {
     fetchDataUser();
     // eslint-disable-next-line
   }, [userId]);
+
   if (loading) return <div style={{ marginTop: "80px" }}>Loading...</div>;
   if (error) return <div style={{ marginTop: "80px" }}>{error}</div>;
 
@@ -86,10 +125,9 @@ export default function UserId() {
       <div className={styles.profileWrapper}>
         <Container fluid="xxl">
           <div className={cn(styles.mt80, styles.mb160)}>
-            {/* <PersonalInfo /> */}
             <Row className={stylesView.mb48}>
               <Col className={stylesView.personalInfoContainer}>
-                <h2 className={stylesView.sectionTitle}>Персональные данные</h2>{" "}
+                <h2 className={stylesView.sectionTitle}>Персональные данные</h2>
               </Col>
             </Row>
             {Object.entries(data).map(([key, value]) => (
@@ -111,18 +149,88 @@ export default function UserId() {
                 <Button
                   text="Принять"
                   large
-                  onClick={handleVerify}
+                  onClick={() => setIsVerifyModalOpen(true)}
                 />
                 <Button
                   text="Отклонить"
                   large
                   addClass={stylesID.violetButton}
+                  onClick={() => setIsRejectModalOpen(true)}
                 />
               </div>
             )}
           </div>
         </Container>
       </div>
+
+      {/* Модальное окно подтверждения принятия */}
+      <ModalWrapper
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+      >
+        <ModalWindow
+          title="Подтверждение регистрации"
+          buttonArea={[
+            <Button
+              text="Отменить"
+              large
+              violet
+              onClick={() => setIsVerifyModalOpen(false)}
+            />,
+            <Button
+              text="Подтвердить"
+              large
+              onClick={handleVerify}
+            />
+          ]}
+        >
+          <p>Вы действительно хотите подтвердить регистрацию этого пользователя?</p>
+        </ModalWindow>
+      </ModalWrapper>
+
+      {/* Модальное окно подтверждения отклонения */}
+      <ModalWrapper
+        isOpen={isRejectModalOpen}
+        onClose={() => setIsRejectModalOpen(false)}
+      >
+        <ModalWindow
+          title="Отклонение регистрации"
+          buttonArea={[
+            <Button
+              text="Отменить"
+              large
+              violet
+              onClick={() => setIsRejectModalOpen(false)}
+            />,
+            <Button
+              text="Отклонить"
+              large
+              onClick={handleReject}
+            />
+          ]}
+        >
+          <p>Вы действительно хотите отклонить регистрацию этого пользователя?</p>
+        </ModalWindow>
+      </ModalWrapper>
+
+      {/* Модальное окно результата действия */}
+      <ModalWrapper
+        isOpen={isActionSuccess}
+        onClose={handleBackToUsers}
+      >
+        <ModalWindow
+          title="Результат"
+          buttonArea={[
+            <Button
+              text="OK"
+              large
+              onClick={handleBackToUsers}
+            />
+          ]}
+        >
+          <p>{actionMessage}</p>
+        </ModalWindow>
+      </ModalWrapper>
     </>
   );
 }
