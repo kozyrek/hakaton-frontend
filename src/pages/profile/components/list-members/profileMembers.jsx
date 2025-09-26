@@ -28,21 +28,40 @@ const ProfileMembers = ({ user }) => {
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
+  // ИСПРАВЛЕНИЕ: Проверяем, является ли пользователь администратором
+  const isAdmin = user?.mentor?.isAdmin ?? false;
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
+        // ИСПРАВЛЕНИЕ: Правильно формируем параметры согласно API
         const params = {
-          search: debouncedSearchQuery || null,
+          ordering: "verified", // Добавляем сортировку
+          page: currentPage,
+          per_page: participantsPerPage
         };
         
-        const response = await getAllUser(params, currentPage);
+        // Добавляем поиск, если есть
+        if (debouncedSearchQuery) {
+          params.search = debouncedSearchQuery;
+        }
+        
+        // ИСПРАВЛЕНИЕ: Для менторов передаем is_verified=true, для админов - null (не передаем)
+        if (!isAdmin) {
+          params.is_verified = true; // Менторы видят только подтвержденных
+        }
+        // Для админов не передаем is_verified - видят всех
+
+        console.log("Параметры запроса:", params);
+        
+        const response = await getAllUser(params);
         setUsersData({
           items: response.items || [],
           totalPages: response.totalPages || 1,
           currentPage: response.currentPage || 1,
         });
-        console.log(response.items)
+        console.log("Полученные пользователи:", response.items);
       } catch (err) {
         console.error("Failed to fetch users:", err.message);
       } finally {
@@ -51,7 +70,7 @@ const ProfileMembers = ({ user }) => {
     };
 
     fetchUsers();
-  }, [debouncedSearchQuery, currentPage]);
+  }, [debouncedSearchQuery, currentPage, isAdmin]);
 
   const getPageNumbers = () => {
     const totalPages = usersData.totalPages;
@@ -102,8 +121,22 @@ const ProfileMembers = ({ user }) => {
     if (selectedParticipant) {
       try {
         await deleteUser(selectedParticipant);
-        const params = { search: debouncedSearchQuery || null };
-        const response = await getAllUser(params, currentPage, participantsPerPage);
+        // ИСПРАВЛЕНИЕ: Обновляем параметры при повторном запросе
+        const params = {
+          ordering: "verified",
+          page: currentPage,
+          per_page: participantsPerPage
+        };
+        
+        if (debouncedSearchQuery) {
+          params.search = debouncedSearchQuery;
+        }
+        
+        if (!isAdmin) {
+          params.is_verified = true;
+        }
+
+        const response = await getAllUser(params);
 
         setUsersData({
           items: response.items || [],
@@ -129,9 +162,6 @@ const ProfileMembers = ({ user }) => {
     setCurrentPage(1);
   };
 
-  // ИСПРАВЛЕНИЕ: Проверяем, является ли пользователь администратором
-  const isAdmin = user?.mentor?.isAdmin ?? false;
-
   return (
     <>
       <h2 className="titleH2">Участники</h2>
@@ -146,65 +176,47 @@ const ProfileMembers = ({ user }) => {
         {!loading && usersData.items.length === 0 ? (
           <div className={styles.emptyList}>Список участников пуст</div>
         ) : (
-          usersData.items
-            .filter((participant) => {
-              // ИСПРАВЛЕНИЕ: Админ видит всех пользователей, обычные пользователи - только подтвержденных
-              if (isAdmin) {
-                return true; // Админ видит всех
-              } else {
-                // Обычные пользователи видят только подтвержденных участников
-                const participantVerified = participant?.verified ?? false;
-                return participantVerified;
-              }
-            })
-            .map((participant) => {
-              // ИСПРАВЛЕНИЕ: Добавляем проверку на существование participant
-              if (!participant) return null;
-              
-              const participantVerified = participant.verified ?? false;
-              
-              return (
-                <li
-                  key={participant.id}
-                  className={`${styles.participantItem} ${
-                    !participantVerified && styles.notVerified
-                  }`}
+          usersData.items.map((participant) => {
+            if (!participant) return null;
+            
+            const participantVerified = participant.verified ?? false;
+            
+            return (
+              <li
+                key={participant.id}
+                className={`${styles.participantItem} ${
+                  !participantVerified && styles.notVerified
+                }`}
+              >
+                <Link
+                  to={`${ROUTES.PROFILE}/${participant.id}`}
+                  className={`text1 ${styles.participantInfo}`}
+                  style={{textDecoration:"none"}}
+                  onClick={(e) => {
+                    if (!participantVerified && !isAdmin) {
+                      e.preventDefault();
+                      console.log("Доступ к неподтвержденному участнику запрещен");
+                    }
+                  }}
                 >
-                  <Link
-                    to={`${ROUTES.PROFILE}/${participant.id}`}
-                    className={`text1 ${styles.participantInfo}`}
-                    style={{textDecoration:"none"}}
-                    // ИСПРАВЛЕНИЕ: Блокируем переход только для неподтвержденных участников у не-админов
-                    onClick={(e) => {
-                      // Если участник не подтвержден и пользователь не админ - блокируем переход
-                      if (!participantVerified && !isAdmin) {
-                        e.preventDefault();
-                        console.log("Доступ к неподтвержденному участнику запрещен");
-                      }
-                    }}
-                  >
-                    {participant.lastName} {participant.firstName}{" "}
-                    {participant.patronymic}
-                    {/* ИСПРАВЛЕНИЕ: Показываем пометку для неподтвержденных пользователей (только для админа) */}
-                    {isAdmin && !participantVerified && (
-                      <span style={{color: 'red', marginLeft: '10px'}}>(Не подтвержден)</span>
-                    )}
-                  </Link>
-                  <span className={`text1 ${styles.participantRole}`}>
-                    {getRole(participant)}
-                  </span>
-                  {/* Кнопку удаления показываем всем */}
-                  { (
-                    <DeleteButton
-                      className={`text2 ${styles.removeButton}`}
-                      onClick={() => openModal(participant)}
-                    >
-                      Удалить
-                    </DeleteButton>
+                  {participant.lastName} {participant.firstName}{" "}
+                  {participant.patronymic}
+                  {isAdmin && !participantVerified && (
+                    <span style={{color: 'red', marginLeft: '10px'}}>(Не подтвержден)</span>
                   )}
-                </li>
-              );
-            })
+                </Link>
+                <span className={`text1 ${styles.participantRole}`}>
+                  {getRole(participant)}
+                </span>
+                <DeleteButton
+                  className={`text2 ${styles.removeButton}`}
+                  onClick={() => openModal(participant)}
+                >
+                  Удалить
+                </DeleteButton>
+              </li>
+            );
+          })
         )}
       </ul>
 
