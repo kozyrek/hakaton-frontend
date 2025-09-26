@@ -10,73 +10,81 @@ import Loader from "../../components/loader/loader";
 
 import { HTTP } from "../../api/http";
 
-import getProjectById from "../../api/projects/getProjectById";
+import getProjectById from "../../api/projects/getProjectById"; // для проектов
+import getTeamById from "../../api/team/getTeamById"; // для команд
 import getProjectFiles from "../../api/projects/getProjectFiles";
-import getTeamById from "../../api/team/getTeamById";
 import { STEP_PROJECT_STATUS } from "../../utils/constants";
 
 export default function ProjectStages() {
     const [error, setError] = useState(undefined);
     const { projectId } = useParams();
-    const [project, setProject] = useState({});
+    const [project, setProject] = useState(null);
     const [files, setFiles] = useState([]);
     const [teamInfo, setTeamInfo] = useState(null);
     const [isCompleteProject, setIsCompleteProject] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
+    // Загрузка проекта и связанных данных
     useEffect(() => {
-        console.log('Fetching project with ID:', projectId); // Добавлено для отладки
-        const fetchDataProject = async () => {
+        const fetchProjectData = async () => {
             try {
-                const requestProject = await getProjectById(projectId);
-                setProject(requestProject.data);
-            } catch (e) {
-                console.error('Error fetching project:', e.message); // Добавлено для отладки
-                setError(e.message);
-            }
-        }
-        fetchDataProject();
-        // eslint-disable-next-line
-    }, [projectId])
+                setIsLoading(true);
+                setError(undefined);
+                
+                console.log('Fetching project with ID:', projectId);
+                
+                // Загружаем проект
+                const projectResponse = await getProjectById(projectId);
+                const projectData = projectResponse.data;
+                console.log('Received project data:', projectData);
+                
+                setProject(projectData);
 
-    useEffect(() => {
-        const fetchFiles = async () => {
-            try {
-                const requestFiles = await getProjectFiles(projectId);
-                setFiles(requestFiles.data);
-            } catch (e) {
-                console.error('Error fetching files:', e.message); // Добавлено для отладки
-                setError(e.message);
-            }
-        }
-        fetchFiles();
-        // eslint-disable-next-line
-    }, [])
-
-    useEffect(() => {
-        if (project.teamId) {
-            const fetchTeamInfo = async () => {
+                // Загружаем файлы проекта
                 try {
-                    const requestTeam = await getTeamById(project.teamId);
-                    setTeamInfo(requestTeam);
-                } catch (e) {
-                    console.error('Error fetching team info:', e.message); // Добавлено для отладки
-                    setError(e.message);
+                    const filesResponse = await getProjectFiles(projectId);
+                    setFiles(filesResponse.data || []);
+                } catch (fileError) {
+                    console.error('Error fetching project files:', fileError.message);
+                    setFiles([]);
                 }
-            }
-            console.log('Fetching team info for teamId:', project.teamId); // Добавлено для отладки
-            fetchTeamInfo();
-        }
-        // eslint-disable-next-line
-    }, [project.teamId])
 
-    useEffect(() => {
-        if (project.steps) {
-            setIsCompleteProject(project.steps.find
-                (x => (x.stepNumber === 15) && (x.status === STEP_PROJECT_STATUS.ACCEPTED)
-            ));
+                // Загружаем информацию о команде, если она есть
+                if (projectData.teamId) {
+                    try {
+                        console.log('Fetching team info for teamId:', projectData.teamId);
+                        const teamResponse = await getTeamById(projectData.teamId);
+                        setTeamInfo(teamResponse);
+                    } catch (teamError) {
+                        console.error('Error fetching team info:', teamError.message);
+                        setTeamInfo(null);
+                    }
+                } else {
+                    console.log('No teamId found in project data');
+                    setTeamInfo(null);
+                }
+
+                // Проверяем завершенность проекта
+                if (projectData.steps) {
+                    const isComplete = projectData.steps.find(
+                        x => (x.stepNumber === 15) && (x.status === STEP_PROJECT_STATUS.ACCEPTED)
+                    );
+                    setIsCompleteProject(!!isComplete);
+                }
+
+            } catch (e) {
+                console.error('Error fetching project data:', e.message);
+                setError(e.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (projectId) {
+            fetchProjectData();
         }
-        // eslint-disable-next-line
-    }, [project.steps])
+    }, [projectId]);
+
     const handleChange = (event) => {
         let formData = new FormData();
         const data = {
@@ -87,11 +95,9 @@ export default function ProjectStages() {
         formData.append('data', JSON.stringify(data))
         formData.append('document', event.target.files[0])
 
-        // console.log(event.target.files[0])
-       
         try {
             const response = HTTP.post("/projects/", formData);
-            return response.data
+            return response.data;
         } catch (error) {
             if (!error.response) {
                 throw new Error('ошибка');
@@ -104,9 +110,9 @@ export default function ProjectStages() {
     
             throw new Error(message);
         }
-    }
+    };
 
-    // ДОБАВЛЕНО: Обработка случая, когда проект не найден
+    // Обработка ошибки загрузки
     if (error) {
         return (
             <LayoutLogin>
@@ -125,10 +131,13 @@ export default function ProjectStages() {
                             Ошибка загрузки проекта
                         </h2>
                         <p style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>
-                            {error}
+                            {error.includes('Team not found') 
+                                ? 'Проект не связан с командой' 
+                                : error}
                         </p>
                         <p style={{ color: '#666' }}>
                             Project ID: {projectId}
+                            {project && project.teamId && ` | Team ID: ${project.teamId}`}
                         </p>
                         <button 
                             onClick={() => window.history.back()}
@@ -150,38 +159,42 @@ export default function ProjectStages() {
         );
     }
 
-    /*------------------------------------------------------------------------------*/
-    return (        
-        Object.keys(project).length === 0
-        ?   <div className="loaderBox">
+    // Отображение загрузки
+    if (isLoading || !project) {
+        return (
+            <div className="loaderBox">
                 <Loader />
-            </div> 
-        :   <>
-                <LayoutLogin>
-                    <Container fluid="xxl">
-                        <HeadStages 
-                            obj={project}
-                            setProject={setProject}
-                        />     
+            </div>
+        );
+    }
 
-                    </Container>      
-                </LayoutLogin>
+    // Основной рендеринг
+    return (        
+        <>
+            <LayoutLogin>
                 <Container fluid="xxl">
-                    <TeamInfo 
-                        obj={teamInfo} 
-                        arr={project.steps}
-                    />
-                    <ProjectDocuments 
-                        files={files} 
-                        projectId={project.id} 
-                        isCompleteProject={isCompleteProject} 
-                    />
-                    <StagesList 
-                        arr={project.steps} 
-                        projectId={project.id} 
-                        isCompleteProject={isCompleteProject} 
-                    />
-                </Container>
-            </>
-    )
-}   
+                    <HeadStages 
+                        obj={project}
+                        setProject={setProject}
+                    />     
+                </Container>      
+            </LayoutLogin>
+            <Container fluid="xxl">
+                <TeamInfo 
+                    obj={teamInfo} 
+                    arr={project.steps || []}
+                />
+                <ProjectDocuments 
+                    files={files} 
+                    projectId={project.id} 
+                    isCompleteProject={isCompleteProject} 
+                />
+                <StagesList 
+                    arr={project.steps || []} 
+                    projectId={project.id} 
+                    isCompleteProject={isCompleteProject} 
+                />
+            </Container>
+        </>
+    );
+}
