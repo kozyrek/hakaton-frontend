@@ -18,7 +18,7 @@ import stylesView from "../components/personal-info/index.module.css";
 import stylesID from "./index.module.css";
 import TextView from "../components/personal-info/textView";
 import verifyUser from "../../../api/verify-user";
-import rejectUser from "../../../api/mock_reject-user";
+import deleteUser from "../../../api/deleteUser"; // ИСПОЛЬЗУЕМ реальную функцию удаления
 import ModalWrapper from "../../../components/modalOverlay";
 import ModalWindow from "../../../components/modalWindow";
 
@@ -69,15 +69,22 @@ export default function UserId() {
     }
   };
 
+  // ИСПРАВЛЕНО: используем реальную функцию deleteUser вместо мока
   const handleReject = async () => {
     try {
-      await rejectUser(userId);
-      setActionMessage("Пользователь успешно отклонен");
+      await deleteUser(userId); // Вызываем реальную функцию удаления
+      setActionMessage("Пользователь успешно отклонен и удален");
       setIsActionSuccess(true);
       setIsRejectModalOpen(false);
     } catch (error) {
       console.error("Ошибка при отклонении пользователя:", error);
-      setActionMessage("Ошибка при отклонении пользователя");
+      if (error.response?.status === 403) {
+        setActionMessage("Недостаточно прав для удаления пользователя");
+      } else if (error.response?.status === 404) {
+        setActionMessage("Пользователь не найден");
+      } else {
+        setActionMessage("Ошибка при отклонении пользователя");
+      }
       setIsActionSuccess(true);
     }
   };
@@ -112,10 +119,9 @@ export default function UserId() {
     <>
       <div className={styles.userHeader}>
         <LayoutProfileBg>
-          {/* В чужом профиле явно запрещаем редактирование */}
           <ProfileHeader 
             user={userProfile} 
-            isEditable={false} // Явно запрещаем редактирование
+            isEditable={false}
           />
         </LayoutProfileBg>
       </div>
