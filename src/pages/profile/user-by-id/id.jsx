@@ -18,12 +18,12 @@ import stylesView from "../components/personal-info/index.module.css";
 import stylesID from "./index.module.css";
 import TextView from "../components/personal-info/textView";
 import verifyUser from "../../../api/verify-user";
-import rejectUser from "../../../api/mock_reject-user"; // ДОБАВЛЕНО: API для отклонения
-import ModalWrapper from "../../../components/modalOverlay"; // ДОБАВЛЕНО: модальное окно
-import ModalWindow from "../../../components/modalWindow"; // ДОБАВЛЕНО: модальное окно
+import rejectUser from "../../../api/mock_reject-user";
+import ModalWrapper from "../../../components/modalOverlay";
+import ModalWindow from "../../../components/modalWindow";
 
 export default function UserId() {
-  const user = useSelector((state) => state.user.user);
+  const currentUser = useSelector((state) => state.user.user);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(undefined);
@@ -32,7 +32,6 @@ export default function UserId() {
   const token = useSelector((state) => state.user.token.accessToken);
   const [data, setData] = useState({});
 
-  // ДОБАВЛЕНО: состояния для модальных окон
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isActionSuccess, setIsActionSuccess] = useState(false);
@@ -47,19 +46,16 @@ export default function UserId() {
               scientificInterests: userProfile.mentor.scientificInterests,
               taughtSubjects: userProfile.mentor.taughtSubjects,
               researchTopics: userProfile.mentor.researchTopics,
-              // documents: user.documents,
             }
           : {
               interests: userProfile.participant.interests,
               olympics: userProfile.participant.olympics,
               achievements: userProfile.participant.achievements,
-              // documents: user.documents,
             }
       );
     }
   }, [userProfile]);
 
-  // ДОБАВЛЕНО: функция подтверждения регистрации
   const handleVerify = async () => {
     try {
       await verifyUser(userId);
@@ -73,7 +69,6 @@ export default function UserId() {
     }
   };
 
-  // ДОБАВЛЕНО: функция отклонения регистрации
   const handleReject = async () => {
     try {
       await rejectUser(userId);
@@ -87,16 +82,15 @@ export default function UserId() {
     }
   };
 
-  // ДОБАВЛЕНО: функция возврата к списку пользователей
   const handleBackToUsers = () => {
-    navigate(ROUTES.PROFILE); // Возвращаемся к профилю (на вкладку users)
+    navigate(ROUTES.PROFILE);
   };
 
   useEffect(() => {
     const fetchDataUser = async () => {
       try {
         const requestUser = await getUser(userId);
-        if (!requestUser.verified && getRole(user) !== ROLES.ADMIN) {
+        if (!requestUser.verified && getRole(currentUser) !== ROLES.ADMIN) {
           navigate(ROUTES.PROFILE);
           return;
         }
@@ -109,8 +103,7 @@ export default function UserId() {
     };
 
     fetchDataUser();
-    // eslint-disable-next-line
-  }, [userId]);
+  }, [userId, currentUser, navigate]);
 
   if (loading) return <div style={{ marginTop: "80px" }}>Loading...</div>;
   if (error) return <div style={{ marginTop: "80px" }}>{error}</div>;
@@ -119,7 +112,11 @@ export default function UserId() {
     <>
       <div className={styles.userHeader}>
         <LayoutProfileBg>
-          <ProfileHeader user={userProfile} />
+          {/* В чужом профиле явно запрещаем редактирование */}
+          <ProfileHeader 
+            user={userProfile} 
+            isEditable={false} // Явно запрещаем редактирование
+          />
         </LayoutProfileBg>
       </div>
       <div className={styles.profileWrapper}>
@@ -144,7 +141,7 @@ export default function UserId() {
               </Row>
             ))}
 
-            {!userProfile.verified && (
+            {!userProfile.verified && getRole(currentUser) === ROLES.ADMIN && (
               <div className={stylesID.buttonContainer}>
                 <Button
                   text="Принять"
@@ -163,7 +160,6 @@ export default function UserId() {
         </Container>
       </div>
 
-      {/* Модальное окно подтверждения принятия */}
       <ModalWrapper
         isOpen={isVerifyModalOpen}
         onClose={() => setIsVerifyModalOpen(false)}
@@ -188,7 +184,6 @@ export default function UserId() {
         </ModalWindow>
       </ModalWrapper>
 
-      {/* Модальное окно подтверждения отклонения */}
       <ModalWrapper
         isOpen={isRejectModalOpen}
         onClose={() => setIsRejectModalOpen(false)}
@@ -212,7 +207,6 @@ export default function UserId() {
         </ModalWindow>
       </ModalWrapper>
 
-      {/* Модальное окно результата действия */}
       <ModalWrapper
         isOpen={isActionSuccess}
         onClose={handleBackToUsers}

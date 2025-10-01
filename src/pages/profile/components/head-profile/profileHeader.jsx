@@ -29,9 +29,12 @@ export const getRole = (user) => {
   return ROLES.UNDEFINED;
 };
 
-const ProfileHeader = ({ user, setEditRegInfo }) => {
+const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false }) => {
   const role = useMemo(() => getRole(user), [user]);
   const width = useResize();
+
+  // Упрощенная проверка - используем явный пропс isEditable
+  const canEdit = isEditable && setEditRegInfo;
 
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("ru-RU", {
@@ -59,16 +62,19 @@ const ProfileHeader = ({ user, setEditRegInfo }) => {
             {user.lastName} {user.firstName}
             {user.patronymic && ` ${user.patronymic}`}
           </h2>
-          <button 
-            className={styles.editButton}
-            onClick={() => setEditRegInfo(true)}
-            aria-label="Редактировать регистрационные данные">
-            <Pencil
-              width={width < 769 ? 18 : 28}
-              height={width < 769 ? 18 : 28}
-              aria-hidden="true"
-            />
-          </button>
+          {/* Показываем кнопку редактирования только если явно разрешено */}
+          {canEdit && (
+            <button 
+              className={styles.editButton}
+              onClick={() => setEditRegInfo(true)}
+              aria-label="Редактировать регистрационные данные">
+              <Pencil
+                width={width < 769 ? 18 : 28}
+                height={width < 769 ? 18 : 28}
+                aria-hidden="true"
+              />
+            </button>
+          )}
         </div>
         {user.birthDate && (
           <p className={`text1 ${styles.userBirthDate}`}>
@@ -100,6 +106,7 @@ const ProfileHeader = ({ user, setEditRegInfo }) => {
 
 ProfileHeader.propTypes = {
   user: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     patronymic: PropTypes.string,
@@ -117,6 +124,9 @@ ProfileHeader.propTypes = {
       schoolGrade: PropTypes.string,
     }),
   }),
+  currentUserId: PropTypes.string,
+  setEditRegInfo: PropTypes.func,
+  isEditable: PropTypes.bool, // Явное указание, можно ли редактировать
 };
 
 export default ProfileHeader;

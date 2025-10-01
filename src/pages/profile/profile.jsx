@@ -42,7 +42,12 @@ export default function Profile() {
     <>
       <div className={styles.userHeader}>
         <LayoutProfileBg>
-          <ProfileHeader user={user.user} setEditRegInfo={setEditRegInfo} />
+          {/* В своем профиле явно разрешаем редактирование */}
+          <ProfileHeader 
+            user={user.user} 
+            setEditRegInfo={setEditRegInfo}
+            isEditable={true} // Явно разрешаем редактирование
+          />
         </LayoutProfileBg>
       </div>
       <div className={styles.profileWrapper}>
@@ -56,7 +61,6 @@ export default function Profile() {
             />
           </div>
           <div className={styles.contentBox}>
-            {/* Изменено: передаем данные пользователя как initialData */}
             {editRegInfo && <ProfileForm initialData={user.user} />}
             {activeTab === "profile" && !editRegInfo && <PersonalInfo isViewied />}
             {activeTab === "users" && !editRegInfo && (
