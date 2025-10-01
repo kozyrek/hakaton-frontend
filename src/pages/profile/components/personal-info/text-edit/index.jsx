@@ -14,11 +14,11 @@ export default function TextEdit(props) {
   const { personalInfo, onClick, id, isMentor } = props;
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState({});
-  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const { applicableFields, errorFields } =
-      createFormDataAndError(personalInfo);
+    const { applicableFields, errorFields } = createFormDataAndError(personalInfo);
     setFormData(applicableFields);
     setFormError(errorFields);
   }, [personalInfo]);
@@ -28,20 +28,40 @@ export default function TextEdit(props) {
   };
 
   const handleSubmit = async () => {
-    const response = await updateUserInterest(id, formData, isMentor);
-    dispatch(set_user(response))
-    onClick(false);
+    if (!id) {
+      console.error('Нельзя сохранить: ID пользователя отсутствует');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      console.log('Отправка данных для пользователя:', id);
+      console.log('Данные:', formData);
+      
+      const response = await updateUserInterest(id, formData, isMentor);
+      console.log('Успешный ответ:', response);
+      
+      dispatch(set_user(response));
+      onClick(false);
+    } catch (error) {
+      console.error('Ошибка сохранения данных:', error);
+      console.error('Детали ошибки:', error.response?.data);
+    } finally {
+      setLoading(false);
+    }
   };
-  console.log(formData);
+
+  // Проверка ID после всех хуков
+  if (!id) {
+    console.error('TextEdit: ID пользователя не передан');
+    return <div>Ошибка: ID пользователя не найден</div>;
+  }
 
   return (
     <div>
       {Object.entries(formData).map(([key, value]) => {
         return (
-          <Row
-            className={styles.textViewContainer}
-            key={key}
-          >
+          <Row className={styles.textViewContainer} key={key}>
             <Col>
               <Inputs
                 type={key === "documents" ? "download" : "textarea"}
@@ -58,8 +78,9 @@ export default function TextEdit(props) {
       <Row className="mt-5">
         <Col>
           <Button
-            text="Сохранить"
-            onClick={() => handleSubmit()}
+            text={loading ? "Сохранение..." : "Сохранить"}
+            onClick={handleSubmit}
+            disabled={loading}
           />
         </Col>
       </Row>

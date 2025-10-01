@@ -22,63 +22,104 @@ export const LABELS = {
   researchTopics: "Тематика научных и исследовательских работ",
 };
 
+// Функция для декодирования JWT токена
+const decodeJWT = (token) => {
+  try {
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload));
+  } catch (error) {
+    console.error('Error decoding JWT:', error);
+    return null;
+  }
+};
+
 export default function PersonalInfo({ isViewied = false }) {
   const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user ?? {});
-  const isMentor = user.user.isMentor;
+  const userState = useSelector((state) => state.user ?? {});
   const width = useResize();
   const [data, setData] = useState();
 
+  // Получаем ID из JWT токена
+  const token = userState.token?.accessToken;
+  const decodedToken = token ? decodeJWT(token) : null;
+  const authenticatedUserId = decodedToken?.sub ? parseInt(decodedToken.sub) : null;
+
+  // Данные пользователя из Redux
+  const userData = userState.user;
+  const isMentor = userData?.isMentor;
+
+  console.log('Authenticated user ID from token:', authenticatedUserId);
+  console.log('User data from Redux:', userData);
+  console.log('Is mentor:', isMentor);
+
+  // Используем ID из токена для API запросов
+  const userId = authenticatedUserId;
+
   useEffect(() => {
-    if (user && Object.keys(user.user).length !== 0) {
+    if (userData && Object.keys(userData).length !== 0) {
+      console.log('Setting data from userData:', userData);
       setData(
         isMentor
           ? {
-              articles: user.user.mentor.articles,
-              scientificInterests: user.user.mentor.scientificInterests,
-              taughtSubjects: user.user.mentor.taughtSubjects,
-              researchTopics: user.user.mentor.researchTopics,
-              documents: user.documents,
+              articles: userData.mentor?.articles || "",
+              scientificInterests: userData.mentor?.scientificInterests || "",
+              taughtSubjects: userData.mentor?.taughtSubjects || "",
+              researchTopics: userData.mentor?.researchTopics || "",
+              documents: userState.documents || [],
             }
           : {
-              interests: user.user.participant.interests,
-              olympics: user.user.participant.olympics,
-              achievements: user.user.participant.achievements,
-              documents: user.documents,
+              interests: userData.participant?.interests || "",
+              olympics: userData.participant?.olympics || "",
+              achievements: userData.participant?.achievements || "",
+              documents: userState.documents || [],
             }
       );
     }
-    // eslint-disable-next-line
-  }, [isMentor]);
+  }, [userData, isMentor, userState.documents]);
 
- useEffect(() => {
-  const getDocuments = async () => {
-    // Проверяем, что user существует и у него есть корректный ID
-    if (user.user && user.user.id) {
-      try {
-        const docs = await getUserDocuments(user.user.id);
-        dispatch(set_user_files(docs));
-      } catch (error) {
-        console.error('Ошибка при загрузке документов:', error);
+  useEffect(() => {
+    const getDocuments = async () => {
+      console.log('Attempting to load documents for user ID:', userId);
+      
+      if (userId) {
+        try {
+          const docs = await getUserDocuments(userId);
+          console.log('Loaded documents:', docs);
+          dispatch(set_user_files(docs));
+          
+          // Обновляем данные с документами
+          setData(prevData => ({
+            ...prevData,
+            documents: docs
+          }));
+        } catch (error) {
+          console.error('Ошибка при загрузке документов:', error);
+        }
+      } else {
+        console.warn('User ID не найден для загрузки документов');
       }
+    };
+    
+    if (userId) {
+      getDocuments();
     }
-  };
-  getDocuments();
-  // eslint-disable-next-line
-}, [user.user.id]); // Добавляем user.user.id в зависимости
+  }, [userId, dispatch]);
 
-  if (!data) return <>Loading...</>;
+  if (!data) {
+    console.log('Data is not ready, showing loading...');
+    return <>Loading...</>;
+  }
+
+  console.log('Rendering with data:', data);
+  console.log('Current user ID for TextEdit:', userId);
 
   return (
-    <Container
-      fluid
-      className="p-0"
-    >
+    <Container fluid className="p-0">
       <Row className={styles.mb48}>
         <Col className={styles.personalInfoContainer}>
-          <h2 className={styles.sectionTitle}>Персональные данные</h2>{" "}
-          {isViewied && (
+          <h2 className={styles.sectionTitle}>Персональные данные</h2>
+          {isViewied && userId === authenticatedUserId && (
             <button
               className={styles.editButton}
               onClick={() => setIsEdit(true)}
@@ -94,26 +135,37 @@ export default function PersonalInfo({ isViewied = false }) {
         </Col>
       </Row>
       {isEdit ? (
-        <TextEdit
-          personalInfo={data}
-          onClick={setIsEdit}
-          id={user.user.id}
-          isMentor={isMentor}
-        />
+        userId ? (
+          <TextEdit
+            personalInfo={data}
+            onClick={setIsEdit}
+            id={userId}
+            isMentor={isMentor}
+          />
+        ) : (
+          <div className="text-danger">
+            Ошибка: ID пользователя не найден. Невозможно сохранить изменения.
+            <br />
+            <small>User ID: {userId}</small>
+          </div>
+        )
       ) : (
-        Object.entries(data).map(([key, value]) => (
-          <Row
-            className={styles.textViewContainer}
-            key={key}
-          >
-            <Col>
-              <TextView
-                title={LABELS[key]}
-                text={value}
-              />
-            </Col>
-          </Row>
-        ))
+        Object.entries(data)
+          .filter(([key, value]) => {
+            // Показываем только непустые поля и документы
+            if (key === 'documents') return value && value.length > 0;
+            return value && value.toString().trim() !== '';
+          })
+          .map(([key, value]) => (
+            <Row className={styles.textViewContainer} key={key}>
+              <Col>
+                <TextView
+                  title={LABELS[key]}
+                  text={value}
+                />
+              </Col>
+            </Row>
+          ))
       )}
     </Container>
   );
