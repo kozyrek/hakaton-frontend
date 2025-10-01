@@ -194,10 +194,10 @@ export default function UserId() {
         onClose={() => setIsRejectModalOpen(false)}
       >
         <ModalWindow
-          title="Отклонение регистрации"
+          title="Вы уверены, что хотите отклонить данного пользователя?"
           buttonArea={[
             <Button
-              text="Отменить"
+              text="Назад"
               large
               violet
               onClick={() => setIsRejectModalOpen(false)}
@@ -209,7 +209,6 @@ export default function UserId() {
             />
           ]}
         >
-          <p>Вы действительно хотите отклонить регистрацию этого пользователя?</p>
         </ModalWindow>
       </ModalWrapper>
 
