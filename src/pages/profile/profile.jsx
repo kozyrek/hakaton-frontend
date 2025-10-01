@@ -9,7 +9,6 @@ import ProfileMembers from "./components/list-members/profileMembers";
 import TeamsProfile from "./components/teams-profile/teamsProfile";
 import ProjectsProfile from "./components/projects-profile/projectsProfile";
 import PersonalInfo from "./components/personal-info";
-// import cn from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/user/userSlice";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +22,6 @@ export default function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Управление вкладками
   const [activeTab, setActiveTab] = useState("profile");
   const [editRegInfo, setEditRegInfo] = useState(false);
   const handleTabChange = (tab) => {
@@ -58,8 +56,8 @@ export default function Profile() {
             />
           </div>
           <div className={styles.contentBox}>
-            {/* {activeTab === "profile" && <ProfileForm formData={user} />} */}
-            {editRegInfo && <ProfileForm formData={user.user} />}
+            {/* Изменено: передаем данные пользователя как initialData */}
+            {editRegInfo && <ProfileForm initialData={user.user} />}
             {activeTab === "profile" && !editRegInfo && <PersonalInfo isViewied />}
             {activeTab === "users" && !editRegInfo && (
               <ProfileMembers
@@ -68,12 +66,12 @@ export default function Profile() {
                 onRemoveParticipant={handleRemoveParticipant}
               />
             )}
-{activeTab === "teams" && user.user.isMentor && !editRegInfo && (
-  <TeamsProfile user={user.user} />
-)}
-{activeTab === "projects" && !editRegInfo && (
-  <ProjectsProfile user={user.user} />
-)}
+            {activeTab === "teams" && user.user.isMentor && !editRegInfo && (
+              <TeamsProfile user={user.user} />
+            )}
+            {activeTab === "projects" && !editRegInfo && (
+              <ProjectsProfile user={user.user} />
+            )}
           </div>
         </Container>
       </div>

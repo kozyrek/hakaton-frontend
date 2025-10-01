@@ -4,9 +4,7 @@ import profilePhotoAvatar from "../../../../assests/images/photo/profilePhotoAva
 import Inputs from "../../../../components/inputs/inputs";
 import { formFields } from "../../../auth/utils/utils";
 import {
-  // passwordMatchValidation,
   validateField,
-  // validateForm,
 } from "../../../auth/utils/validateForm";
 import ArrowDown from "../../../../assests/images/icon/arrowdown";
 import ArrowUp from "../../../../assests/images/icon/arrowup";
@@ -19,8 +17,7 @@ import DownloadButton from "../../ui/downloadBtn/downloadButton";
 import stylesReg from "../../../auth/styles/registration.module.css";
 
 const ProfileForm = ({
-  // formData,
-  // handleChange,
+  initialData,
   handlePhotoChange,
   handlePdfChange,
   handleSaveProfile
@@ -36,40 +33,41 @@ const ProfileForm = ({
   });
   const [formError, setFormError] = useState({});
 
-  console.log('фрмдата',formData)//---------------------------------
-
+  // Инициализация формы данными пользователя
   useEffect(() => {
-    const { applicableFields, errorFields } = formFields.reduce(
-      (acc, field) => {
-        if (field.name === formData.role.value) {
-          field.data.map((val) => {
-            acc.applicableFields[val.name] = {
-              value: "",
-              type: val.type,
+    if (initialData) {
+      const role = initialData.role || 'participant';
+      const { applicableFields, errorFields } = formFields.reduce(
+        (acc, field) => {
+          if (field.name === role) {
+            field.data.forEach((val) => {
+              acc.applicableFields[val.name] = {
+                value: initialData[val.name] || "",
+                type: val.type,
+              };
+              acc.errorFields[val.name] = "";
+            });
+          } else {
+            acc.applicableFields[field.name] = {
+              value: initialData[field.name] || "",
+              type: field.type,
             };
-            acc.errorFields[val.name] = "";
-          });
-        } else {
-          acc.applicableFields[field.name] = {
-            value: "",
-            type: field.type,
-          };
-          acc.errorFields[field.name] = "";
-        }
-        return acc;
-      },
-      { applicableFields: {}, errorFields: {} }
-    );
-    console.log(applicableFields);
+            acc.errorFields[field.name] = "";
+          }
+          return acc;
+        },
+        { applicableFields: {}, errorFields: {} }
+      );
 
-    setFormData((prev) => ({
-      ...prev,
-      ...applicableFields,
-    }));
-
-    setFormError(errorFields);
-
-  }, [formData.role.value]);
+      setFormData({
+        role: { value: role, type: "role" },
+        policy: { value: initialData.policy || false, type: "checkbox" },
+        regulations: { value: initialData.regulations || false, type: "checkbox" },
+        ...applicableFields,
+      });
+      setFormError(errorFields);
+    }
+  }, [initialData]);
 
   const handleChange = (value, name) => {
       const processedValue =
