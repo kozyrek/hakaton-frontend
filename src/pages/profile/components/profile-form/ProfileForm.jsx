@@ -15,6 +15,7 @@ import Button from "../../../../components/button/button";
 import DownloadButton from "../../ui/downloadBtn/downloadButton";
 
 import stylesReg from "../../../auth/styles/registration.module.css";
+import getRegion from "../../../../api/regions/getRegions"; // Добавляем импорт
 
 const ProfileForm = ({
   initialData,
@@ -33,41 +34,55 @@ const ProfileForm = ({
   });
   const [formError, setFormError] = useState({});
 
-  // Инициализация формы данными пользователя
+  // Загрузка регионов
   useEffect(() => {
-    if (initialData) {
-      const role = initialData.role || 'participant';
-      const { applicableFields, errorFields } = formFields.reduce(
-        (acc, field) => {
-          if (field.name === role) {
-            field.data.forEach((val) => {
-              acc.applicableFields[val.name] = {
-                value: initialData[val.name] || "",
-                type: val.type,
-              };
-              acc.errorFields[val.name] = "";
-            });
-          } else {
-            acc.applicableFields[field.name] = {
-              value: initialData[field.name] || "",
-              type: field.type,
-            };
-            acc.errorFields[field.name] = "";
-          }
-          return acc;
-        },
-        { applicableFields: {}, errorFields: {} }
-      );
+    const fetchRegions = async () => {
+      try {
+        const response = await getRegion();
+        setRegions(response.data);
+      } catch (error) {
+        console.error('Ошибка загрузки регионов:', error);
+      }
+    };
+    fetchRegions();
+  }, []);
 
-      setFormData({
-        role: { value: role, type: "role" },
-        policy: { value: initialData.policy || false, type: "checkbox" },
-        regulations: { value: initialData.regulations || false, type: "checkbox" },
-        ...applicableFields,
-      });
-      setFormError(errorFields);
-    }
-  }, [initialData]);
+  // Инициализация формы данными пользователя
+useEffect(() => {
+  if (initialData) {
+    const role = initialData.role || 'participant';
+    const { applicableFields, errorFields } = formFields.reduce(
+      (acc, field) => {
+        if (field.name === role) {
+          field.data.forEach((val) => {
+            acc.applicableFields[val.name] = {
+              value: initialData[val.name] || "",
+              type: val.type,
+            };
+            acc.errorFields[val.name] = "";
+          });
+        } else {
+          // ИСПРАВЛЕНИЕ: используем field.name вместо val.name
+          acc.applicableFields[field.name] = {
+            value: initialData[field.name] || "",
+            type: field.type,
+          };
+          acc.errorFields[field.name] = ""; // ИСПРАВЛЕНИЕ: используем field.name
+        }
+        return acc;
+      },
+      { applicableFields: {}, errorFields: {} }
+    );
+
+    setFormData({
+      role: { value: role, type: "role" },
+      policy: { value: initialData.policy || false, type: "checkbox" },
+      regulations: { value: initialData.regulations || false, type: "checkbox" },
+      ...applicableFields,
+    });
+    setFormError(errorFields);
+  }
+}, [initialData]);
 
   const handleChange = (value, name) => {
       const processedValue =
@@ -95,15 +110,14 @@ const ProfileForm = ({
           return item.name === formData.role.value ? (
             item.data.map((e) =>
               e.name === "regionId" ? (
-                <div className={styles.regionId}>
+                <div className={styles.regionId} key={e.id}>
                   <label className={stylesReg.label}>Регион</label>
                   <div
                     className={`${styles.loginInput} ${stylesReg.requred} pt-2`}
                     onClick={() => setIsShowRegion(!isShowRegion)}
                   >
-                    {formData.regionId?.value
-                      ? regions.find((r) => r.id == formData.regionId.value)
-                          ?.name
+                    {formData.regionId?.value && regions.length > 0
+                      ? regions.find((r) => r.id == formData.regionId.value)?.name
                       : "Выберите регион"}
                     <span
                       className={stylesReg.arrow}
@@ -134,10 +148,15 @@ const ProfileForm = ({
                       </div>
                     )}
                   </div>
+                  {formError.regionId && (
+                    <div className={stylesReg.helperTextError}>
+                      {formError.regionId}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div
-                  className={`${stylesReg.conInputs} ${styles[item.data[e.id-8].name]}`}
+                  className={`${stylesReg.conInputs} ${styles[item.data[e.id-8]?.name]}`}
                   key={e.id}
                 >
                   <Inputs
@@ -194,14 +213,14 @@ const ProfileForm = ({
             accept="image/*"
             id="photoInput"
             onChange={handlePhotoChange}
-            // style={{ display: "none" }}
+            style={{ display: "none" }}
           />
         </div>
 
       <Button 
         large 
         text="Сохранить" 
-        onClick={() => alert("Сменить пароль")}
+        onClick={() => handleSaveProfile && handleSaveProfile(formData)}
         addClass={styles.btnSave}
       />
     </>
