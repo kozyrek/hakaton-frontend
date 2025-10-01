@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Button from "../../../components/button/button";
 import Pencil from "../../profile/components/personal-info/images/Pencil";
 import { useResize } from "../../../hooks/useResize";
@@ -16,6 +16,23 @@ import deleteMembers from "../../../api/team/deleteMembers";
 import changeRole from "../../../api/team/changeRole";
 import getTeamById from "../../../api/team/getTeamById";
 
+// ДОБАВЛЕНО: кастомный хук дебаунса
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const TeamMembers = ({ members, onTeamUpdate }) => {
   const { teamId } = useParams();
   const [isEditRoleOpen, setEditRoleOpen] = useState(false);
@@ -28,24 +45,49 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [roleInput, setRoleInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); // ДОБАВЛЕНО: состояние для поиска
+  const [searchQuery, setSearchQuery] = useState("");
   
   const [selectedParticipants, setSelectedParticipants] = useState([]);
 
   const width = useResize();
 
-  // ДОБАВЛЕНО: фильтрация пользователей по поисковому запросу
+  // ДОБАВЛЕНО: использование дебаунса для поискового запроса
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  // ИСПРАВЛЕНО: правильная фильтрация пользователей на основе структуры из Swagger
   const filteredParticipants = useMemo(() => {
-    if (!searchQuery.trim()) {
+    console.log('Все пользователи для фильтрации:', participantWithoutTeam);
+    console.log('Поисковый запрос:', debouncedSearchQuery);
+
+    if (!debouncedSearchQuery.trim()) {
       return participantWithoutTeam;
     }
     
-    const query = searchQuery.toLowerCase();
-    return participantWithoutTeam.filter(item => {
-      const fullName = `${item.participant.lastName} ${item.participant.firstName}`.toLowerCase();
-      return fullName.includes(query);
+    const query = debouncedSearchQuery.toLowerCase().trim();
+    return participantWithoutTeam.filter(user => {
+      // ИСПРАВЛЕНО: правильное извлечение данных из структуры Swagger
+      const firstName = (user.firstName || '').toLowerCase();
+      const lastName = (user.lastName || '').toLowerCase();
+      const fullName = `${firstName} ${lastName}`.toLowerCase();
+      const email = (user.email || '').toLowerCase();
+
+      console.log('Проверка пользователя:', { 
+        id: user.id, 
+        firstName, 
+        lastName, 
+        fullName, 
+        email,
+        query 
+      });
+
+      return fullName.includes(query) || 
+             firstName.includes(query) || 
+             lastName.includes(query) ||
+             email.includes(query);
     });
-  }, [participantWithoutTeam, searchQuery]);
+  }, [participantWithoutTeam, debouncedSearchQuery]);
+
+  console.log('Отфильтрованные пользователи:', filteredParticipants);
 
   const fetchTeamData = async () => {
     try {
@@ -58,21 +100,45 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     }
   };
 
-  const fetchParticipant = async () => {
-    const response = await getAllUser({
-      is_team_member: false,
-      is_mentor: false,
-    });
-    setParticipantWithoutTeam(response.items);
-    setSelectedParticipants([]);
-  };
-  
+  // ИСПРАВЛЕНО: функция загрузки пользователей с серверным поиском
+  const fetchParticipants = useCallback(async (search = '') => {
+    try {
+      console.log("Загрузка пользователей без команды с поиском:", search);
+      const params = {
+        is_team_member: false,
+        is_mentor: false,
+      };
+      
+      // Добавляем поиск только если есть поисковый запрос
+      if (search.trim()) {
+        params.search = search;
+      }
+      
+      const response = await getAllUser(params);
+      console.log("Полученные пользователи:", response);
+      
+      // ИСПРАВЛЕНО: правильное извлечение items из ответа
+      const users = response.items || response || [];
+      setParticipantWithoutTeam(users);
+      setSelectedParticipants([]);
+    } catch (error) {
+      console.error("Ошибка при загрузке пользователей:", error);
+      setParticipantWithoutTeam([]);
+    }
+  }, []);
+
+  // ИСПРАВЛЕНО: загрузка пользователей при открытии модального окна и при изменении поиска
   useEffect(() => {
     if (isAddMemberOpen) {
-      fetchParticipant();
-      setSearchQuery(""); // Сброс поиска при открытии модального окна
+      if (debouncedSearchQuery.trim()) {
+        // Если есть поисковый запрос, делаем поиск на сервере
+        fetchParticipants(debouncedSearchQuery);
+      } else {
+        // Если нет поискового запроса, загружаем всех пользователей
+        fetchParticipants();
+      }
     }
-  }, [isAddMemberOpen]);
+  }, [isAddMemberOpen, debouncedSearchQuery, fetchParticipants]);
 
   const handleAddSelectedMembers = async () => {
     console.log("Добавление выбранных участников:", selectedParticipants);
@@ -103,17 +169,18 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     }
   };
 
-  const handleAddSingleMember = async (item) => {
+  const handleAddSingleMember = async (user) => {
     setIsLoading(true);
     try {
       await addMembers(teamId, [
         {
-          participantId: item.participant.id
+          participantId: user.id
         }
       ]);
       
       await fetchTeamData();
-      await fetchParticipant();
+      // Перезагружаем список пользователей после добавления
+      fetchParticipants(debouncedSearchQuery);
       
       setAddSuccessOpen(true);
     } catch (error) {
@@ -123,17 +190,8 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     }
   };
 
-  const handleUserSelect = (participantId) => {
-    setSelectedParticipants(prev => {
-      if (prev.includes(participantId)) {
-        return prev.filter(id => id !== participantId);
-      } else {
-        return [...prev, participantId];
-      }
-    });
-  };
-
-  const handleCheckboxChange = (participantId, isChecked) => {
+  // ИСПРАВЛЕНО: обработчик чекбокса
+  const handleCheckboxChange = useCallback((participantId, isChecked) => {
     setSelectedParticipants(prev => {
       if (isChecked) {
         return [...prev, participantId];
@@ -141,7 +199,7 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
         return prev.filter(id => id !== participantId);
       }
     });
-  };
+  }, []);
 
   const handleDeleteClick = async (teamId, memberId) => {
     setIsLoading(true);
@@ -161,6 +219,7 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
       setLimitReachedOpen(true);
     } else {
       setAddMemberOpen(true);
+      setSearchQuery(""); // Сброс поиска при открытии модального окна
     }
   };
 
@@ -200,7 +259,7 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     }
   };
 
-  // ДОБАВЛЕНО: обработчик изменения поискового запроса
+  // ИСПРАВЛЕНО: обработчик изменения поискового запроса
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -289,21 +348,20 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
               />
             ]}
           >
-            {/* ИСПРАВЛЕНО: добавлен обработчик onChange для поиска */}
             <SearchInput 
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder="Поиск по имени..."
+              placeholder="Поиск по имени, фамилии или email..."
             />
             <div className={styles.modalParticipantsList}>
               {filteredParticipants.length > 0 ? (
-                filteredParticipants.map((item, index) => (
+                filteredParticipants.map((user, index) => (
                   <UserDisplay
-                    key={item.id || `participant-${index}`}
-                    item={item}
-                    onSubmit={handleAddSingleMember}
-                    onCheckboxChange={(isChecked) => handleCheckboxChange(item.participant.id, isChecked)}
-                    isChecked={selectedParticipants.includes(item.participant.id)}
+                    key={user.id || `user-${index}`}
+                    item={user} // Передаем объект пользователя напрямую
+                    onSubmit={() => handleAddSingleMember(user)}
+                    onCheckboxChange={(isChecked) => handleCheckboxChange(user.id, isChecked)}
+                    isChecked={selectedParticipants.includes(user.id)}
                     disabled={isLoading}
                   />
                 ))
