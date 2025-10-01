@@ -22,16 +22,30 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [isAddMemberOpen, setAddMemberOpen] = useState(false);
   const [isLimitReachedOpen, setLimitReachedOpen] = useState(false);
-  const [isAddSuccessOpen, setAddSuccessOpen] = useState(false); // ДОБАВЛЕНО: для успешного добавления
+  const [isAddSuccessOpen, setAddSuccessOpen] = useState(false);
   const [participantWithoutTeam, setParticipantWithoutTeam] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [roleInput, setRoleInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(""); // ДОБАВЛЕНО: состояние для поиска
   
   const [selectedParticipants, setSelectedParticipants] = useState([]);
 
   const width = useResize();
+
+  // ДОБАВЛЕНО: фильтрация пользователей по поисковому запросу
+  const filteredParticipants = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return participantWithoutTeam;
+    }
+    
+    const query = searchQuery.toLowerCase();
+    return participantWithoutTeam.filter(item => {
+      const fullName = `${item.participant.lastName} ${item.participant.firstName}`.toLowerCase();
+      return fullName.includes(query);
+    });
+  }, [participantWithoutTeam, searchQuery]);
 
   const fetchTeamData = async () => {
     try {
@@ -54,10 +68,12 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
   };
   
   useEffect(() => {
-    if (isAddMemberOpen) fetchParticipant();
+    if (isAddMemberOpen) {
+      fetchParticipant();
+      setSearchQuery(""); // Сброс поиска при открытии модального окна
+    }
   }, [isAddMemberOpen]);
 
-  // ИСПРАВЛЕНО: обработчик добавления выбранных участников
   const handleAddSelectedMembers = async () => {
     console.log("Добавление выбранных участников:", selectedParticipants);
     
@@ -79,7 +95,6 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
       setAddMemberOpen(false);
       await fetchTeamData();
       
-      // ИСПРАВЛЕНО: показываем окно успешного добавления вместо удаления
       setAddSuccessOpen(true);
     } catch (error) {
       console.error("Ошибка при добавлении участников:", error);
@@ -88,7 +103,6 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     }
   };
 
-  // ИСПРАВЛЕНО: обработчик одиночного добавления
   const handleAddSingleMember = async (item) => {
     setIsLoading(true);
     try {
@@ -101,7 +115,6 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
       await fetchTeamData();
       await fetchParticipant();
       
-      // ИСПРАВЛЕНО: показываем окно успешного добавления
       setAddSuccessOpen(true);
     } catch (error) {
       console.error("Ошибка при добавлении участника:", error);
@@ -130,12 +143,10 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     });
   };
 
-  // ИСПРАВЛЕНО: обработчик удаления участника
   const handleDeleteClick = async (teamId, memberId) => {
     setIsLoading(true);
     try {
       await deleteMembers(teamId, memberId);
-      // ИСПРАВЛЕНО: показываем окно удаления
       setDeleteOpen(true);
       await fetchTeamData();
     } catch (error) {
@@ -187,6 +198,11 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // ДОБАВЛЕНО: обработчик изменения поискового запроса
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
   return (
@@ -273,23 +289,34 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
               />
             ]}
           >
-            <SearchInput />
-            <div style={{ marginTop: "28px" }}>
-              {participantWithoutTeam.map((item, index) => (
-                <UserDisplay
-                  key={item.id || `participant-${index}`}
-                  item={item}
-                  onSubmit={handleAddSingleMember}
-                  onCheckboxChange={(isChecked) => handleCheckboxChange(item.participant.id, isChecked)}
-                  isChecked={selectedParticipants.includes(item.participant.id)}
-                  disabled={isLoading}
-                />
-              ))}
+            {/* ИСПРАВЛЕНО: добавлен обработчик onChange для поиска */}
+            <SearchInput 
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Поиск по имени..."
+            />
+            <div className={styles.modalParticipantsList}>
+              {filteredParticipants.length > 0 ? (
+                filteredParticipants.map((item, index) => (
+                  <UserDisplay
+                    key={item.id || `participant-${index}`}
+                    item={item}
+                    onSubmit={handleAddSingleMember}
+                    onCheckboxChange={(isChecked) => handleCheckboxChange(item.participant.id, isChecked)}
+                    isChecked={selectedParticipants.includes(item.participant.id)}
+                    disabled={isLoading}
+                  />
+                ))
+              ) : (
+                <div className={styles.noResults}>
+                  {searchQuery ? "Ничего не найдено" : "Нет доступных участников"}
+                </div>
+              )}
             </div>
           </ModalWindow>
         </ModalWrapper>
 
-        {/* ДОБАВЛЕНО: Модальное окно успешного добавления */}
+        {/* Модальное окно успешного добавления */}
         <ModalWrapper
           isOpen={isAddSuccessOpen}
           onClose={() => setAddSuccessOpen(false)}
@@ -325,7 +352,7 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
           </ModalWindow>
         </ModalWrapper>
 
-        {/* Остальные модальные окна без изменений */}
+        {/* Остальные модальные окна */}
         <ModalWrapper
           isOpen={isEditRoleOpen}
           onClose={() => setEditRoleOpen(false)}
