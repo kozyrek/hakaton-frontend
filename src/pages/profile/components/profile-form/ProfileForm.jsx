@@ -48,41 +48,40 @@ const ProfileForm = ({
   }, []);
 
   // Инициализация формы данными пользователя
-useEffect(() => {
-  if (initialData) {
-    const role = initialData.role || 'participant';
-    const { applicableFields, errorFields } = formFields.reduce(
-      (acc, field) => {
-        if (field.name === role) {
-          field.data.forEach((val) => {
-            acc.applicableFields[val.name] = {
-              value: initialData[val.name] || "",
-              type: val.type,
+  useEffect(() => {
+    if (initialData) {
+      const role = initialData.role || 'participant';
+      const { applicableFields, errorFields } = formFields.reduce(
+        (acc, field) => {
+          if (field.name === role) {
+            field.data.forEach((val) => {
+              acc.applicableFields[val.name] = {
+                value: initialData[val.name] || "",
+                type: val.type,
+              };
+              acc.errorFields[val.name] = "";
+            });
+          } else {
+            acc.applicableFields[field.name] = {
+              value: initialData[field.name] || "",
+              type: field.type,
             };
-            acc.errorFields[val.name] = "";
-          });
-        } else {
-          // ИСПРАВЛЕНИЕ: используем field.name вместо val.name
-          acc.applicableFields[field.name] = {
-            value: initialData[field.name] || "",
-            type: field.type,
-          };
-          acc.errorFields[field.name] = ""; // ИСПРАВЛЕНИЕ: используем field.name
-        }
-        return acc;
-      },
-      { applicableFields: {}, errorFields: {} }
-    );
+            acc.errorFields[field.name] = "";
+          }
+          return acc;
+        },
+        { applicableFields: {}, errorFields: {} }
+      );
 
-    setFormData({
-      role: { value: role, type: "role" },
-      policy: { value: initialData.policy || false, type: "checkbox" },
-      regulations: { value: initialData.regulations || false, type: "checkbox" },
-      ...applicableFields,
-    });
-    setFormError(errorFields);
-  }
-}, [initialData]);
+      setFormData({
+        role: { value: role, type: "role" },
+        policy: { value: initialData.policy || false, type: "checkbox" },
+        regulations: { value: initialData.regulations || false, type: "checkbox" },
+        ...applicableFields,
+      });
+      setFormError(errorFields);
+    }
+  }, [initialData]);
 
   const handleChange = (value, name) => {
       const processedValue =
@@ -110,25 +109,22 @@ useEffect(() => {
           return item.name === formData.role.value ? (
             item.data.map((e) =>
               e.name === "regionId" ? (
-                <div className={styles.regionId} key={e.id}>
+                <div className={`${styles.regionId} ${styles.regionSelectContainer}`} key={e.id}>
                   <label className={stylesReg.label}>Регион</label>
-                  <div
-                    className={`${styles.loginInput} ${stylesReg.requred} pt-2`}
-                    onClick={() => setIsShowRegion(!isShowRegion)}
-                  >
-                    {formData.regionId?.value && regions.length > 0
-                      ? regions.find((r) => r.id == formData.regionId.value)?.name
-                      : "Выберите регион"}
-                    <span
-                      className={stylesReg.arrow}
-                      key="role-selected"
+                  <div className={styles.regionSelectWrapper}>
+                    <div
+                      className={`${styles.loginInput} ${stylesReg.requred} ${styles.regionSelect}`}
+                      onClick={() => setIsShowRegion(!isShowRegion)}
                     >
-                      {!isShowRegion ? <ArrowDown /> : <ArrowUp />}
-                    </span>
+                      {formData.regionId?.value && regions.length > 0
+                        ? regions.find((r) => r.id == formData.regionId.value)?.name
+                        : "Выберите регион"}
+                      <span className={stylesReg.arrow}>
+                        {!isShowRegion ? <ArrowDown /> : <ArrowUp />}
+                      </span>
+                    </div>
                     {isShowRegion && (
-                      <div
-                        className={`${stylesReg.requredOptinsCOntainer} ${stylesReg.rq}`}
-                      >
+                      <div className={`${stylesReg.requredOptinsCOntainer} ${stylesReg.rq} ${styles.regionDropdown}`}>
                         {regions.map((option, index) => (
                           <div key={option.id}>
                             <div

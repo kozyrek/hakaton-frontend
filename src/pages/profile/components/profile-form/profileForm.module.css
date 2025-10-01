@@ -32,6 +32,38 @@
   align-self: center;
 }
 
+/* Стили для селекта региона */
+.regionSelectContainer {
+  position: relative;
+}
+
+.regionSelectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.regionSelect {
+  width: 100%;
+  cursor: pointer;
+  border: 2px solid #b899d6;
+  border-radius: 4px;
+  padding: 8px 12px;
+  background: white;
+  margin-bottom: 0;
+}
+
+.regionDropdown {
+  width: 100% !important;
+  left: 0 !important;
+  top: 100% !important;
+  margin-top: 0 !important;
+}
+
+.loginInput {
+  position: relative;
+  width: 100%;
+}
+
 /* .formRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
