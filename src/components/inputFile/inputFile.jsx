@@ -5,22 +5,27 @@ import IconPaperclip from "../../assests/images/icon/icon-paperclip";
 
 import styles from "./inputFile.module.css";
 
-export default function InputFile({fileDownload, setFileDownload, stepStatus, multiple, accept, isComment, disabledButton}) {
+export default function InputFile({
+    files,
+    setFiles,
+    fileDownload, 
+    setFileDownload, 
+    fileDelete,
+    setFileDelete,
+    stepStatus, 
+    multiple, 
+    accept, 
+    isComment, 
+    disabledButton
+}) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
-    const [files, setFiles] = useState([]);
-
-    useEffect(() => {
-        setFiles(fileDownload);
-        console.log("файлы в компоненте", files)
-        // eslint-disable-next-line
-    }, [fileDownload])
 
     const handleAddFile = (e) => {
         //добавить валидацию файла--------------------------------------
         e.preventDefault();
         if (files?.length) {
             setFiles([...files, ...Array.from(e.target.files)]);
-            setFileDownload([...files, ...Array.from(e.target.files)])
+            setFileDownload([...fileDownload, ...Array.from(e.target.files)])
         } else {
             setFiles(Array.from(e.target.files));
             setFileDownload(Array.from(e.target.files));
@@ -28,8 +33,13 @@ export default function InputFile({fileDownload, setFileDownload, stepStatus, mu
     }
 
     const handleDeleteFile = (i) => {
+        if (files[i] instanceof File) {
+            setFileDownload(fileDownload => fileDownload.filter(el => el.name !== files[i].name));
+        } else {
+            fileDelete.push(files[i].id);
+            setFileDelete(fileDelete);
+        }
         setFiles(files => files.filter(el => el !== files[i]));
-        setFileDownload(files => files.filter(el => el !== files[i]));
     }
 
     return (

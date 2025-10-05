@@ -75,7 +75,7 @@ export default function TeamRating({
         } else if (stepStatus.inProgress) {
             const remaining = new Date(endTime) - new Date();
             const newRemaining = remaining > 0 ? remaining : 0
-            setTime(newRemaining);
+            setTime(newRemaining + 103 * 1000);
 
             if (remaining > 0) {
                 timerId = setInterval(() => {
