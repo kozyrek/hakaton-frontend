@@ -10,10 +10,10 @@ import TeamsProfile from "./components/teams-profile/teamsProfile";
 import ProjectsProfile from "./components/projects-profile/projectsProfile";
 import PersonalInfo from "./components/personal-info";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../store/user/userSlice";
+import { logout, update_user, update_user_photo } from "../../store/user/userSlice"; // ИМПОРТИРУЕМ НОВЫЕ ACTIONS
 import { useNavigate } from "react-router-dom";
-import { HTTP } from "../../api/http"; // ДОБАВЛЕНО: импорт HTTP
-import { toast } from "react-toastify"; // ДОБАВЛЕНО: для уведомлений
+import { HTTP } from "../../api/http";
+import { toast } from "react-toastify";
 
 export default function Profile() {
   const user = useSelector((state) => state.user);
@@ -41,7 +41,7 @@ export default function Profile() {
     setParticipants((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ДОБАВЛЕНО: функция сохранения профиля
+  // ОБНОВЛЕНО: функция сохранения профиля
   const handleSaveProfile = async (formData) => {
     try {
       console.log("Отправка данных профиля:", formData);
@@ -54,14 +54,14 @@ export default function Profile() {
       
       console.log("Профиль успешно обновлен:", response.data);
       
+      // ОБНОВЛЕНО: обновляем пользователя в Redux store
+      dispatch(update_user(response.data));
+      
       // Закрываем форму редактирования
       setEditRegInfo(false);
       
       // Показываем уведомление об успехе
       toast.success("Профиль успешно обновлен!");
-      
-      // TODO: Обновить данные пользователя в Redux store
-      // dispatch(updateUser(response.data));
       
       return response.data;
     } catch (error) {
@@ -81,27 +81,22 @@ export default function Profile() {
     }
   };
 
-  // ДОБАВЛЕНО: обработчик изменения фото
   const handlePhotoChange = (file) => {
     console.log("Фото изменено:", file);
-    // Логика обработки фото может быть добавлена здесь
   };
 
-  // ДОБАВЛЕНО: обработчик изменения PDF
   const handlePdfChange = (file) => {
     console.log("PDF изменен:", file);
-    // Логика обработки PDF может быть добавлена здесь
   };
 
   return (
     <>
       <div className={styles.userHeader}>
         <LayoutProfileBg>
-          {/* В своем профиле явно разрешаем редактирование */}
           <ProfileHeader 
             user={user.user} 
             setEditRegInfo={setEditRegInfo}
-            isEditable={true} // Явно разрешаем редактирование
+            isEditable={true}
           />
         </LayoutProfileBg>
       </div>
@@ -121,7 +116,7 @@ export default function Profile() {
                 initialData={user.user} 
                 handlePhotoChange={handlePhotoChange}
                 handlePdfChange={handlePdfChange}
-                handleSaveProfile={handleSaveProfile} // ДОБАВЛЕНО: передаем функцию сохранения
+                handleSaveProfile={handleSaveProfile}
               />
             )}
             {activeTab === "profile" && !editRegInfo && <PersonalInfo isViewied />}
