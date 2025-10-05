@@ -71,7 +71,7 @@ export default function TeamRating({
         if (stepStatus.notStarted) {
             const newTime = step.timerMinutes * 60000;
             setTime(newTime);
-            console.log("111", newTime, step.timerMinutes);//
+            // console.log("111", newTime, step.timerMinutes);//
         } else if (stepStatus.inProgress) {
             const remaining = new Date(endTime) - new Date();
             const newRemaining = remaining > 0 ? remaining : 0
@@ -85,13 +85,13 @@ export default function TeamRating({
                     });
                 }, 1000);
             }
-            console.log("222", endTime, remaining, newRemaining);//--
+            // console.log("222", endTime, remaining, newRemaining);//--
         } else if (
             stepStatus.isSubmitted || stepStatus.isAccept
         ) {
             const newTime = new Date(submitTime) - new Date(startTime)
             setTime(newTime);
-            console.log("333", newTime, Number(new Date(submitTime)), Number(new Date(startTime)));//--
+            // console.log("333", newTime, Number(new Date(submitTime)), Number(new Date(startTime)));//--
         } else if (stepStatus.timeExceeded) {
             setTime(0);
         }
