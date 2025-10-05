@@ -12,6 +12,8 @@ import PersonalInfo from "./components/personal-info";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { HTTP } from "../../api/http"; // ДОБАВЛЕНО: импорт HTTP
+import { toast } from "react-toastify"; // ДОБАВЛЕНО: для уведомлений
 
 export default function Profile() {
   const user = useSelector((state) => state.user);
@@ -24,6 +26,7 @@ export default function Profile() {
 
   const [activeTab, setActiveTab] = useState("profile");
   const [editRegInfo, setEditRegInfo] = useState(false);
+  
   const handleTabChange = (tab) => {
     setEditRegInfo(false);
     setActiveTab(tab);
@@ -36,6 +39,58 @@ export default function Profile() {
 
   const handleRemoveParticipant = (index) => {
     setParticipants((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // ДОБАВЛЕНО: функция сохранения профиля
+  const handleSaveProfile = async (formData) => {
+    try {
+      console.log("Отправка данных профиля:", formData);
+      
+      const response = await HTTP.patch(`/users/${user.user.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      console.log("Профиль успешно обновлен:", response.data);
+      
+      // Закрываем форму редактирования
+      setEditRegInfo(false);
+      
+      // Показываем уведомление об успехе
+      toast.success("Профиль успешно обновлен!");
+      
+      // TODO: Обновить данные пользователя в Redux store
+      // dispatch(updateUser(response.data));
+      
+      return response.data;
+    } catch (error) {
+      console.error("Ошибка при сохранении профиля:", error);
+      
+      let errorMessage = "Ошибка при сохранении профиля";
+      if (error.response?.data?.detail) {
+        if (Array.isArray(error.response.data.detail)) {
+          errorMessage = error.response.data.detail.map(err => err.msg).join(', ');
+        } else {
+          errorMessage = error.response.data.detail;
+        }
+      }
+      
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
+  // ДОБАВЛЕНО: обработчик изменения фото
+  const handlePhotoChange = (file) => {
+    console.log("Фото изменено:", file);
+    // Логика обработки фото может быть добавлена здесь
+  };
+
+  // ДОБАВЛЕНО: обработчик изменения PDF
+  const handlePdfChange = (file) => {
+    console.log("PDF изменен:", file);
+    // Логика обработки PDF может быть добавлена здесь
   };
 
   return (
@@ -61,7 +116,14 @@ export default function Profile() {
             />
           </div>
           <div className={styles.contentBox}>
-            {editRegInfo && <ProfileForm initialData={user.user} />}
+            {editRegInfo && (
+              <ProfileForm 
+                initialData={user.user} 
+                handlePhotoChange={handlePhotoChange}
+                handlePdfChange={handlePdfChange}
+                handleSaveProfile={handleSaveProfile} // ДОБАВЛЕНО: передаем функцию сохранения
+              />
+            )}
             {activeTab === "profile" && !editRegInfo && <PersonalInfo isViewied />}
             {activeTab === "users" && !editRegInfo && (
               <ProfileMembers
