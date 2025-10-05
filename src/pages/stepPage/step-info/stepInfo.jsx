@@ -9,7 +9,9 @@ import TeamRating from "../../projectStages/team-rating/teamRating";
 import sendDataStepProject from "../../../api/projects/sendDataStepProject";
 import acceptStep from "../../../api/steps/acceptStep";
 import rejectStep from "../../../api/steps/rejectStep";
-import { FILENAME_EXTENSION_FULL } from "../../../utils/constants";
+import { FILENAME_EXTENSION_FULL, ROUTES } from "../../../utils/constants";
+import { useNavigate } from "react-router-dom";
+
 
 import styles from "./stepInfo.module.css";
 
@@ -28,7 +30,11 @@ export default function StepProjectInfo({
   );
   const [scoreValue, setScoreValue] = useState(0);
   const [timer, setTimer] = useState(0);
-  const [fileDownload, setFileDownload] = useState(null);
+  const [files, setFiles] = useState([])
+  const [fileDownload, setFileDownload] = useState([]);
+  const [fileDelete, setFileDelete] = useState([]);
+  const navigate = useNavigate();
+  
 
   useEffect(() => {
     setTextValue(step.text ? JSON.parse(step.text).text : "");
@@ -36,7 +42,7 @@ export default function StepProjectInfo({
   }, [step.text]);
 
   useEffect(() => {
-    setFileDownload(step.files);
+    setFiles(step.files);
   }, [step]);
 
   //Взаимодействие капитана/участника со страницей
@@ -69,25 +75,36 @@ export default function StepProjectInfo({
         formData.append("text", JSON.stringify({ text: textValue }));
       }
 
-      // 2. Добавляем файлы с проверкой типа
+      // 2.1 Добавляем файлы
+      // if (fileDownload?.length) {
+      //   for (const file of fileDownload) {
+      //     // Проверяем, является ли элемент объектом File
+      //     if (file instanceof File) {
+      //       formData.append("files", file);
+      //     }
+      //     // Если файл пришел с сервера (имеет filePath)
+      //     else if (file?.filePath) {
+      //       // Для существующих файлов можно либо:
+      //       // а) Отправить только ссылку (если бэкенд умеет их обрабатывать)
+      //       // б) Перезагрузить файл с сервера
+      //       // Здесь вариант а)
+      //       formData.append("file_references", file.filePath);
+      //     } else {
+      //       console.warn("Неподдерживаемый тип файла:", file);
+      //       continue;
+      //     }
+      //   }
+      // }
+
       if (fileDownload?.length) {
         for (const file of fileDownload) {
-          // Проверяем, является ли элемент объектом File
-          if (file instanceof File) {
-            formData.append("files", file);
-          }
-          // Если файл пришел с сервера (имеет filePath)
-          else if (file?.filePath) {
-            // Для существующих файлов можно либо:
-            // а) Отправить только ссылку (если бэкенд умеет их обрабатывать)
-            // б) Перезагрузить файл с сервера
-            // Здесь вариант а)
-            formData.append("file_references", file.filePath);
-          } else {
-            console.warn("Неподдерживаемый тип файла:", file);
-            continue;
-          }
-
+          formData.append("add_files", file);
+        }
+      }
+      // 2.2 Удаляем файлы
+      if (fileDelete?.length) {
+        for (const id of fileDelete) {
+          formData.append("remove_files", id);
         }
       }
 
@@ -145,6 +162,7 @@ export default function StepProjectInfo({
       if (response.status === 200) {
         console.log("шаг согласован", response.data);
         handleSwitchStatus(stepStatus.isAccept);
+        navigate(`/project/${step.projectId}`)
       }
     }
   };
@@ -165,6 +183,7 @@ export default function StepProjectInfo({
       if (response.status === 200) {
         console.log("шаг отклонен", response.data);
         handleSwitchStatus(stepStatus.notStarted);
+        navigate(`/project/${step.projectId}`)
       }
     }
   }
@@ -210,8 +229,12 @@ export default function StepProjectInfo({
         <p className="text1">Документы, презентации, картинки, видео</p>
 
         <InputFile
+          files={files}
+          setFiles={setFiles}
           fileDownload={fileDownload}
           setFileDownload={setFileDownload}
+          fileDelete={fileDelete}
+          setFileDelete={setFileDelete}
           stepStatus={stepStatus}
           multiple
           accept={FILENAME_EXTENSION_FULL.join(", ")}
