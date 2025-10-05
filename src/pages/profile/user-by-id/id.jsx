@@ -18,7 +18,7 @@ import stylesView from "../components/personal-info/index.module.css";
 import stylesID from "./index.module.css";
 import TextView from "../components/personal-info/textView";
 import verifyUser from "../../../api/verify-user";
-import deleteUser from "../../../api/deleteUser"; // ИСПОЛЬЗУЕМ реальную функцию удаления
+import deleteUser from "../../../api/deleteUser";
 import ModalWrapper from "../../../components/modalOverlay";
 import ModalWindow from "../../../components/modalWindow";
 
@@ -36,6 +36,8 @@ export default function UserId() {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isActionSuccess, setIsActionSuccess] = useState(false);
   const [actionMessage, setActionMessage] = useState("");
+  const [modalTitle, setModalTitle] = useState(""); // ДОБАВЛЕНО: состояние для заголовка модального окна
+  const [showMessage, setShowMessage] = useState(true); // ДОБАВЛЕНО: состояние для отображения сообщения
 
   useEffect(() => {
     if (userProfile) {
@@ -59,25 +61,32 @@ export default function UserId() {
   const handleVerify = async () => {
     try {
       await verifyUser(userId);
-      setActionMessage("Пользователь успешно подтвержден");
+      // ИСПРАВЛЕНО: устанавливаем заголовок и скрываем сообщение
+      setModalTitle("Пользователь успешно зачислен");
+      setActionMessage(""); // Пустое сообщение
+      setShowMessage(false); // Не показывать блок с сообщением
       setIsActionSuccess(true);
       setIsVerifyModalOpen(false);
     } catch (error) {
       console.error("Ошибка при подтверждении пользователя:", error);
+      setModalTitle("Результат");
       setActionMessage("Ошибка при подтверждении пользователя");
+      setShowMessage(true); // Показывать блок с сообщением об ошибке
       setIsActionSuccess(true);
     }
   };
 
-  // ИСПРАВЛЕНО: используем реальную функцию deleteUser вместо мока
   const handleReject = async () => {
     try {
-      await deleteUser(userId); // Вызываем реальную функцию удаления
-      setActionMessage("Пользователь успешно отклонен и удален");
+      await deleteUser(userId);
+      setModalTitle("Пользователь успешно отклонен и удален");
+      setActionMessage(""); // Пустое сообщение
+      setShowMessage(false); // Не показывать блок с сообщением
       setIsActionSuccess(true);
       setIsRejectModalOpen(false);
     } catch (error) {
       console.error("Ошибка при отклонении пользователя:", error);
+      setModalTitle("Результат");
       if (error.response?.status === 403) {
         setActionMessage("Недостаточно прав для удаления пользователя");
       } else if (error.response?.status === 404) {
@@ -85,12 +94,20 @@ export default function UserId() {
       } else {
         setActionMessage("Ошибка при отклонении пользователя");
       }
+      setShowMessage(true); // Показывать блок с сообщением об ошибке
       setIsActionSuccess(true);
     }
   };
 
   const handleBackToUsers = () => {
     navigate(ROUTES.PROFILE);
+  };
+
+  // ДОБАВЛЕНО: функция для сброса состояний модального окна
+  const resetModalStates = () => {
+    setModalTitle("");
+    setActionMessage("");
+    setShowMessage(true);
   };
 
   useEffect(() => {
@@ -166,6 +183,7 @@ export default function UserId() {
         </Container>
       </div>
 
+      {/* Модальное окно подтверждения регистрации */}
       <ModalWrapper
         isOpen={isVerifyModalOpen}
         onClose={() => setIsVerifyModalOpen(false)}
@@ -190,6 +208,7 @@ export default function UserId() {
         </ModalWindow>
       </ModalWrapper>
 
+      {/* Модальное окно отклонения пользователя */}
       <ModalWrapper
         isOpen={isRejectModalOpen}
         onClose={() => setIsRejectModalOpen(false)}
@@ -210,24 +229,35 @@ export default function UserId() {
             />
           ]}
         >
+          <p>Это действие нельзя отменить. Пользователь будет удален из системы.</p>
         </ModalWindow>
       </ModalWrapper>
 
+      {/* Модальное окно результата действия */}
       <ModalWrapper
         isOpen={isActionSuccess}
-        onClose={handleBackToUsers}
+        onClose={() => {
+          resetModalStates();
+          setIsActionSuccess(false);
+          handleBackToUsers();
+        }}
       >
         <ModalWindow
-          title="Результат"
+          title={modalTitle}
           buttonArea={[
             <Button
               text="OK"
               large
-              onClick={handleBackToUsers}
+              onClick={() => {
+                resetModalStates();
+                setIsActionSuccess(false);
+                handleBackToUsers();
+              }}
             />
           ]}
         >
-          <p>{actionMessage}</p>
+          {/* УСОВЕРШЕНСТВОВАНО: блок p показывается только если есть сообщение */}
+          {showMessage && actionMessage && <p>{actionMessage}</p>}
         </ModalWindow>
       </ModalWrapper>
     </>
