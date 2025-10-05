@@ -124,7 +124,7 @@ const ProfileForm = ({
                       </span>
                     </div>
                     {isShowRegion && (
-                      <div className={`${stylesReg.requredOptinsCOntainer} ${stylesReg.rq} ${styles.regionDropdown}`}>
+                      <div className={`${stylesReg.requredOptinsCOntainer} ${stylesReg.rq} ${styles.regionDropdown}`} style={{zIndex:'99 '}}>
                         {regions.map((option, index) => (
                           <div key={option.id}>
                             <div
