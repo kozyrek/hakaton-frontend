@@ -72,6 +72,12 @@ export default function TeamPage() {
     fetchTeamInfo();
 }, [teamId]);
 
+const handleTeamUpdate = async () => {
+  // Перезагрузите данные команды
+  const updatedTeam = await getTeamById(teamId);
+  setTeam(updatedTeam);
+};
+
     // ДОБАВЛЕНО: Обработка случая, когда данные не найдены
     if (error) {
         return (
@@ -121,7 +127,7 @@ export default function TeamPage() {
         <>
             <LayoutLogin>
                 <Container fluid="xxl">
-                    <HeadTeam team={team} />     
+                    <HeadTeam team={team} onTeamUpdate={handleTeamUpdate}/>     
                 </Container>      
             </LayoutLogin>
 

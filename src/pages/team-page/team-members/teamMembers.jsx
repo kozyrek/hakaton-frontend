@@ -33,6 +33,24 @@ const useDebounce = (value, delay) => {
   return debouncedValue;
 };
 
+// ДОБАВЛЕНО: функция для отладки структуры пользователей
+const debugUserStructure = (users) => {
+  if (users && users.length > 0) {
+    console.log("=== ДЕБАГ СТРУКТУРЫ ПОЛЬЗОВАТЕЛЕЙ ===");
+    users.slice(0, 3).forEach((user, index) => {
+      console.log(`Пользователь ${index + 1}:`, {
+        id: user.id,
+        participantId: user.participantId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        все_ключи: Object.keys(user)
+      });
+    });
+    console.log("=== КОНЕЦ ДЕБАГА ===");
+  }
+};
+
 const TeamMembers = ({ members, onTeamUpdate }) => {
   const { teamId } = useParams();
   const [isEditRoleOpen, setEditRoleOpen] = useState(false);
@@ -46,8 +64,8 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
   const [roleInput, setRoleInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  
   const [selectedParticipants, setSelectedParticipants] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const width = useResize();
 
@@ -71,23 +89,12 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
       const fullName = `${firstName} ${lastName}`.toLowerCase();
       const email = (user.email || '').toLowerCase();
 
-      console.log('Проверка пользователя:', { 
-        id: user.id, 
-        firstName, 
-        lastName, 
-        fullName, 
-        email,
-        query 
-      });
-
       return fullName.includes(query) || 
              firstName.includes(query) || 
              lastName.includes(query) ||
              email.includes(query);
     });
   }, [participantWithoutTeam, debouncedSearchQuery]);
-
-  console.log('Отфильтрованные пользователи:', filteredParticipants);
 
   const fetchTeamData = async () => {
     try {
@@ -119,6 +126,10 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
       
       // ИСПРАВЛЕНО: правильное извлечение items из ответа
       const users = response.items || response || [];
+      
+      // ДОБАВЛЕНО: отладочный вывод структуры пользователей
+      debugUserStructure(users);
+      
       setParticipantWithoutTeam(users);
       setSelectedParticipants([]);
     } catch (error) {
@@ -140,55 +151,84 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     }
   }, [isAddMemberOpen, debouncedSearchQuery, fetchParticipants]);
 
-  const handleAddSelectedMembers = async () => {
-    console.log("Добавление выбранных участников:", selectedParticipants);
-    
-    if (selectedParticipants.length === 0) {
-      console.log("Нет выбранных участников для добавления");
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      const membersToAdd = selectedParticipants.map(participantId => ({
-        participantId: participantId
-      }));
+  // ИСПРАВЛЕНО: функция добавления выбранных участников с правильным participantId
+const handleAddSelectedMembers = async () => {
+  console.log("Добавление выбранных участников:", selectedParticipants);
+  
+  if (selectedParticipants.length === 0) {
+    console.log("Нет выбранных участников для добавления");
+    setErrorMessage("Выберите хотя бы одного участника для добавления");
+    return;
+  }
+  
+  setIsLoading(true);
+  setErrorMessage("");
+  try {
+    const membersToAdd = selectedParticipants.map(userId => {
+      const user = participantWithoutTeam.find(u => u.id === userId);
+      console.log("Найден пользователь для добавления:", user);
+      
+      // ИСПРАВЛЕНИЕ: используем participant.id из вложенного объекта
+      const participantId = user.participant?.id;
+      
+      if (!participantId) {
+        throw new Error(`У пользователя ${user.firstName} ${user.lastName} не найден participant.id. Структура пользователя: ${JSON.stringify(user)}`);
+      }
+      
+      return {
+        participantId: Number(participantId),
+        roleName: "participant",
+      };
+    });
 
-      console.log("Данные для отправки:", membersToAdd);
-      
-      await addMembers(teamId, membersToAdd);
-      
-      setAddMemberOpen(false);
-      await fetchTeamData();
-      
-      setAddSuccessOpen(true);
-    } catch (error) {
-      console.error("Ошибка при добавлении участников:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    console.log("Данные для отправки:", membersToAdd);
+    
+    await addMembers(teamId, membersToAdd);
+    
+    setAddMemberOpen(false);
+    await fetchTeamData();
+    
+    setAddSuccessOpen(true);
+  } catch (error) {
+    console.error("Ошибка при добавлении участников:", error);
+    setErrorMessage(`Ошибка при добавлении участников: ${error.message}`);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
+  // ИСПРАВЛЕНО: функция добавления одиночного участника
   const handleAddSingleMember = async (user) => {
-    setIsLoading(true);
-    try {
-      await addMembers(teamId, [
-        {
-          participantId: user.id
-        }
-      ]);
-      
-      await fetchTeamData();
-      // Перезагружаем список пользователей после добавления
-      fetchParticipants(debouncedSearchQuery);
-      
-      setAddSuccessOpen(true);
-    } catch (error) {
-      console.error("Ошибка при добавлении участника:", error);
-    } finally {
-      setIsLoading(false);
+  setIsLoading(true);
+  setErrorMessage("");
+  try {
+    console.log("Добавление одиночного пользователя:", user);
+    
+    // ИСПРАВЛЕНИЕ: используем participant.id из вложенного объекта
+    const participantId = user.participant?.id;
+    
+    if (!participantId) {
+      throw new Error(`У пользователя ${user.firstName} ${user.lastName} не найден participant.id. Структура пользователя: ${JSON.stringify(user)}`);
     }
-  };
+    
+    await addMembers(teamId, [
+      {
+        participantId: Number(participantId),
+        roleName: "participant",
+      }
+    ]);
+    
+    await fetchTeamData();
+    fetchParticipants(debouncedSearchQuery);
+    
+    setAddSuccessOpen(true);
+  } catch (error) {
+    console.error("Ошибка при добавлении участника:", error);
+    setErrorMessage(`Ошибка при добавлении участника: ${error.message}`);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // ИСПРАВЛЕНО: обработчик чекбокса
   const handleCheckboxChange = useCallback((participantId, isChecked) => {
@@ -203,12 +243,14 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
 
   const handleDeleteClick = async (teamId, memberId) => {
     setIsLoading(true);
+    setErrorMessage("");
     try {
       await deleteMembers(teamId, memberId);
       setDeleteOpen(true);
       await fetchTeamData();
     } catch (error) {
       console.error("Ошибка при удалении участника:", error);
+      setErrorMessage(`Ошибка при удалении участника: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -220,6 +262,7 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     } else {
       setAddMemberOpen(true);
       setSearchQuery(""); // Сброс поиска при открытии модального окна
+      setErrorMessage(""); // Сброс ошибок
     }
   };
 
@@ -233,11 +276,13 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
   const handleMakeCaptain = async (memberId, e) => {
     e.stopPropagation();
     setIsLoading(true);
+    setErrorMessage("");
     try {
       await changeRole(teamId, memberId, "капитан");
       await fetchTeamData();
     } catch (error) {
       console.error("Ошибка при изменении роли:", error);
+      setErrorMessage(`Ошибка при изменении роли: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -247,6 +292,7 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     if (!roleInput.trim() || editingIndex === null) return;
     
     setIsLoading(true);
+    setErrorMessage("");
     try {
       await changeRole(teamId, editingIndex, roleInput.trim());
       setEditRoleOpen(false);
@@ -254,6 +300,7 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
       await fetchTeamData();
     } catch (error) {
       console.error("Ошибка при изменении роли:", error);
+      setErrorMessage(`Ошибка при изменении роли: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -268,6 +315,13 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
     <>
       <div className={`contentBox ${styles.participantsBlock}`}>
         <h2 className="titleH2">Участники команды</h2>
+
+        {/* Отображение ошибок */}
+        {/* {errorMessage && (
+          <div className={styles.errorMessage}>
+            {errorMessage}
+          </div>
+        )} */}
 
         <ul className={styles.participantsList}>
           {members.map((member, index) => (
@@ -353,12 +407,20 @@ const TeamMembers = ({ members, onTeamUpdate }) => {
               onChange={handleSearchChange}
               placeholder="Поиск по имени, фамилии или email..."
             />
+            
+            {/* Отображение ошибок в модальном окне */}
+            {/* {errorMessage && (
+              <div className={styles.errorMessage}>
+                {errorMessage}
+              </div>
+            )} */}
+            
             <div className={styles.modalParticipantsList}>
               {filteredParticipants.length > 0 ? (
                 filteredParticipants.map((user, index) => (
                   <UserDisplay
                     key={user.id || `user-${index}`}
-                    item={user} // Передаем объект пользователя напрямую
+                    item={user}
                     onSubmit={() => handleAddSingleMember(user)}
                     onCheckboxChange={(isChecked) => handleCheckboxChange(user.id, isChecked)}
                     isChecked={selectedParticipants.includes(user.id)}
