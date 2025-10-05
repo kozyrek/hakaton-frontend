@@ -6,9 +6,9 @@ import Avatar from "./images/iconAvatar";
 
 export default function ReviewCard({ item, setModalIsOpen, addClass }) {
   const [isVisibleButton, setIsVisibleButton] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
   const refText = createRef();
-  const refVideo = createRef();
+  // const refVideo = createRef();
 
   useEffect(() => {
     if (!item.url) {
@@ -18,28 +18,35 @@ export default function ReviewCard({ item, setModalIsOpen, addClass }) {
     // eslint-disable-next-line
   }, []);
   
-  const playVideo = () => {
-    if (refVideo.current.paused) {
-      refVideo.current.play();
-      setIsPlaying(!isPlaying);
-    } 
-    else {
-      refVideo.current.pause();
-      setIsPlaying(!isPlaying);
-    }
-    refVideo.current.onended = function() {
-      setIsPlaying(false);
-    };
-  }
+  // const playVideo = () => {
+  //   if (refVideo.current.paused) {
+  //     refVideo.current.play();
+  //     setIsPlaying(!isPlaying);
+  //   } 
+  //   else {
+  //     refVideo.current.pause();
+  //     setIsPlaying(!isPlaying);
+  //   }
+  //   refVideo.current.onended = function() {
+  //     setIsPlaying(false);
+  //   };
+  // }
 
   const className = cn(styles.reviewWrapper, addClass)
 
   return (
     <>
       {item.url && (
-        <div id={item.id} className={`${styles.videoWrapper} ${isPlaying ? styles.isPlaying : ''}`}>
-          <div className={styles.buttonPlay}></div>
-          <video ref={refVideo} src={item.url} onClick={playVideo}></video>
+        // <div id={item.id} className={`${styles.videoWrapper} ${isPlaying ? styles.isPlaying : ''}`}>
+        //   <div className={styles.buttonPlay}></div> 
+        //   <video ref={refVideo} src={item.url} onClick={playVideo}></video>
+        // </div>
+        <div id={item.id} className={styles.videoWrapper}>
+          <iframe 
+            title={item.id} 
+            src={item.url} 
+            allowfullscreen
+          ></iframe>
         </div>
       )}
 
