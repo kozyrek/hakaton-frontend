@@ -29,6 +29,28 @@ export const getRole = (user) => {
   return ROLES.UNDEFINED;
 };
 
+// ДОБАВЛЕНО: функция для форматирования класса/группы
+const formatSchoolGrade = (schoolGrade) => {
+  if (!schoolGrade) return "Не указано";
+  
+  // Если строка содержит только цифры, добавляем "класс"
+  if (/^\d+$/.test(schoolGrade.trim())) {
+    return `${schoolGrade} класс`;
+  }
+  
+  // Если уже содержит текст, оставляем как есть
+  return schoolGrade;
+};
+
+// ДОБАВЛЕНО: функция для получения информации об образовании
+const getEducationInfo = (user) => {
+  if (user.isMentor) {
+    return user.mentor?.jobTitle || "Должность не указана";
+  } else {
+    return formatSchoolGrade(user.participant?.schoolGrade);
+  }
+};
+
 const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false }) => {
   const role = useMemo(() => getRole(user), [user]);
   const width = useResize();
@@ -37,11 +59,18 @@ const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false
   const canEdit = isEditable && setEditRegInfo;
 
   const formatDate = (dateString) =>
-    new Date(dateString).toLocaleDateString("ru-RU", {
+    dateString ? new Date(dateString).toLocaleDateString("ru-RU", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    });
+    }) : "Не указана";
+
+  // ДОБАВЛЕНО: отладочный вывод для проверки структуры данных
+  console.log("ProfileHeader user data:", user);
+  console.log("Phone number:", user?.phoneNumber);
+  console.log("Education organization:", user?.eduOrganization);
+  console.log("Participant data:", user?.participant);
+  console.log("School grade:", user?.participant?.schoolGrade);
 
   if (!user) {
     return <div className={styles.error}>Профиль не загружен</div>;
@@ -78,15 +107,13 @@ const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false
         </div>
         {user.birthDate && (
           <p className={`text1 ${styles.userBirthDate}`}>
-            {formatDate(user.birthDate)}
+            Дата рождения: {formatDate(user.birthDate)}
           </p>
         )}
         <div className={styles.bottomText}>
           <p className={`text1 ${styles.userDetails}`}>
             {role} | {user.eduOrganization || "Организация не указана"} |{" "}
-            {user.isMentor
-              ? user.mentor?.specialization || "Специализация не указана"
-              : user.participant?.schoolGrade || "Класс не указан"}
+            {getEducationInfo(user)}
           </p>
           <div className={styles.contact}>
             <ContactItem
@@ -106,19 +133,20 @@ const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false
 
 ProfileHeader.propTypes = {
   user: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     patronymic: PropTypes.string,
-    avatar: PropTypes.string,
     birthDate: PropTypes.string,
     phoneNumber: PropTypes.string,
     email: PropTypes.string.isRequired,
+    eduOrganization: PropTypes.string, // ДОБАВЛЕНО
     isMentor: PropTypes.bool,
     photoPath: PropTypes.string,
     mentor: PropTypes.shape({
       isAdmin: PropTypes.bool,
       specialization: PropTypes.string,
+      jobTitle: PropTypes.string, // ДОБАВЛЕНО
     }),
     participant: PropTypes.shape({
       schoolGrade: PropTypes.string,
