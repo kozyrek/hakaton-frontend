@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 
 import styles from "./profileHeader.module.css";
@@ -29,7 +30,7 @@ export const getRole = (user) => {
   return ROLES.UNDEFINED;
 };
 
-// ДОБАВЛЕНО: функция для форматирования класса/группы
+// Функция для форматирования класса/группы
 const formatSchoolGrade = (schoolGrade) => {
   if (!schoolGrade) return "Не указано";
   
@@ -42,7 +43,7 @@ const formatSchoolGrade = (schoolGrade) => {
   return schoolGrade;
 };
 
-// ДОБАВЛЕНО: функция для получения информации об образовании
+// Функция для получения информации об образовании
 const getEducationInfo = (user) => {
   if (user.isMentor) {
     return user.mentor?.jobTitle || "Должность не указана";
@@ -51,9 +52,19 @@ const getEducationInfo = (user) => {
   }
 };
 
+// Функция для получения URL фото с параметром версии
+const getPhotoUrl = (photoPath, photoVersion, defaultAvatar) => {
+  if (!photoPath) return defaultAvatar;
+  // Добавляем параметр версии для обхода кэша браузера
+  return `${photoPath}?v=${photoVersion}`;
+};
+
 const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false }) => {
   const role = useMemo(() => getRole(user), [user]);
   const width = useResize();
+  
+  // Получаем версию фото из store
+  const { photoVersion } = useSelector((state) => state.user);
 
   // Упрощенная проверка - используем явный пропс isEditable
   const canEdit = isEditable && setEditRegInfo;
@@ -65,7 +76,7 @@ const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false
       day: "numeric",
     }) : "Не указана";
 
-  // ДОБАВЛЕНО: отладочный вывод для проверки структуры данных
+  // Отладочный вывод для проверки структуры данных
   console.log("ProfileHeader user data:", user);
   console.log("Phone number:", user?.phoneNumber);
   console.log("Education organization:", user?.eduOrganization);
@@ -76,14 +87,18 @@ const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false
     return <div className={styles.error}>Профиль не загружен</div>;
   }
 
+  // Получаем URL фото с параметром версии
+  const photoUrl = getPhotoUrl(user.photoPath, photoVersion, profilePhotoAvatar);
+
   return (
     <div className={styles.userInfoBlock}>
       <div className={styles.userInfoHeader}>
         <div className={styles.profilePhotoBlock}> 
           <img
-            src={user.photoPath || profilePhotoAvatar}
+            src={photoUrl}
             alt={`Аватар ${user.firstName} ${user.lastName}`}
             className={styles.profilePhotoPlaceholder}
+            key={`photo-${photoVersion}`} // Ключ для принудительного перерендера
           />
         </div>
         <div className={styles.titleBlock}>
@@ -140,13 +155,13 @@ ProfileHeader.propTypes = {
     birthDate: PropTypes.string,
     phoneNumber: PropTypes.string,
     email: PropTypes.string.isRequired,
-    eduOrganization: PropTypes.string, // ДОБАВЛЕНО
+    eduOrganization: PropTypes.string,
     isMentor: PropTypes.bool,
     photoPath: PropTypes.string,
     mentor: PropTypes.shape({
       isAdmin: PropTypes.bool,
       specialization: PropTypes.string,
-      jobTitle: PropTypes.string, // ДОБАВЛЕНО
+      jobTitle: PropTypes.string,
     }),
     participant: PropTypes.shape({
       schoolGrade: PropTypes.string,
@@ -154,7 +169,7 @@ ProfileHeader.propTypes = {
   }),
   currentUserId: PropTypes.string,
   setEditRegInfo: PropTypes.func,
-  isEditable: PropTypes.bool, // Явное указание, можно ли редактировать
+  isEditable: PropTypes.bool,
 };
 
 export default ProfileHeader;

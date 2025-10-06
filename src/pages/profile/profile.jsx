@@ -10,7 +10,13 @@ import TeamsProfile from "./components/teams-profile/teamsProfile";
 import ProjectsProfile from "./components/projects-profile/projectsProfile";
 import PersonalInfo from "./components/personal-info";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, update_user, update_user_photo, update_user_participant,update_user_mentor } from "../../store/user/userSlice"; // ИМПОРТИРУЕМ НОВЫЕ ACTIONS
+import { 
+  logout, 
+  update_user, 
+  update_user_participant, 
+  update_user_mentor, 
+  increment_photo_version 
+} from "../../store/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import { HTTP } from "../../api/http";
 import { toast } from "react-toastify";
@@ -41,53 +47,56 @@ export default function Profile() {
     setParticipants((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ОБНОВЛЕНО: функция сохранения профиля
-const handleSaveProfile = async (formData) => {
-  try {
-    console.log("Отправка данных профиля:", formData);
-    
-    const response = await HTTP.patch(`/users/${user.user.id}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    
-    console.log("Профиль успешно обновлен:", response.data);
-    
-    // ОБНОВЛЕНО: обновляем пользователя в Redux store
-    dispatch(update_user(response.data));
-    
-    // ДОПОЛНИТЕЛЬНО: если нужно обновить отдельно participant или mentor
-    if (response.data.participant) {
-      dispatch(update_user_participant(response.data.participant));
-    }
-    if (response.data.mentor) {
-      dispatch(update_user_mentor(response.data.mentor));
-    }
-    
-    // Закрываем форму редактирования
-    setEditRegInfo(false);
-    
-    // Показываем уведомление об успехе
-    toast.success("Профиль успешно обновлен!");
-    
-    return response.data;
-  } catch (error) {
-    console.error("Ошибка при сохранении профиля:", error);
-    
-    let errorMessage = "Ошибка при сохранении профиля";
-    if (error.response?.data?.detail) {
-      if (Array.isArray(error.response.data.detail)) {
-        errorMessage = error.response.data.detail.map(err => err.msg).join(', ');
-      } else {
-        errorMessage = error.response.data.detail;
+  // Функция сохранения профиля
+  const handleSaveProfile = async (formData) => {
+    try {
+      console.log("Отправка данных профиля:", formData);
+      
+      const response = await HTTP.patch(`/users/${user.user.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      console.log("Профиль успешно обновлен:", response.data);
+      
+      // Обновляем пользователя в Redux store
+      dispatch(update_user(response.data));
+      
+      // Увеличиваем версию фото для принудительного перерендера
+      dispatch(increment_photo_version());
+      
+      // Дополнительно: если нужно обновить отдельно participant или mentor
+      if (response.data.participant) {
+        dispatch(update_user_participant(response.data.participant));
       }
+      if (response.data.mentor) {
+        dispatch(update_user_mentor(response.data.mentor));
+      }
+      
+      // Закрываем форму редактирования
+      setEditRegInfo(false);
+      
+      // Показываем уведомление об успехе
+      toast.success("Профиль успешно обновлен!");
+      
+      return response.data;
+    } catch (error) {
+      console.error("Ошибка при сохранении профиля:", error);
+      
+      let errorMessage = "Ошибка при сохранении профиля";
+      if (error.response?.data?.detail) {
+        if (Array.isArray(error.response.data.detail)) {
+          errorMessage = error.response.data.detail.map(err => err.msg).join(', ');
+        } else {
+          errorMessage = error.response.data.detail;
+        }
+      }
+      
+      toast.error(errorMessage);
+      throw error;
     }
-    
-    toast.error(errorMessage);
-    throw error;
-  }
-};
+  };
 
   const handlePhotoChange = (file) => {
     console.log("Фото изменено:", file);

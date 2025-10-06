@@ -7,6 +7,7 @@ const initialState = {
     accessToken: "",
     refreshToken: "",
   },
+  photoVersion: 0, // ДОБАВЛЕНО: счетчик версий для принудительного перерендера
 };
 
 export const userSlice = createSlice({
@@ -40,28 +41,31 @@ export const userSlice = createSlice({
       };
       state.documents = [];
       state.user = {};
+      state.photoVersion = 0; // Сброс версии фото
     },
-    // ДОБАВЛЕНО: action для обновления данных пользователя
     update_user: (state, action) => {
       state.user = { ...state.user, ...action.payload };
     },
-    // ДОБАВЛЕНО: action для обновления фото пользователя
     update_user_photo: (state, action) => {
       state.user.photoPath = action.payload;
+      // ДОБАВЛЕНО: увеличиваем версию фото для принудительного перерендера
+      state.photoVersion += 1;
     },
-    // ДОБАВЛЕНО: action для обновления участника (participant)
     update_user_participant: (state, action) => {
       if (!state.user.participant) {
         state.user.participant = {};
       }
       state.user.participant = { ...state.user.participant, ...action.payload };
     },
-    // ДОБАВЛЕНО: action для обновления ментора (mentor)
     update_user_mentor: (state, action) => {
       if (!state.user.mentor) {
         state.user.mentor = {};
       }
       state.user.mentor = { ...state.user.mentor, ...action.payload };
+    },
+    // ДОБАВЛЕНО: принудительное обновление версии фото
+    increment_photo_version: (state) => {
+      state.photoVersion += 1;
     },
   },
 });
@@ -73,10 +77,11 @@ export const {
   set_user_files,
   delete_user_file,
   logout,
-  update_user, // ДОБАВЛЕНО
-  update_user_photo, // ДОБАВЛЕНО
-  update_user_participant, // ДОБАВЛЕНО
-  update_user_mentor, // ДОБАВЛЕНО
+  update_user,
+  update_user_photo,
+  update_user_participant,
+  update_user_mentor,
+  increment_photo_version, // ДОБАВЛЕНО
 } = userSlice.actions;
 
 export default userSlice.reducer;
