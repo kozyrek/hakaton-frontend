@@ -1,29 +1,20 @@
 import { HTTP } from "../http";
 import { ERROR_TEXT } from "../../api/utils/constants";
 
-/**
- * Скачивает все файлы по проекту.
- *
- * @returns {Promise<object>} Promise с ответом сервера.
- * @throws {Error} Возможные ошибки:
- * - Проблемы с сетью
- * - Неверные учетные данные
- * - Ошибки валидации на стороне сервера
- *
- * @example
- * // Пример использования
- * try {
- *   const response = await downLoadAllFiles(projectId);
- *   console.log('Все файлы проекта:', response.data);
- * } catch (error) {
- *   console.error('Ошибка:', error.message);
- * }
- */
-
 export default async function downloadAllFiles(projectId) {
     try {
-        const response = await HTTP.get(`/projects/${projectId}/files-zip`);
+        const response = await HTTP.get(`/projects/${projectId}/files-zip` , {
+        responseType: 'blob',});
         console.log(response.data);
+
+        var FILE = window.URL.createObjectURL(response.data);
+        var docUrl = document.createElement('a');
+        docUrl.href = FILE;
+        docUrl.setAttribute('target', '_blank');
+        docUrl.setAttribute('type', 'application/zip');
+        document.body.appendChild(docUrl);
+        docUrl.click();
+
         return response;
     } catch (error) {
         if (!error.response) {
