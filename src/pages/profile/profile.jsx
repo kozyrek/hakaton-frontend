@@ -10,8 +10,16 @@ import TeamsProfile from "./components/teams-profile/teamsProfile";
 import ProjectsProfile from "./components/projects-profile/projectsProfile";
 import PersonalInfo from "./components/personal-info";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../store/user/userSlice";
+import { 
+  logout, 
+  update_user, 
+  update_user_participant, 
+  update_user_mentor, 
+  increment_photo_version 
+} from "../../store/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { HTTP } from "../../api/http";
+import { toast } from "react-toastify";
 
 export default function Profile() {
   const user = useSelector((state) => state.user);
@@ -24,6 +32,7 @@ export default function Profile() {
 
   const [activeTab, setActiveTab] = useState("profile");
   const [editRegInfo, setEditRegInfo] = useState(false);
+  
   const handleTabChange = (tab) => {
     setEditRegInfo(false);
     setActiveTab(tab);
@@ -38,15 +47,73 @@ export default function Profile() {
     setParticipants((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // Функция сохранения профиля
+  const handleSaveProfile = async (formData) => {
+    try {
+      console.log("Отправка данных профиля:", formData);
+      
+      const response = await HTTP.patch(`/users/${user.user.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      console.log("Профиль успешно обновлен:", response.data);
+      
+      // Обновляем пользователя в Redux store
+      dispatch(update_user(response.data));
+      
+      // Увеличиваем версию фото для принудительного перерендера
+      dispatch(increment_photo_version());
+      
+      // Дополнительно: если нужно обновить отдельно participant или mentor
+      if (response.data.participant) {
+        dispatch(update_user_participant(response.data.participant));
+      }
+      if (response.data.mentor) {
+        dispatch(update_user_mentor(response.data.mentor));
+      }
+      
+      // Закрываем форму редактирования
+      setEditRegInfo(false);
+      
+      // Показываем уведомление об успехе
+      toast.success("Профиль успешно обновлен!");
+      
+      return response.data;
+    } catch (error) {
+      console.error("Ошибка при сохранении профиля:", error);
+      
+      let errorMessage = "Ошибка при сохранении профиля";
+      if (error.response?.data?.detail) {
+        if (Array.isArray(error.response.data.detail)) {
+          errorMessage = error.response.data.detail.map(err => err.msg).join(', ');
+        } else {
+          errorMessage = error.response.data.detail;
+        }
+      }
+      
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const handlePhotoChange = (file) => {
+    console.log("Фото изменено:", file);
+  };
+
+  const handlePdfChange = (file) => {
+    console.log("PDF изменен:", file);
+  };
+
   return (
     <>
       <div className={styles.userHeader}>
         <LayoutProfileBg>
-          {/* В своем профиле явно разрешаем редактирование */}
           <ProfileHeader 
             user={user.user} 
             setEditRegInfo={setEditRegInfo}
-            isEditable={true} // Явно разрешаем редактирование
+            isEditable={true}
           />
         </LayoutProfileBg>
       </div>
@@ -61,7 +128,14 @@ export default function Profile() {
             />
           </div>
           <div className={styles.contentBox}>
-            {editRegInfo && <ProfileForm initialData={user.user} />}
+            {editRegInfo && (
+              <ProfileForm 
+                initialData={user.user} 
+                handlePhotoChange={handlePhotoChange}
+                handlePdfChange={handlePdfChange}
+                handleSaveProfile={handleSaveProfile}
+              />
+            )}
             {activeTab === "profile" && !editRegInfo && <PersonalInfo isViewied />}
             {activeTab === "users" && !editRegInfo && (
               <ProfileMembers
