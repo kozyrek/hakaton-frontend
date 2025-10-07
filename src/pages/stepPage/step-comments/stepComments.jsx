@@ -108,7 +108,7 @@ export default function StepProjectComment({
                             //     stepStatus.notStarted
                             //     || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
                             // }
-                            disabled={!stepStatus.inProgress}
+                            disabled={!(stepStatus.inProgress || stepStatus.isSubmitted || stepStatus.timeExceeded)}
                         />
 
                         <InputFileComment
@@ -117,7 +117,7 @@ export default function StepProjectComment({
                             stepStatus={stepStatus} 
                             multiple
                             isComment
-                            disabled={!stepStatus.inProgress}
+                            // disabled={!(stepStatus.inProgress || stepStatus.isSubmitted || stepStatus.timeExceeded)}
                             accept={FILENAME_EXTENSION_FULL.join(", ")}
                         />
 
@@ -129,7 +129,7 @@ export default function StepProjectComment({
                             addClass={styles.buttonSend}
                             disabled={
                                 stepStatus.notStarted 
-                                || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
+                                // || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
                                 || !(commentValue || fileDownload?.length)
                             }
                         />

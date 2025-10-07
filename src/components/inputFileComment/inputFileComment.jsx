@@ -5,7 +5,7 @@ import IconPaperclip from "../../assests/images/icon/icon-paperclip";
 
 import styles from "../inputFile/inputFile.module.css";
 
-export default function InputFile({
+export default function InputFileComment({
     fileDownload, 
     setFileDownload, 
     stepStatus, 
@@ -44,7 +44,7 @@ export default function InputFile({
         <div className={files?.length && styles.inputWrapper}>
             {(!isMentor || isComment) && <label className={`${styles.inputFile} ${(
                 // (stepStatus.notStarted || !stepStatus.inProgress || stepStatus.isSubmitted) && !isComment)
-                !stepStatus.inProgress) 
+                !(stepStatus.inProgress || stepStatus.isSubmitted || stepStatus.timeExceeded)) 
                 ? `${styles.disabled}` 
                 : ""} ${isComment ? styles.inputFileMobile : ""}`}>
                 <span className={`text4 ${styles.inputFileText} ${!isComment ? styles.inputWidth : ""}`}>Выберите файл</span>
