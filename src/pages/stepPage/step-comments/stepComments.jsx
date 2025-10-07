@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Button from "../../../components/button/button";
 import PaperClip from "../../profile/components/personal-info/textView/images/PaperClip";
 import Textarea from "../../../components/textarea/textarea";
-import InputFile from "../../../components/inputFile/inputFile";
+import InputFileComment from "../../../components/inputFileComment/inputFileComment";
 import startWorkOnStep from "../../../api/steps/startWorkOnStep";
 import addStepComment from "../../../api/steps/addStepComment";
 import downloadComments from "../../../api/steps/downloadComments";
@@ -111,7 +111,7 @@ export default function StepProjectComment({
                             disabled={!stepStatus.inProgress}
                         />
 
-                        <InputFile 
+                        <InputFileComment
                             fileDownload={fileDownload} 
                             setFileDownload={setFileDownload}
                             stepStatus={stepStatus} 
