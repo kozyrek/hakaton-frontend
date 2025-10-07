@@ -25,6 +25,7 @@ import { ERROR_TEXT } from "../../api/utils/constants";
 export default async function addStepComment(projectId, stepNumber, data) {
     const errors = {
         "Too many files to send. Maximum is 5": "Максимальное количество файлов для отправки 5",
+        "File with filename malina.jpg already exists." : "Файл с таким именем уже существует"
     }
 
     try {
