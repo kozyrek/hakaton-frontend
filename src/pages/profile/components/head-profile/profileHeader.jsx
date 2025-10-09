@@ -24,7 +24,7 @@ const ContactItem = ({ icon, text }) => (
 );
 
 export const getRole = (user) => {
-  if (!user.isMentor) return ROLES.PARTICIPANT;
+  if (!user?.isMentor) return ROLES.PARTICIPANT;
   if (user.mentor?.isAdmin) return ROLES.ADMIN;
   if (user.isMentor) return ROLES.MENTOR;
   return ROLES.UNDEFINED;
@@ -45,6 +45,8 @@ const formatSchoolGrade = (schoolGrade) => {
 
 // Функция для получения информации об образовании
 const getEducationInfo = (user) => {
+  if (!user) return "Не указано";
+  
   if (user.isMentor) {
     return user.mentor?.jobTitle || "Должность не указана";
   } else {
@@ -57,6 +59,18 @@ const getPhotoUrl = (photoPath, photoVersion, defaultAvatar) => {
   if (!photoPath) return defaultAvatar;
   // Добавляем параметр версии для обхода кэша браузера
   return `${photoPath}?v=${photoVersion}`;
+};
+
+// Функция для получения образовательной организации
+const getEducationOrganization = (user) => {
+  if (!user) return "Организация не указана";
+  return user.eduOrganization || "Организация не указана";
+};
+
+// Функция для получения телефона
+const getPhoneNumber = (user) => {
+  if (!user) return "Не указано";
+  return user.phoneNumber || "Не указано";
 };
 
 const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false }) => {
@@ -78,8 +92,8 @@ const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false
 
   // Отладочный вывод для проверки структуры данных
   console.log("ProfileHeader user data:", user);
-  console.log("Phone number:", user?.phoneNumber);
-  console.log("Education organization:", user?.eduOrganization);
+  console.log("Phone number:", getPhoneNumber(user));
+  console.log("Education organization:", getEducationOrganization(user));
   console.log("Participant data:", user?.participant);
   console.log("School grade:", user?.participant?.schoolGrade);
 
@@ -127,17 +141,17 @@ const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false
         )}
         <div className={styles.bottomText}>
           <p className={`text1 ${styles.userDetails}`}>
-            {role} | {user.eduOrganization || "Организация не указана"} |{" "}
+            {role} | {getEducationOrganization(user)} |{" "}
             {getEducationInfo(user)}
           </p>
           <div className={styles.contact}>
             <ContactItem
               icon={phoneSvg}
-              text={user.phoneNumber}
+              text={getPhoneNumber(user)}
             />
             <ContactItem
               icon={emailSvg}
-              text={user.email}
+              text={user.email || "Email не указан"}
             />
           </div>
         </div>
@@ -148,13 +162,13 @@ const ProfileHeader = ({ user, setEditRegInfo, currentUserId, isEditable = false
 
 ProfileHeader.propTypes = {
   user: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    firstName: PropTypes.string.isRequired,
-    lastName: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
     patronymic: PropTypes.string,
     birthDate: PropTypes.string,
     phoneNumber: PropTypes.string,
-    email: PropTypes.string.isRequired,
+    email: PropTypes.string,
     eduOrganization: PropTypes.string,
     isMentor: PropTypes.bool,
     photoPath: PropTypes.string,

@@ -57,13 +57,21 @@ const ProfileForm = ({
         (acc, field) => {
           if (field.name === role) {
             field.data.forEach((val) => {
-              acc.applicableFields[val.name] = {
-                value: initialData[val.name] || "",
-                type: val.type,
-              };
+              // Для вложенных полей (participant/mentor)
+              if (initialData[field.name] && initialData[field.name][val.name] !== undefined) {
+                acc.applicableFields[val.name] = {
+                  value: initialData[field.name][val.name] || "",
+                  type: val.type,
+                };
+              } else {
+                acc.applicableFields[val.name] = {
+                  value: initialData[val.name] || "",
+                  type: val.type,
+                };
+              }
               acc.errorFields[val.name] = "";
             });
-          } else {
+          } else if (field.name !== 'role') {
             acc.applicableFields[field.name] = {
               value: initialData[field.name] || "",
               type: field.type,
@@ -74,6 +82,18 @@ const ProfileForm = ({
         },
         { applicableFields: {}, errorFields: {} }
       );
+
+      // Добавляем основные поля пользователя
+      const basicFields = ['firstName', 'lastName', 'patronymic', 'email', 'phoneNumber', 'eduOrganization', 'birthDate'];
+      basicFields.forEach(field => {
+        if (initialData[field] !== undefined) {
+          applicableFields[field] = {
+            value: initialData[field] || "",
+            type: field === 'birthDate' ? 'date' : 'text'
+          };
+          errorFields[field] = "";
+        }
+      });
 
       setFormData({
         role: { value: role, type: "role" },
@@ -86,22 +106,27 @@ const ProfileForm = ({
   }, [initialData]);
 
   const handleChange = (value, name) => {
-      const processedValue =
-        name === "phoneNumber" ? value.replace(/^\+/, "") : value;
-  
-      setFormData({
-        ...formData,
-        [name]: { value: processedValue, type: formData[name].type },
-      });
-  
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-  
-      timerRef.current = setTimeout(() => {
-        validateField(processedValue, formData[name].type, name, setFormError);
-      }, 1500);
-    };
+    let processedValue = value;
+    
+    if (name === "phoneNumber") {
+      // Для телефона убираем только плюс в начале, остальное форматирование оставляем
+      // Окончательная очистка будет в prepareFormDataForSubmit
+      processedValue = value.replace(/^\+/, "");
+    }
+    
+    setFormData({
+      ...formData,
+      [name]: { value: processedValue, type: formData[name].type },
+    });
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    timerRef.current = setTimeout(() => {
+      validateField(processedValue, formData[name].type, name, setFormError);
+    }, 1500);
+  };
 
   // Обработчик выбора фото
   const handlePhotoChangeInternal = (event) => {
@@ -115,14 +140,18 @@ const ProfileForm = ({
     }
   };
 
-  // Функция для очистки данных от пустых полей
+  // Функция для очистки данных от пустых полей - ОБНОВЛЕННАЯ
   const removeEmptyFields = (obj) => {
     const cleaned = { ...obj };
     
     Object.keys(cleaned).forEach(key => {
-      if (cleaned[key] === '' || cleaned[key] === null || cleaned[key] === undefined) {
+      // Удаляем поля с null, undefined, пустой строкой или пустым массивом
+      if (cleaned[key] === null || 
+          cleaned[key] === undefined || 
+          cleaned[key] === '' || 
+          (Array.isArray(cleaned[key]) && cleaned[key].length === 0)) {
         delete cleaned[key];
-      } else if (typeof cleaned[key] === 'object' && cleaned[key] !== null) {
+      } else if (typeof cleaned[key] === 'object' && cleaned[key] !== null && !Array.isArray(cleaned[key])) {
         // Рекурсивно очищаем вложенные объекты
         cleaned[key] = removeEmptyFields(cleaned[key]);
         // Если после очистки вложенный объект пуст, удаляем его
@@ -135,7 +164,7 @@ const ProfileForm = ({
     return cleaned;
   };
 
-  // Функция подготовки данных для отправки
+  // Функция подготовки данных для отправки - ОБНОВЛЕННАЯ
   const prepareFormDataForSubmit = () => {
     const data = {};
     
@@ -146,46 +175,58 @@ const ProfileForm = ({
       }
     });
 
-    // Удаляем служебные поля, которые не нужно отправлять
-    delete data.role;
-    delete data.policy;
-    delete data.regulations;
+    // Очищаем телефон от форматирования (оставляем только цифры)
+    if (data.phoneNumber) {
+      data.phoneNumber = data.phoneNumber.replace(/\D/g, '');
+    }
 
-    // Преобразование данных в camelCase и обработка специальных полей
-    let apiData = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      patronymic: data.patronymic,
-      birthDate: data.dateBirth || null,
-      phoneNumber: data.phoneNumber,
-      eduOrganization: data.eduOrganization,
-      // Для участников
-      ...(formData.role.value === 'participant' && {
-        participant: {
-          regionId: data.regionId ? parseInt(data.regionId) : 1,
-          schoolGrade: data.schoolGrade,
-          city: data.city,
-          interests: data.interests,
-          olympics: data.olympics,
-          achievements: data.achievements
-        }
-      }),
-      // Для менторов
-      ...(formData.role.value === 'mentor' && {
-        mentor: {
-          jobTitle: data.jobTitle,
-          specialization: data.specialization,
-          researchTopics: data.researchTopics,
-          articles: data.articles,
-          scientificInterests: data.scientificInterests,
-          taughtSubjects: data.taughtSubjects
-        }
-      })
-    };
+    // Базовые поля пользователя - передаем ТОЛЬКО заполненные поля
+    let apiData = {};
 
-    // Удаляем пустые поля перед отправкой
+    // Добавляем только заполненные основные поля
+    if (data.firstName) apiData.firstName = data.firstName;
+    if (data.lastName) apiData.lastName = data.lastName;
+    if (data.patronymic) apiData.patronymic = data.patronymic;
+    if (data.birthDate || data.dateBirth) apiData.birthDate = data.birthDate || data.dateBirth;
+    if (data.phoneNumber) apiData.phoneNumber = data.phoneNumber;
+    if (data.eduOrganization) apiData.eduOrganization = data.eduOrganization;
+    if (data.email) apiData.email = data.email;
+
+    // Добавляем поля в зависимости от роли - ТОЛЬКО если есть хоть одно заполненное поле
+    if (formData.role.value === 'participant') {
+      const participantData = {};
+      
+      if (data.regionId) participantData.regionId = parseInt(data.regionId);
+      if (data.schoolGrade) participantData.schoolGrade = data.schoolGrade;
+      if (data.city) participantData.city = data.city;
+      if (data.interests) participantData.interests = data.interests;
+      if (data.olympics) participantData.olympics = data.olympics;
+      if (data.achievements) participantData.achievements = data.achievements;
+      
+      // Добавляем participant только если есть хотя бы одно поле
+      if (Object.keys(participantData).length > 0) {
+        apiData.participant = participantData;
+      }
+    } else if (formData.role.value === 'mentor') {
+      const mentorData = {};
+      
+      if (data.jobTitle) mentorData.jobTitle = data.jobTitle;
+      if (data.specialization) mentorData.specialization = data.specialization;
+      if (data.researchTopics) mentorData.researchTopics = data.researchTopics;
+      if (data.articles) mentorData.articles = data.articles;
+      if (data.scientificInterests) mentorData.scientificInterests = data.scientificInterests;
+      if (data.taughtSubjects) mentorData.taughtSubjects = data.taughtSubjects;
+      
+      // Добавляем mentor только если есть хотя бы одно поле
+      if (Object.keys(mentorData).length > 0) {
+        apiData.mentor = mentorData;
+      }
+    }
+
+    // Удаляем полностью пустые объекты
     apiData = removeEmptyFields(apiData);
 
+    console.log('Подготовленные данные для отправки:', apiData);
     return apiData;
   };
 
@@ -218,11 +259,19 @@ const ProfileForm = ({
       
       // Создаем FormData для multipart/form-data
       const formDataToSend = new FormData();
+      
+      // Важно: поле должно называться 'data' и содержать JSON строку
       formDataToSend.append('data', JSON.stringify(apiData));
       
       // Если есть новое фото, добавляем его
       if (photoFile) {
         formDataToSend.append('photo', photoFile);
+      }
+
+      // Отладочный вывод для проверки FormData
+      console.log('FormData contents:');
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
       }
 
       console.log('FormData to send:', formDataToSend);
