@@ -36,6 +36,30 @@ const ProfileForm = ({
   const [photoFile, setPhotoFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Функция для форматирования телефона
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return "";
+    
+    // Очищаем от всего, кроме цифр
+    const cleaned = phone.replace(/\D/g, '');
+    
+    // Форматируем в +7 (XXX) XXX-XX-XX
+    if (cleaned.length === 11) {
+      return `+7 (${cleaned.substring(1, 4)}) ${cleaned.substring(4, 7)}-${cleaned.substring(7, 9)}-${cleaned.substring(9)}`;
+    } else if (cleaned.length === 10) {
+      return `+7 (${cleaned.substring(0, 3)}) ${cleaned.substring(3, 6)}-${cleaned.substring(6, 8)}-${cleaned.substring(8)}`;
+    }
+    
+    // Если не подходит под формат, возвращаем как есть
+    return phone;
+  };
+
+  // Функция для очистки форматирования телефона (оставляем только цифры)
+  const cleanPhoneNumber = (phone) => {
+    if (!phone) return "";
+    return phone.replace(/\D/g, '');
+  };
+
   // Загрузка регионов
   useEffect(() => {
     const fetchRegions = async () => {
@@ -87,8 +111,15 @@ const ProfileForm = ({
       const basicFields = ['firstName', 'lastName', 'patronymic', 'email', 'phoneNumber', 'eduOrganization', 'birthDate'];
       basicFields.forEach(field => {
         if (initialData[field] !== undefined) {
+          let value = initialData[field] || "";
+          
+          // Форматируем телефон при инициализации
+          if (field === 'phoneNumber' && value) {
+            value = formatPhoneNumber(value);
+          }
+          
           applicableFields[field] = {
-            value: initialData[field] || "",
+            value: value,
             type: field === 'birthDate' ? 'date' : 'text'
           };
           errorFields[field] = "";
@@ -109,9 +140,9 @@ const ProfileForm = ({
     let processedValue = value;
     
     if (name === "phoneNumber") {
-      // Для телефона убираем только плюс в начале, остальное форматирование оставляем
+      // Для телефона сохраняем отформатированное значение для отображения
       // Окончательная очистка будет в prepareFormDataForSubmit
-      processedValue = value.replace(/^\+/, "");
+      processedValue = value;
     }
     
     setFormData({
@@ -124,7 +155,9 @@ const ProfileForm = ({
     }
 
     timerRef.current = setTimeout(() => {
-      validateField(processedValue, formData[name].type, name, setFormError);
+      // Для валидации передаем очищенный номер телефона
+      const validationValue = name === "phoneNumber" ? cleanPhoneNumber(value) : value;
+      validateField(validationValue, formData[name].type, name, setFormError);
     }, 1500);
   };
 
@@ -140,7 +173,7 @@ const ProfileForm = ({
     }
   };
 
-  // Функция для очистки данных от пустых полей - ОБНОВЛЕННАЯ
+  // Функция для очистки данных от пустых полей
   const removeEmptyFields = (obj) => {
     const cleaned = { ...obj };
     
@@ -164,7 +197,7 @@ const ProfileForm = ({
     return cleaned;
   };
 
-  // Функция подготовки данных для отправки - ОБНОВЛЕННАЯ
+  // Функция подготовки данных для отправки
   const prepareFormDataForSubmit = () => {
     const data = {};
     
@@ -176,8 +209,9 @@ const ProfileForm = ({
     });
 
     // Очищаем телефон от форматирования (оставляем только цифры)
+    let phoneNumberValue = "";
     if (data.phoneNumber) {
-      data.phoneNumber = data.phoneNumber.replace(/\D/g, '');
+      phoneNumberValue = cleanPhoneNumber(data.phoneNumber);
     }
 
     // Базовые поля пользователя - передаем ТОЛЬКО заполненные поля
@@ -188,7 +222,13 @@ const ProfileForm = ({
     if (data.lastName) apiData.lastName = data.lastName;
     if (data.patronymic) apiData.patronymic = data.patronymic;
     if (data.birthDate || data.dateBirth) apiData.birthDate = data.birthDate || data.dateBirth;
-    if (data.phoneNumber) apiData.phoneNumber = data.phoneNumber;
+    
+    // ВАЖНО: Всегда добавляем phoneNumber, даже если он пустой, но только если он был изменен
+    // или если у пользователя уже был номер телефона
+    if (phoneNumberValue || initialData?.phoneNumber) {
+      apiData.phoneNumber = phoneNumberValue;
+    }
+    
     if (data.eduOrganization) apiData.eduOrganization = data.eduOrganization;
     if (data.email) apiData.email = data.email;
 
@@ -227,6 +267,10 @@ const ProfileForm = ({
     apiData = removeEmptyFields(apiData);
 
     console.log('Подготовленные данные для отправки:', apiData);
+    console.log('Исходный телефон:', data.phoneNumber);
+    console.log('Очищенный телефон:', phoneNumberValue);
+    console.log('Был ли телефон у пользователя:', initialData?.phoneNumber);
+    
     return apiData;
   };
 
