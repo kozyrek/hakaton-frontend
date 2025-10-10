@@ -13,6 +13,7 @@ import ProjectStages from "./pages/projectStages";
 import StepProjectPage from "./pages/stepPage";
 
 import PasswordRecovery from "./pages/auth/passwordRecovery";
+import PasswordReset from "./pages/auth/passwordReset";
 import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -61,6 +62,10 @@ root.render(
               <Route
                 path={ROUTES.RECOVERY}
                 element={<PasswordRecovery />}
+              />
+              <Route
+                path={ROUTES.PASSWORDRESET}
+                element={<PasswordReset />}
               />
               <Route
                 path="*"
