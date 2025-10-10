@@ -548,7 +548,7 @@ const ProfileForm = ({
           {/* Блок с ошибкой */}
           {passwordChangeError && (
             <div className={styles.errorMessage}>
-              <div className={styles.errorIcon}>⚠️</div>
+              {/* <div className={styles.errorIcon}>⚠️</div> */}
               <div className={styles.errorText}>{passwordChangeError}</div>
             </div>
           )}
