@@ -89,21 +89,7 @@ export const formFields = [
     label: "Электронная почта",
     type: "email",
     placeholder: "Введите адрес электронной почты",
-  },
-  {
-    id: 14,
-    name: "password",
-    label: "Пароль",
-    type: "password",
-    placeholder: "Введите пароль",
-  },
-  {
-    id: 15,
-    name: "retryPassword",
-    label: "Повтор пароля",
-    type: "password",
-    placeholder: "Введите пароль",
-  },
+  }
 ];
 
 export const loginFields = [

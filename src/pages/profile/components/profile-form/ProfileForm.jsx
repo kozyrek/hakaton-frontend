@@ -16,6 +16,9 @@ import DownloadButton from "../../ui/downloadBtn/downloadButton";
 
 import stylesReg from "../../../auth/styles/registration.module.css";
 import getRegion from "../../../../api/regions/getRegions";
+import { changePassword } from "../../../../api/auth/changePassword";
+import ModalWrapper from "../../../../components/modalOverlay";
+import ModalWindow from "../../../../components/modalWindow";
 
 const ProfileForm = ({
   initialData,
@@ -35,6 +38,17 @@ const ProfileForm = ({
   const [formError, setFormError] = useState({});
   const [photoFile, setPhotoFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Состояния для модального окна смены пароля
+  const [isChangePasswordModal, setIsChangePasswordModal] = useState(false);
+  const [passwordFormData, setPasswordFormData] = useState({
+    oldPassword: { value: "", type: "password" },
+    newPassword: { value: "", type: "password" },
+    confirmPassword: { value: "", type: "password" },
+  });
+  const [passwordFormError, setPasswordFormError] = useState({});
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordChangeSuccess, setPasswordChangeSuccess] = useState(false);
 
   // Функция для форматирования телефона
   const formatPhoneNumber = (phone) => {
@@ -334,6 +348,192 @@ const ProfileForm = ({
     return !requiredFields.some(field => !formData[field]?.value);
   };
 
+  // Функция для обработки смены пароля
+  const handlePasswordChange = async () => {
+    // Валидация
+    const hasErrors = Object.values(passwordFormError).some(error => error !== "");
+    const hasEmptyFields = !passwordFormData.oldPassword.value || 
+                          !passwordFormData.newPassword.value || 
+                          !passwordFormData.confirmPassword.value;
+    
+    if (hasErrors || hasEmptyFields) {
+      alert("Пожалуйста, заполните все поля и исправьте ошибки");
+      return;
+    }
+
+    if (passwordFormData.newPassword.value !== passwordFormData.confirmPassword.value) {
+      setPasswordFormError(prev => ({
+        ...prev,
+        confirmPassword: "Пароли не совпадают"
+      }));
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      const passwordData = {
+        oldPassword: passwordFormData.oldPassword.value,
+        newPassword: passwordFormData.newPassword.value
+      };
+
+      await changePassword(passwordData);
+      setPasswordChangeSuccess(true);
+      
+      // Автоматически закрываем модальное окно через 2 секунды
+      setTimeout(() => {
+        setIsChangePasswordModal(false);
+        setPasswordChangeSuccess(false);
+        // Сбрасываем форму
+        setPasswordFormData({
+          oldPassword: { value: "", type: "password" },
+          newPassword: { value: "", type: "password" },
+          confirmPassword: { value: "", type: "password" },
+        });
+        setPasswordFormError({});
+      }, 2000);
+      
+    } catch (error) {
+      console.error("Ошибка при смене пароля:", error);
+      
+      let errorMessage = "Ошибка при смене пароля";
+      if (error.response?.data?.detail) {
+        if (typeof error.response.data.detail === 'string') {
+          errorMessage = error.response.data.detail;
+        } else if (Array.isArray(error.response.data.detail)) {
+          errorMessage = error.response.data.detail.map(err => err.msg).join(', ');
+        }
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  // Обработчик изменения полей пароля
+  const handlePasswordFieldChange = (value, name) => {
+    setPasswordFormData({
+      ...passwordFormData,
+      [name]: { ...passwordFormData[name], value: value },
+    });
+
+    // Валидация в реальном времени
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    timerRef.current = setTimeout(() => {
+      if (name === "newPassword") {
+        validateField(value, "password", name, setPasswordFormError);
+      } else if (name === "confirmPassword" && passwordFormData.newPassword.value) {
+        if (value !== passwordFormData.newPassword.value) {
+          setPasswordFormError(prev => ({
+            ...prev,
+            confirmPassword: "Пароли не совпадают"
+          }));
+        } else {
+          setPasswordFormError(prev => ({
+            ...prev,
+            confirmPassword: ""
+          }));
+        }
+      }
+    }, 500);
+  };
+
+  // Функция для закрытия модального окна
+  const handleClosePasswordModal = () => {
+    setIsChangePasswordModal(false);
+    setPasswordChangeSuccess(false);
+    setPasswordFormData({
+      oldPassword: { value: "", type: "password" },
+      newPassword: { value: "", type: "password" },
+      confirmPassword: { value: "", type: "password" },
+    });
+    setPasswordFormError({});
+  };
+
+  // Функция для рендеринга контента модального окна смены пароля
+  const renderPasswordModalContent = () => {
+    if (passwordChangeSuccess) {
+      return (
+        <div className={styles.successMessage}>
+          <p>Пароль успешно изменен!</p>
+          <p>Модальное окно закроется автоматически...</p>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <div className={styles.passwordInputs}>
+          <Inputs
+            name="oldPassword"
+            placeholder="Текущий пароль"
+            type="password"
+            formData={passwordFormData}
+            formError={passwordFormError}
+            onChange={handlePasswordFieldChange}
+          />
+          <Inputs
+            name="newPassword"
+            placeholder="Новый пароль"
+            type="password"
+            formData={passwordFormData}
+            formError={passwordFormError}
+            onChange={handlePasswordFieldChange}
+          />
+          <Inputs
+            name="confirmPassword"
+            placeholder="Повторите новый пароль"
+            type="password"
+            formData={passwordFormData}
+            formError={passwordFormError}
+            onChange={handlePasswordFieldChange}
+          />
+        </div>
+      </>
+    );
+  };
+
+  // Функция для рендеринга кнопок модального окна смены пароля
+  const renderPasswordModalButtons = () => {
+    if (passwordChangeSuccess) {
+      return [
+        <Button
+          key="ok"
+          text="OK"
+          large
+          onClick={handleClosePasswordModal}
+        />
+      ];
+    }
+
+    return [
+      <Button
+        key="cancel"
+        text="Отмена"
+        large
+        violet
+        onClick={handleClosePasswordModal}
+        disabled={isChangingPassword}
+      />,
+      <Button
+        key="change"
+        text={isChangingPassword ? "Смена пароля..." : "Сменить пароль"}
+        large
+        onClick={handlePasswordChange}
+        disabled={isChangingPassword || 
+                 !passwordFormData.oldPassword.value ||
+                 !passwordFormData.newPassword.value ||
+                 !passwordFormData.confirmPassword.value ||
+                 !!passwordFormError.newPassword ||
+                 !!passwordFormError.confirmPassword ||
+                 passwordFormData.newPassword.value !== passwordFormData.confirmPassword.value}
+      />
+    ];
+  };
+
   return (
     <>
       <h2 className={`titleH2 ${styles.profileTabTitle}`}>Регистрационные данные</h2>
@@ -415,7 +615,7 @@ const ProfileForm = ({
         <Button 
           large 
           text="Сменить пароль" 
-          onClick={() => alert("Сменить пароль")}
+          onClick={() => setIsChangePasswordModal(true)}
           addClass={styles.btnChangePassword}
         />
       </div>
@@ -446,6 +646,21 @@ const ProfileForm = ({
             style={{ display: "none" }}
           />
         </div>
+
+      {/* Модальное окно смены пароля */}
+      <ModalWrapper
+        isOpen={isChangePasswordModal}
+        onClose={handleClosePasswordModal}
+      >
+        <ModalWindow
+          title={passwordChangeSuccess ? "Пароль изменен" : "Смена пароля"}
+          description={passwordChangeSuccess ? "" : "Введите текущий пароль и новый пароль"}
+          setIsShow={handleClosePasswordModal}
+          buttonArea={renderPasswordModalButtons()}
+        >
+          {renderPasswordModalContent()}
+        </ModalWindow>
+      </ModalWrapper>
 
       <Button 
         large 
