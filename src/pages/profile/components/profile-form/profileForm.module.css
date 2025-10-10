@@ -10,7 +10,7 @@
     "regionId city ."
     "eduOrganization schoolGrade ."
     "email phoneNumber ."
-    "password retryPassword btnChangePassword";
+    "btnChangePassword password retryPassword";
   gap: 20px 31px;
   color: #1a1f1f;
 }
@@ -100,4 +100,10 @@
   border-radius: 8px;
   object-fit: cover;
   margin-bottom: 10px;
+}
+
+.helherTextPassword {
+  margin-top: 24px;
+  font-size: 14px;
+  color: #9D9D9D;
 }

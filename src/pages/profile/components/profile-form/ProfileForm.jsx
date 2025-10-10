@@ -491,6 +491,9 @@ const ProfileForm = ({
             formError={passwordFormError}
             onChange={handlePasswordFieldChange}
           />
+           <div className={styles.helherTextPassword}>
+            Пароль должен содержать не менее 8 символов, используйте латиницу, спецсимволы (@#$%&*!), заглавные и прописные буквы, цифры.
+          </div>
         </div>
       </>
     );
