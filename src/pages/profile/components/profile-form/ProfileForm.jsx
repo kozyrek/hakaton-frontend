@@ -431,7 +431,7 @@ const ProfileForm = ({
             />
           </div>
           <div>
-            <label htmlFor="photoInput" className="me-md-3 mb-md-3">
+            <label htmlFor="photoInput" className="me-3 mb-3">
               {photoFile ? "Файл загружен" : "Загрузите файл"}
             </label>
             <DownloadButton onClick={() => document.getElementById("photoInput").click()}>
