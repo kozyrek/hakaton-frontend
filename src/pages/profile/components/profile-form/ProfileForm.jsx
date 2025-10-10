@@ -49,6 +49,7 @@ const ProfileForm = ({
   const [passwordFormError, setPasswordFormError] = useState({});
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordChangeSuccess, setPasswordChangeSuccess] = useState(false);
+  const [passwordChangeError, setPasswordChangeError] = useState("");
 
   // Функция для форматирования телефона
   const formatPhoneNumber = (phone) => {
@@ -68,10 +69,63 @@ const ProfileForm = ({
     return phone;
   };
 
-  // Функция для очистки форматирования телефона (оставляем только цифры)
+  // Функция для очистки форматирования телефона
   const cleanPhoneNumber = (phone) => {
     if (!phone) return "";
     return phone.replace(/\D/g, '');
+  };
+
+  // Функция для обработки ошибок смены пароля
+  const handlePasswordError = (error) => {
+    console.error("Ошибка при смене пароля:", error);
+    
+    let errorMessage = "Произошла непредвиденная ошибка";
+    
+    if (error.response) {
+      // Ошибка с ответом от сервера
+      const status = error.response.status;
+      const detail = error.response.data?.detail;
+      
+      switch (status) {
+        case 403:
+          errorMessage = "Неверный текущий пароль. Пожалуйста, проверьте введенные данные.";
+          break;
+        case 400:
+          errorMessage = "Некорректный запрос. Проверьте введенные данные.";
+          break;
+        case 422:
+          if (Array.isArray(detail)) {
+            errorMessage = detail.map(err => 
+              `${err.loc?.join('.') || ''}: ${err.msg}`
+            ).join(', ');
+          } else if (typeof detail === 'string') {
+            errorMessage = detail;
+          } else {
+            errorMessage = "Ошибка валидации данных. Проверьте введенные значения.";
+          }
+          break;
+        case 500:
+          errorMessage = "Внутренняя ошибка сервера. Пожалуйста, попробуйте позже.";
+          break;
+        case 503:
+          errorMessage = "Сервис временно недоступен. Пожалуйста, попробуйте позже.";
+          break;
+        default:
+          if (typeof detail === 'string') {
+            errorMessage = detail;
+          } else {
+            errorMessage = `Ошибка сервера (${status}). Пожалуйста, попробуйте позже.`;
+          }
+      }
+    } else if (error.request) {
+      // Запрос был сделан, но ответ не получен
+      errorMessage = "Не удалось соединиться с сервером. Проверьте подключение к интернету.";
+    } else {
+      // Что-то пошло не так при настройке запроса
+      errorMessage = "Ошибка при отправке запроса. Пожалуйста, попробуйте еще раз.";
+    }
+    
+    setPasswordChangeError(errorMessage);
   };
 
   // Загрузка регионов
@@ -357,7 +411,7 @@ const ProfileForm = ({
                           !passwordFormData.confirmPassword.value;
     
     if (hasErrors || hasEmptyFields) {
-      alert("Пожалуйста, заполните все поля и исправьте ошибки");
+      setPasswordChangeError("Пожалуйста, заполните все поля и исправьте ошибки");
       return;
     }
 
@@ -366,10 +420,13 @@ const ProfileForm = ({
         ...prev,
         confirmPassword: "Пароли не совпадают"
       }));
+      setPasswordChangeError("Пароли не совпадают. Пожалуйста, проверьте введенные данные.");
       return;
     }
 
     setIsChangingPassword(true);
+    setPasswordChangeError(""); // Очищаем предыдущие ошибки
+
     try {
       const passwordData = {
         oldPassword: passwordFormData.oldPassword.value,
@@ -390,21 +447,11 @@ const ProfileForm = ({
           confirmPassword: { value: "", type: "password" },
         });
         setPasswordFormError({});
+        setPasswordChangeError("");
       }, 2000);
       
     } catch (error) {
-      console.error("Ошибка при смене пароля:", error);
-      
-      let errorMessage = "Ошибка при смене пароля";
-      if (error.response?.data?.detail) {
-        if (typeof error.response.data.detail === 'string') {
-          errorMessage = error.response.data.detail;
-        } else if (Array.isArray(error.response.data.detail)) {
-          errorMessage = error.response.data.detail.map(err => err.msg).join(', ');
-        }
-      }
-      
-      alert(errorMessage);
+      handlePasswordError(error);
     } finally {
       setIsChangingPassword(false);
     }
@@ -416,6 +463,11 @@ const ProfileForm = ({
       ...passwordFormData,
       [name]: { ...passwordFormData[name], value: value },
     });
+
+    // Очищаем ошибку при изменении полей
+    if (passwordChangeError) {
+      setPasswordChangeError("");
+    }
 
     // Валидация в реальном времени
     if (timerRef.current) {
@@ -451,6 +503,7 @@ const ProfileForm = ({
       confirmPassword: { value: "", type: "password" },
     });
     setPasswordFormError({});
+    setPasswordChangeError("");
   };
 
   // Функция для рендеринга контента модального окна смены пароля
@@ -458,7 +511,7 @@ const ProfileForm = ({
     if (passwordChangeSuccess) {
       return (
         <div className={styles.successMessage}>
-          <p>Пароль успешно изменен!</p>
+          <p>✅ Пароль успешно изменен!</p>
           <p>Модальное окно закроется автоматически...</p>
         </div>
       );
@@ -491,7 +544,16 @@ const ProfileForm = ({
             formError={passwordFormError}
             onChange={handlePasswordFieldChange}
           />
-           <div className={styles.helherTextPassword}>
+          
+          {/* Блок с ошибкой */}
+          {passwordChangeError && (
+            <div className={styles.errorMessage}>
+              <div className={styles.errorIcon}>⚠️</div>
+              <div className={styles.errorText}>{passwordChangeError}</div>
+            </div>
+          )}
+          
+          <div className={styles.helperTextPassword}>
             Пароль должен содержать не менее 8 символов, используйте латиницу, спецсимволы (@#$%&*!), заглавные и прописные буквы, цифры.
           </div>
         </div>
