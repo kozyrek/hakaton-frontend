@@ -156,7 +156,7 @@ export default function Inputs(props) {
           {isError ? (
             <span className={styles.helherTextError}>{formError[name]}</span>
           ) : (
-            name === "password" && <span>{HELPER_TEXT_PASSWORD}</span>
+            name === "password" && <span className={styles.helherTextPassword}>{HELPER_TEXT_PASSWORD}</span>
           )}
         </>
       )}

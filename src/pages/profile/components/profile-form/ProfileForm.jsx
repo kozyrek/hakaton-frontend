@@ -420,8 +420,8 @@ const ProfileForm = ({
         />
       </div>
 
-      <div className={styles.profilePhotoSection}>
-          <label>Фото пользователя (до 2 МБ):</label>
+      <div className={`${styles.profilePhotoSection} g-4`}>
+          <label className="mb-2">Фото пользователя (до 2 МБ):</label>
           <div>
             <img
               src={photoFile ? URL.createObjectURL(photoFile) : (initialData?.photoPath ? `${initialData.photoPath}?v=${Date.now()}` : profilePhotoAvatar)}
@@ -431,7 +431,7 @@ const ProfileForm = ({
             />
           </div>
           <div>
-            <label htmlFor="photoInput">
+            <label htmlFor="photoInput" className="me-md-3 mb-md-3">
               {photoFile ? "Файл загружен" : "Загрузите файл"}
             </label>
             <DownloadButton onClick={() => document.getElementById("photoInput").click()}>
