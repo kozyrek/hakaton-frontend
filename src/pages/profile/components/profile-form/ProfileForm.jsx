@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./profileForm.module.css";
 import profilePhotoAvatar from "../../../../assests/images/photo/profilePhotoAvatar.svg";
 import Inputs from "../../../../components/inputs/inputs";
-import { formFields } from "../../../auth/utils/utils";
+import { formFieldsProfile } from "../../../auth/utils/utils";
 import {
   validateField,
 } from "../../../auth/utils/validateForm";
@@ -145,7 +145,7 @@ const ProfileForm = ({
   useEffect(() => {
     if (initialData) {
       const role = initialData.role || 'participant';
-      const { applicableFields, errorFields } = formFields.reduce(
+      const { applicableFields, errorFields } = formFieldsProfile.reduce(
         (acc, field) => {
           if (field.name === role) {
             field.data.forEach((val) => {
@@ -603,7 +603,7 @@ const ProfileForm = ({
     <>
       <h2 className={`titleH2 ${styles.profileTabTitle}`}>Регистрационные данные</h2>
       <div className={`text2 ${styles.userRegDataChange}`}>
-        {formFields.map((item) => {
+        {formFieldsProfile.map((item) => {
           return item.name === formData.role.value ? (
             item.data.map((e) =>
               e.name === "regionId" ? (
