@@ -172,31 +172,31 @@ export default function Inputs(props) {
               </button>
             </div>
           ) : isDateField ? (
-            // Специальная обработка для поля даты рождения
-            <div className={styles.phoneInputWrapper}>
-              <IMaskInput
-                mask="00.00.0000"
-                placeholder="дд.мм.гггг"
-                lazy={!formData[name]?.value}
-                value={formatDateForDisplay(formData[name]?.value) || ""}
-                onAccept={(value) => handleDateChange(value)}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-                className={`${styles.loginInput} ${isError && styles.errorInput} ${
-                  !formData[name]?.value && !focused ? styles.transparentInput : ''
-                }`}
-                required
-                disabled={disabled}
-                {...other}
-              />
-              <button
-                className={`${styles.delete} ${styles.phoneDelete} ${!label && styles.notLabel}`}
-                onClick={() => handelClick(type)}
-              >
-                <SvgDelete />
-              </button>
-            </div>
-          ) : (
+  // Специальная обработка для поля даты рождения
+  <div className={styles.phoneInputWrapper}>
+    <IMaskInput
+      mask="00.00.0000"
+      placeholder="дд.мм.гггг"
+      lazy={!formData[name]?.value}
+      value={formData[name]?.value || ""} // Убираем форматирование для отображения
+      onAccept={(value) => onChange(value, name)} // Сохраняем как есть (DD.MM.YYYY)
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      className={`${styles.loginInput} ${isError && styles.errorInput} ${
+        !formData[name]?.value && !focused ? styles.transparentInput : ''
+      }`}
+      required
+      disabled={disabled}
+      {...other}
+    />
+    <button
+      className={`${styles.delete} ${styles.phoneDelete} ${!label && styles.notLabel}`}
+      onClick={() => handelClick(type)}
+    >
+      <SvgDelete />
+    </button>
+  </div>
+) : (
             <>
               <input
                 type={isShowPassword ? "text" : type}
