@@ -105,7 +105,7 @@ export default function Registration() {
   };
 
 const formatErrorMessage = (errorMessage) => {
-  if (!errorMessage) return ["Произошла неизвестная ошибка"];
+  if (!errorMessage) return ["Пожалуйста, проверьте введенные данные"];
   
   let messages = [];
   
@@ -140,8 +140,12 @@ const formatErrorMessage = (errorMessage) => {
       if (message.includes("value is not a valid")) {
         return "Неверное значение поля";
       }
+      if (message.includes("ensure this value has at least") || message.includes("ensure this value has at most")) {
+        return "Некорректная длина поля";
+      }
       
-      return message;
+      // Если сообщение не было переведено, используем фолбек
+      return "Пожалуйста, проверьте введенные данные";
     });
   } else {
     // Если это одна ошибка
@@ -173,12 +177,29 @@ const formatErrorMessage = (errorMessage) => {
     else if (message.includes("value is not a valid")) {
       messages.push("Неверное значение поля");
     }
+    else if (message.includes("ensure this value has at least") || message.includes("ensure this value has at most")) {
+      messages.push("Некорректная длина поля");
+    }
     else {
-      messages.push(message);
+      // Если сообщение не было переведено, используем фолбек
+      messages.push("Пожалуйста, проверьте введенные данные");
     }
   }
   
-  return messages;
+  // Дополнительная проверка: если после обработки остались непереведенные английские сообщения, заменяем их
+  const finalMessages = messages.map(msg => {
+    // Проверяем, содержит ли сообщение английские слова (простые паттерны для common validation errors)
+    const hasEnglishPattern = 
+      /(String should|Input should|valid date|match pattern|Password contains|field required|invalid email|value is not|ensure this value)/i.test(msg);
+    
+    if (hasEnglishPattern) {
+      return "Пожалуйста, проверьте введенные данные";
+    }
+    
+    return msg;
+  });
+  
+  return finalMessages;
 };
 
 const getErrorMessage = (error) => {
@@ -196,7 +217,23 @@ const getErrorMessage = (error) => {
       // Если ошибка содержит loc и msg, формируем понятное сообщение
       if (err.loc && err.msg) {
         const field = err.loc[err.loc.length - 1]; // Берем последний элемент loc (название поля)
-        return `${field}: ${err.msg}`;
+        // Пытаемся определить поле на русском
+        const fieldNames = {
+          'firstName': 'Имя',
+          'lastName': 'Фамилия', 
+          'patronymic': 'Отчество',
+          'birthDate': 'Дата рождения',
+          'phoneNumber': 'Номер телефона',
+          'email': 'Email',
+          'password': 'Пароль',
+          'regionId': 'Регион',
+          'schoolGrade': 'Класс',
+          'city': 'Город',
+          'policy': 'Согласие с политикой',
+          'regulations': 'Согласие с положением'
+        };
+        const russianField = fieldNames[field] || field;
+        return `${russianField}: ${err.msg}`;
       }
       return err.msg || JSON.stringify(err);
     });
@@ -205,7 +242,24 @@ const getErrorMessage = (error) => {
   // Если error.detail - это объект
   if (typeof error?.detail === 'object') {
     return Object.entries(error.detail)
-      .map(([key, value]) => `${key}: ${value}`);
+      .map(([key, value]) => {
+        const fieldNames = {
+          'firstName': 'Имя',
+          'lastName': 'Фамилия', 
+          'patronymic': 'Отчество',
+          'birthDate': 'Дата рождения',
+          'phoneNumber': 'Номер телефона',
+          'email': 'Email',
+          'password': 'Пароль',
+          'regionId': 'Регион',
+          'schoolGrade': 'Класс',
+          'city': 'Город',
+          'policy': 'Согласие с политикой',
+          'regulations': 'Согласие с положением'
+        };
+        const russianField = fieldNames[key] || key;
+        return `${russianField}: ${value}`;
+      });
   }
   
   // Если есть прямые поля с ошибками в response.data
@@ -214,9 +268,41 @@ const getErrorMessage = (error) => {
     for (const [key, value] of Object.entries(error)) {
       if (key !== 'detail' && value) {
         if (Array.isArray(value)) {
-          messages.push(...value.map(v => `${key}: ${v}`));
+          messages.push(...value.map(v => {
+            const fieldNames = {
+              'firstName': 'Имя',
+              'lastName': 'Фамилия', 
+              'patronymic': 'Отчество',
+              'birthDate': 'Дата рождения',
+              'phoneNumber': 'Номер телефона',
+              'email': 'Email',
+              'password': 'Пароль',
+              'regionId': 'Регион',
+              'schoolGrade': 'Класс',
+              'city': 'Город',
+              'policy': 'Согласие с политикой',
+              'regulations': 'Согласие с положением'
+            };
+            const russianField = fieldNames[key] || key;
+            return `${russianField}: ${v}`;
+          }));
         } else {
-          messages.push(`${key}: ${value}`);
+          const fieldNames = {
+            'firstName': 'Имя',
+            'lastName': 'Фамилия', 
+            'patronymic': 'Отчество',
+            'birthDate': 'Дата рождения',
+            'phoneNumber': 'Номер телефона',
+            'email': 'Email',
+            'password': 'Пароль',
+            'regionId': 'Регион',
+            'schoolGrade': 'Класс',
+            'city': 'Город',
+            'policy': 'Согласие с политикой',
+            'regulations': 'Согласие с положением'
+          };
+          const russianField = fieldNames[key] || key;
+          messages.push(`${russianField}: ${value}`);
         }
       }
     }
@@ -234,7 +320,7 @@ const getErrorMessage = (error) => {
   }
   
   // По умолчанию
-  return ["Произошла неизвестная ошибка при регистрации"];
+  return ["Пожалуйста, проверьте введенные данные"];
 };
 
 const handleSubmit = async () => {
@@ -499,30 +585,42 @@ const handleSubmit = async () => {
       )}
 
       {/* Модальное окно для ошибок регистрации с использованием ModalWrapper */}
-      <ModalWrapper
-        isOpen={errorModal.isOpen}
-        onClose={closeErrorModal}
-      >
-        <ModalWindow
-          title="Ошибка регистрации"
-          setIsShow={closeErrorModal}
-          buttonArea={[
-            <Button
-              key="close"
-              text="Ок"
-              onClick={closeErrorModal}
-            />
-          ]}
-        >
-          <div style={{ whiteSpace: 'pre-line', textAlign: 'left' }}>
-            {errorModal.messages.map((message, index) => (
-              <div key={index} style={{ marginBottom: index < errorModal.messages.length - 1 ? '10px' : '0' }}>
-                {message}
-              </div>
-            ))}
+<ModalWrapper
+  isOpen={errorModal.isOpen}
+  onClose={closeErrorModal}
+>
+  <ModalWindow
+    title="Ошибка регистрации"
+    setIsShow={closeErrorModal}
+    buttonArea={[
+      <Button
+        key="close"
+        text="Ок"
+        onClick={closeErrorModal}
+      />
+    ]}
+  >
+    <div style={{ whiteSpace: 'pre-line' }}>
+      {errorModal.messages.map((message, index) => {
+        // Определяем выравнивание в зависимости от длины сообщения
+        const textAlign = message.length < 40 ? 'center' : 'left';
+        
+        return (
+          <div 
+            key={index} 
+            style={{ 
+              marginBottom: index < errorModal.messages.length - 1 ? '10px' : '0',
+              textAlign: textAlign,
+              padding: '0 10px'
+            }}
+          >
+            {message}
           </div>
-        </ModalWindow>
-      </ModalWrapper>
+        );
+      })}
+    </div>
+  </ModalWindow>
+</ModalWrapper>
     </LayoutLogin>
   );
 }
