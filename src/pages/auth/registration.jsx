@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LayoutLogin from "./layoutLogin";
 import Inputs from "../../components/inputs/inputs";
 import ModalWindow from "../../components/modalWindow";
+import ModalWrapper from "../../components/modalOverlay"; // Добавляем импорт ModalWrapper
 import { formFields } from "./utils/utils";
 import {
   passwordMatchValidation,
@@ -21,6 +22,7 @@ import ArrowUp from "./images/arrowup";
 import { MODAL } from "../../components/modalWindow/utils/constants";
 import userRegistration from "../../api/userRegistration";
 import getRegion from "../../api/regions/getRegions";
+import Button from "../../components/button/button";
 
 export default function Registration() {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,6 +48,7 @@ export default function Registration() {
 
   const [formData, setFormData] = useState(initialFormData);
   const [regions, setRegions] = useState([]);
+  const [errorModal, setErrorModal] = useState({ isOpen: false, messages: [] }); // Теперь храним массив сообщений
   const timerRef = useRef(null);
   
   // Инициализируем ошибки для всех полей
@@ -101,68 +104,208 @@ export default function Registration() {
     }, 1500);
   };
 
-  const handleSubmit = async () => {
-    const errors = validateForm(formData, formError, setFormError);
-    if (!passwordMatchValidation(formData)) {
-      const name = "retryPassword";
-      setFormError((prevError) => ({
-        ...prevError,
-        [name]: "Пароли не совпадают",
-      }));
-      return;
-    }
-
-    if (errors) return;
-
-    try {
-      const response = await userRegistration(formData);
-
-      if (response?.status === 201) {
-        console.log("reg");
-        setIsShowModal(true);
+const formatErrorMessage = (errorMessage) => {
+  if (!errorMessage) return ["Произошла неизвестная ошибка"];
+  
+  let messages = [];
+  
+  // Если это массив ошибок, обрабатываем каждую
+  if (Array.isArray(errorMessage)) {
+    messages = errorMessage.map(msg => {
+      const message = msg.toString();
+      
+      // Заменяем сообщения на русские
+      if (message.includes("String should have at least 2 characters")) {
+        return "Поле должно содержать минимум 2 символа";
       }
-    } catch (error) {
-      console.error("Ошибка регистрации:", error);
+      if (message.includes("Input should be a valid date or datetime, input is too short")) {
+        return "Неверный формат даты, пожалуйста, заполните её корректно";
+      }
+      if (message.includes("String should match pattern '^7\\d{10}$'")) {
+        return "Номер телефона должен начинаться с 7 и содержать 11 цифр";
+      }
+      if (message.includes("Password contains invalid characters") || 
+          message.includes("body.password: Value error, Password contains invalid characters")) {
+        return "Пароль содержит недопустимые символы. Допустимые символы: заглавные и строчные латинские буквы, цифры и ! @ # $ % & *";
+      }
+      if (message.includes("Input should be a valid date or datetime, invalid date separator, expected `-`")) {
+        return "Неверный формат даты, пожалуйста, заполните её корректно";
+      }
+      if (message.includes("field required")) {
+        return "Обязательное поле не заполнено";
+      }
+      if (message.includes("invalid email")) {
+        return "Неверный формат email адреса";
+      }
+      if (message.includes("value is not a valid")) {
+        return "Неверное значение поля";
+      }
+      
+      return message;
+    });
+  } else {
+    // Если это одна ошибка
+    const message = errorMessage.toString();
+    
+    // Заменяем конкретные сообщения об ошибках
+    if (message.includes("String should have at least 2 characters")) {
+      messages.push("Поле должно содержать минимум 2 символа");
+    }
+    else if (message.includes("Input should be a valid date or datetime, input is too short")) {
+      messages.push("Неверный формат даты, пожалуйста, заполните её корректно");
+    }
+    else if (message.includes("String should match pattern '^7\\d{10}$'")) {
+      messages.push("Номер телефона должен начинаться с 7 и содержать 11 цифр");
+    }
+    else if (message.includes("Password contains invalid characters") || 
+             message.includes("body.password: Value error, Password contains invalid characters")) {
+      messages.push("Пароль содержит недопустимые символы. Допустимые символы: заглавные и строчные латинские буквы, цифры и ! @ # $ % & *");
+    }
+    else if (message.includes("Input should be a valid date or datetime, invalid date separator, expected `-`")) {
+      messages.push("Неверный формат даты, пожалуйста, заполните её корректно");
+    }
+    else if (message.includes("field required")) {
+      messages.push("Обязательное поле не заполнено");
+    }
+    else if (message.includes("invalid email")) {
+      messages.push("Неверный формат email адреса");
+    }
+    else if (message.includes("value is not a valid")) {
+      messages.push("Неверное значение поля");
+    }
+    else {
+      messages.push(message);
+    }
+  }
+  
+  return messages;
+};
 
-      if (error.response?.status === 409) {
-        const errorMessage = error.response.data.detail;
-
-        if (errorMessage.includes("User with this email already exists")) {
-          setFormError((prev) => ({
-            ...prev,
-            email: "Пользователь с таким email уже зарегистрирован",
-          }));
-        } else if (errorMessage.includes("region_id does not exist")) {
-          setFormError((prev) => ({
-            ...prev,
-            regionId: "Указанный регион не существует",
-          }));
+const getErrorMessage = (error) => {
+  console.log("Error response data:", error);
+  
+  // Если error.detail - это строка, возвращаем её
+  if (typeof error?.detail === 'string') {
+    return [error.detail];
+  }
+  
+  // Если error.detail - это массив (как в Pydantic validation errors)
+  if (Array.isArray(error?.detail)) {
+    // Возвращаем массив всех сообщений об ошибках
+    return error.detail.map(err => {
+      // Если ошибка содержит loc и msg, формируем понятное сообщение
+      if (err.loc && err.msg) {
+        const field = err.loc[err.loc.length - 1]; // Берем последний элемент loc (название поля)
+        return `${field}: ${err.msg}`;
+      }
+      return err.msg || JSON.stringify(err);
+    });
+  }
+  
+  // Если error.detail - это объект
+  if (typeof error?.detail === 'object') {
+    return Object.entries(error.detail)
+      .map(([key, value]) => `${key}: ${value}`);
+  }
+  
+  // Если есть прямые поля с ошибками в response.data
+  if (error && typeof error === 'object') {
+    const messages = [];
+    for (const [key, value] of Object.entries(error)) {
+      if (key !== 'detail' && value) {
+        if (Array.isArray(value)) {
+          messages.push(...value.map(v => `${key}: ${v}`));
         } else {
-          toast.error(errorMessage, {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          messages.push(`${key}: ${value}`);
         }
-      } else {
-        toast.error(
-          error.response?.data?.detail || "Произошла неизвестная ошибка",
-          {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          }
-        );
       }
     }
+    if (messages.length > 0) return messages;
+  }
+  
+  // Если это просто строка в response.data
+  if (typeof error === 'string') {
+    return [error];
+  }
+  
+  // Если пришел сам объект ошибки
+  if (error?.msg || error?.message) {
+    return [error.msg || error.message];
+  }
+  
+  // По умолчанию
+  return ["Произошла неизвестная ошибка при регистрации"];
+};
+
+const handleSubmit = async () => {
+  const errors = validateForm(formData, formError, setFormError);
+  if (!passwordMatchValidation(formData)) {
+    const name = "retryPassword";
+    setFormError((prevError) => ({
+      ...prevError,
+      [name]: "Пароли не совпадают",
+    }));
+    return;
+  }
+
+  if (errors) return;
+
+  try {
+    const response = await userRegistration(formData);
+
+    if (response?.status === 201) {
+      console.log("reg");
+      setIsShowModal(true);
+    }
+  } catch (error) {
+    console.error("Ошибка регистрации:", error);
+
+    let errorMessages = ["Произошла неизвестная ошибка при регистрации"];
+
+    if (error.response?.status === 409) {
+      const errorDetail = error.response.data.detail || error.response.data;
+
+      if (typeof errorDetail === 'string' && errorDetail.includes("User with this email already exists")) {
+        setFormError((prev) => ({
+          ...prev,
+          email: "Пользователь с таким email уже зарегистрирован",
+        }));
+        return;
+      } else if (typeof errorDetail === 'string' && errorDetail.includes("region_id does not exist")) {
+        setFormError((prev) => ({
+          ...prev,
+          regionId: "Указанный регион не существует",
+        }));
+        return;
+      } else {
+        errorMessages = getErrorMessage(error.response.data);
+      }
+    } else if (error.response?.status === 422) {
+      // Ошибки валидации - наиболее частый случай
+      errorMessages = getErrorMessage(error.response.data) || ["Ошибка валидации данных. Проверьте правильность заполнения полей."];
+    } else if (error.response?.status === 400) {
+      errorMessages = getErrorMessage(error.response.data) || ["Неверные данные для регистрации. Проверьте введенную информацию."];
+    } else if (error.response?.status === 500) {
+      errorMessages = ["Внутренняя ошибка сервера. Попробуйте позже."];
+    } else if (error.response?.data) {
+      errorMessages = getErrorMessage(error.response.data);
+    } else if (error.message) {
+      errorMessages = [error.message];
+    }
+
+    // Форматируем сообщения об ошибках для лучшей читаемости
+    const formattedErrorMessages = formatErrorMessage(errorMessages);
+
+    // Показываем модальное окно с ошибками
+    setErrorModal({
+      isOpen: true,
+      messages: formattedErrorMessages
+    });
+  }
+};
+
+  const closeErrorModal = () => {
+    setErrorModal({ isOpen: false, messages: [] });
   };
 
   return (
@@ -354,6 +497,32 @@ export default function Registration() {
           }}
         />
       )}
+
+      {/* Модальное окно для ошибок регистрации с использованием ModalWrapper */}
+      <ModalWrapper
+        isOpen={errorModal.isOpen}
+        onClose={closeErrorModal}
+      >
+        <ModalWindow
+          title="Ошибка регистрации"
+          setIsShow={closeErrorModal}
+          buttonArea={[
+            <Button
+              key="close"
+              text="Ок"
+              onClick={closeErrorModal}
+            />
+          ]}
+        >
+          <div style={{ whiteSpace: 'pre-line', textAlign: 'left' }}>
+            {errorModal.messages.map((message, index) => (
+              <div key={index} style={{ marginBottom: index < errorModal.messages.length - 1 ? '10px' : '0' }}>
+                {message}
+              </div>
+            ))}
+          </div>
+        </ModalWindow>
+      </ModalWrapper>
     </LayoutLogin>
   );
 }
