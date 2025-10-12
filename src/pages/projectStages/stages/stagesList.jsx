@@ -24,7 +24,6 @@ export default function StagesList({arr, projectId, isCompleteProject}) {
         // eslint-disable-next-line
     }, [arr])
 
-
     return (
         <div className="contentBox">
             <h3 className={`titleH3 ${styles.subtitle}`}>Этапы проекта</h3>

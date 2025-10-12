@@ -4,6 +4,7 @@ import LayoutLogin from "./layoutLogin";
 import { Link, useNavigate } from "react-router-dom";
 import { loginFields } from "./utils/utils";
 import Inputs from "../../components/inputs/inputs";
+import Loader from "../../components/loader/loader";
 import { validateField, validateForm } from "./utils/validateForm";
 import { useDispatch } from "react-redux";
 import { add_token, set_user } from "../../store/user/userSlice";
@@ -13,14 +14,15 @@ import { ROUTES } from "../../utils/constants";
 import styles from "./styles/formLogin.module.css";
 import stylesReg from "./styles/registration.module.css";
 import getUser from "../../api/getUser";
-
-const INCORECT_EMAIL_PASSWORD = "Неверный адрес электронной почты или пароль.";
+import ModalWindow from "../../components/modalWindow";
+import ModalWrapper from "../../components/modalOverlay";
+import Button from "../../components/button/button";
 
 export default function Login() {
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState({});
   const [loading, setLoading] = useState(false);
-  const [responseError, setResponseError] = useState(null);
+  const [errorModal, setErrorModal] = useState({ isOpen: false, messages: [] });
   const timerRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -61,11 +63,71 @@ export default function Login() {
     }, 1500);
   };
 
+  const getLoginErrorMessage = (error) => {
+    console.log("Login error:", error);
+    
+    // Получаем текст ошибки из разных возможных мест
+    let errorMessage = "";
+    
+    if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (error.message) {
+      errorMessage = error.message;
+    } else if (error.response?.data?.detail) {
+      errorMessage = error.response.data.detail;
+    }
+    
+    console.log("Extracted error message:", errorMessage);
+    
+    // Обрабатываем конкретные сообщения об ошибках
+    if (errorMessage.includes("Account not verified yet")) {
+      return ["Аккаунт не подтвержден", "Пожалуйста, подождите, пока модератор подтвердит вашу регистрацию."];
+    }
+    if (errorMessage.includes("Incorrect email or password")) {
+      return ["Неверный email или пароль", "Проверьте правильность введенных данных и попробуйте снова."];
+    }
+    if (errorMessage.includes("Invalid email or password")) {
+      return ["Неверный email или пароль", "Проверьте правильность введенных данных и попробуйте снова."];
+    }
+    
+    // Если ошибка - объект Axios error
+    if (error.response) {
+      const status = error.response.status;
+      
+      // Аккаунт не подтвержден
+      if (status === 403) {
+        return ["Аккаунт не подтвержден", "Пожалуйста, подождите, пока модератор подтвердит вашу регистрацию."];
+      }
+      
+      // Неверные учетные данные
+      if (status === 401 || status === 400) {
+        return ["Неверный email или пароль", "Проверьте правильность введенных данных и попробуйте снова."];
+      }
+      
+      // Ошибка сервера
+      if (status === 500) {
+        return ["Внутренняя ошибка сервера", "Попробуйте позже."];
+      }
+    }
+    
+    // Сетевая ошибка
+    if (errorMessage.includes("Network Error")) {
+      return ["Проблемы с подключением", "Проверьте интернет-соединение и попробуйте снова."];
+    }
+    
+    // Общая ошибка - если ничего не подошло, показываем общее сообщение
+    return ["Ошибка входа", "Проверьте данные и попробуйте еще раз, или обратитесь в поддержку."];
+  };
+
+  const closeErrorModal = () => {
+    setErrorModal({ isOpen: false, messages: [] });
+  };
+
   const handleSubmit = async () => {
     const errors = validateForm(formData, formError, setFormError);
     if (errors) return;
+    
     setLoading(true);
-    setResponseError(null)
     try {
       const token = await getToken(
         formData["email"].value,
@@ -77,8 +139,15 @@ export default function Login() {
       setLoading(false);
       navigate(ROUTES.PROFILE);
     } catch (error) {
-      setResponseError(INCORECT_EMAIL_PASSWORD);
-      console.log(error.error);
+      console.log("Login error:", error);
+      
+      const errorMessages = getLoginErrorMessage(error);
+      
+      // Показываем модальное окно с ошибкой
+      setErrorModal({
+        isOpen: true,
+        messages: errorMessages
+      });
     }
     setLoading(false);
   };
@@ -91,13 +160,12 @@ export default function Login() {
       >
         <div className={styles.form}>
           {loading ? (
-            <h2 style={{ position: "absolute", top: "50%", left: "47%" }}>
-              Loading...
-            </h2>
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+              <Loader />
+            </div>
           ) : (
             <>
               <h3 className={styles.h3}>Вход</h3>
-              {responseError && <div>{responseError}</div>}
               <div className={styles.isNoAccount}>
                 Нет аккаунта?{" "}
                 <Link
@@ -144,6 +212,40 @@ export default function Login() {
           )}
         </div>
       </Container>
+
+      {/* Модальное окно для ошибок входа */}
+      <ModalWrapper
+        isOpen={errorModal.isOpen}
+        onClose={closeErrorModal}
+      >
+        <ModalWindow
+          title="Ошибка входа"
+          setIsShow={closeErrorModal}
+          buttonArea={[
+            <Button
+              key="close"
+              text="Ок"
+              onClick={closeErrorModal}
+            />
+          ]}
+        >
+          <div style={{ whiteSpace: 'pre-line', textAlign: 'center' }}>
+            {errorModal.messages.map((message, index) => (
+              <div 
+                key={index} 
+                style={{ 
+                  marginBottom: index < errorModal.messages.length - 1 ? '10px' : '0',
+                  padding: '0 10px',
+                  fontWeight: index === 0 ? 'bold' : 'normal',
+                  color: index === 0 ? '#333' : '#666'
+                }}
+              >
+                {message}
+              </div>
+            ))}
+          </div>
+        </ModalWindow>
+      </ModalWrapper>
     </LayoutLogin>
   );
 }

@@ -1,273 +1,269 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Button from "../../../components/button/button";
 import Textarea from "../../../components/textarea/textarea";
+import InputFile from "../../../components/inputFile/inputFile";
 import TeamRating from "../../projectStages/team-rating/teamRating";
 import sendDataStepProject from "../../../api/projects/sendDataStepProject";
 import acceptStep from "../../../api/steps/acceptStep";
 import rejectStep from "../../../api/steps/rejectStep";
+import { FILENAME_EXTENSION_FULL } from "../../../utils/constants";
 
 import styles from "./stepInfo.module.css";
-import IconDelete from "../images/icon-delete";
-import IconPaperclip from "../images/icon-paperclip";
 
 export default function StepProjectInfo({
-    step, 
-    stepTitle,
-    handleSwitchStatus,
-    stepStatus,
+  step,
+  stepTitle,
+  handleSwitchStatus,
+  stepStatus,
+  handleChangeTimer,
 }) {
-    const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
-    // const [textEdit, setTextEdit] = useState(!step.text);
-    const [textValue, setTextValue] = useState(step.text ? JSON.parse(step.text).text : "");
-    const [scoreValue, setScoreValue] = useState(0);
-    const [timer, setTimer] = useState(0);
-    const [fileDownload, setFileDownload] = useState(null);
+  const [isMentor, setIsMentor] = useState(
+    useSelector((state) => state.user.user.isMentor)
+  );
+  const [textValue, setTextValue] = useState(
+    step.text ? JSON.parse(step.text).text : ""
+  );
+  const [scoreValue, setScoreValue] = useState(0);
+  const [timer, setTimer] = useState(0);
+  const [fileDownload, setFileDownload] = useState(null);
 
-    
-    // const [time, setTime] = useState(5);//-----------------------
-    // useEffect(() => {
-    //     if (time > 0) {
-    //         setTimeout(setTime, 1000, time - 1);
-    //         console.log(time)//----------------------
-    //     } else {
-    //         console.log("таймер стоп")//-------------
-    //     }
-    // }, [time])
+  useEffect(() => {
+    setTextValue(step.text ? JSON.parse(step.text).text : "");
+    // eslint-disable-next-line
+  }, [step.text]);
 
-    useEffect(() => {
-        setTextValue(step.text ? JSON.parse(step.text).text : "");
-        // setTextEdit(!step.text)
-        // eslint-disable-next-line
-    }, [step.text])
+  useEffect(() => {
+    setFileDownload(step.files);
+  }, [step]);
 
-    // const editContent = () => {
-    //     setTextEdit(!textEdit);        
-    // }
+  //Взаимодействие капитана/участника со страницей
 
-    useEffect(() => {
-        setFileDownload(step.files)
-    }, [step])
+  const handleChangeText = (e) => {
+    e.preventDefault();
+    setTextValue(e.target.value);
+  };
 
-    //Взаимодействие капитана/участника со страницей 
+  const handleSendDataStep = async () => {
+    try {
+      // Валидация полей
+      if (!textValue && !fileDownload?.length) {
+        toast.error("Заполните текст шага или добавьте файлы", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        return;
+      }
 
-    const handleChangeText = (e) => {
-        e.preventDefault();
-        setTextValue(e.target.value);
-    };
-    
-    const handleAddFile = (e) => {
-        //добавить валидацию файла--------------------------------------
-        e.preventDefault();
-        if (fileDownload?.length) {
-            setFileDownload([...fileDownload, ...Array.from(e.target.files)]);
-        } else {
-            setFileDownload(Array.from(e.target.files));
+      const formData = new FormData();
+
+      // 1. Добавляем текстовые данные
+      if (textValue) {
+        formData.append("text", JSON.stringify({ text: textValue }));
+      }
+
+      // 2. Добавляем файлы с проверкой типа
+      if (fileDownload?.length) {
+        for (const file of fileDownload) {
+          // Проверяем, является ли элемент объектом File
+          if (file instanceof File) {
+            formData.append("files", file);
+          }
+          // Если файл пришел с сервера (имеет filePath)
+          else if (file?.filePath) {
+            // Для существующих файлов можно либо:
+            // а) Отправить только ссылку (если бэкенд умеет их обрабатывать)
+            // б) Перезагрузить файл с сервера
+            // Здесь вариант а)
+            formData.append("file_references", file.filePath);
+          } else {
+            console.warn("Неподдерживаемый тип файла:", file);
+            continue;
+          }
+
         }
-    }
+      }
 
-    const handleDeleteFile = (i) => {
-        setFileDownload(fileDownload => fileDownload.filter(el => el !== fileDownload[i]))
-    }
+      // 3. Отправка данных
+      const response = await sendDataStepProject(
+        step.projectId,
+        step.stepNumber,
+        formData
+      );
 
-    const handleSendDataStep = async () => {
-        if (!textValue || !fileDownload?.length) {
-            alert("Заполните текст шага или добавьте файлы");
-        } else {
-            let formData = new FormData();
-            const data = {
-                text: textValue,
-            };
-            formData.append('text', JSON.stringify(data));
-            //------------------------------------------------
-            for (let file of fileDownload) {
-                formData.append('files', file);
+      if (response.status === 200) {
+        console.log("Шаг отправлен на ревью", response.data);
+        handleSwitchStatus(stepStatus.isSubmitted);
+        handleChangeTimer();
+      } else {
+        console.error("Ошибка при отправке шага", response);
+      }
+    } catch (error) {
+      console.error("Ошибка в handleSendDataStep:", error);
+    }
+  };
+
+  //Взаимодействие ментора со страницей
+  const handleAcceptStep = async () => {
+    if (scoreValue === 0) {
+      toast("Поставьте, пожалуйста, оценку команде", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
+    } else if (
+      scoreValue < 0 || 
+      scoreValue > 10 || 
+      isNaN(scoreValue) || 
+      !Number.isInteger(scoreValue)
+    ) {
+      toast.error("Установите баллы (от 0 до 10) в поле «Оценка», используя целые числа", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
+    } else {
+      const response = await acceptStep(
+        step.projectId, 
+        step.stepNumber, 
+        scoreValue);
+      if (response.status === 200) {
+        console.log("шаг согласован", response.data);
+        handleSwitchStatus(stepStatus.isAccept);
+      }
+    }
+  };
+
+  const handleRejectStep = async() => {
+    if (timer <= 0 || isNaN(timer) || !Number.isInteger(timer)) {
+      toast.error("Установите таймер, используя целые числа", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
+    } else {
+      const response = await rejectStep(step.projectId, step.stepNumber, timer);
+      if (response.status === 200) {
+        console.log("шаг отклонен", response.data);
+        handleSwitchStatus(stepStatus.notStarted);
+      }
+    }
+  }
+
+  return (
+    <div className={`contentBox ${styles.wrapper}`}>
+      <div className={styles.infoWrapper}>
+        <h1 className={`titleH2 ${styles.title}`}>{stepTitle}</h1>
+        <h2 className={`titleH3 ${styles.stepTitle}`}>Шаг {step.stepNumber}</h2>
+
+        {!isMentor && (
+          <Textarea
+            name="description"
+            placeholder="Введите текст"
+            maxLength={10000}
+            value={textValue}
+            onChange={handleChangeText}
+            onClick={() => setTextValue("")}
+            disabled={
+              stepStatus.notStarted ||
+              !stepStatus.inProgress ||
+              stepStatus.isSubmitted ||
+              stepStatus.isAccept
             }
+          />
+        )}
+        {isMentor && step.text && (
+          <p className={`text1 ${styles.text}`}>{JSON.parse(step.text).text}</p>
+        )}
+      </div>
+      <TeamRating
+        step={step}
+        setScoreValue={setScoreValue}
+        setTimer={setTimer}
+        stepStatus={stepStatus}
+      />
+      <div className={styles.filesWrapper}>
+        <h3 className={`titleH3 ${styles.title}`}>
+          {!(stepStatus.isAccept || isMentor)
+            ? "Загрузите файлы проекта"
+            : "Файлы проекта"}
+        </h3>
+        <p className="text1">Документы, презентации, картинки, видео</p>
 
-            const response = await sendDataStepProject(step.projectId, step.stepNumber, formData);
-            if (response.status === 200) {
-                console.log("шаг отправлен на ревью", response.data);
-                handleSwitchStatus(stepStatus.isSubmitted);
+        <InputFile
+          fileDownload={fileDownload}
+          setFileDownload={setFileDownload}
+          stepStatus={stepStatus}
+          multiple
+          accept={FILENAME_EXTENSION_FULL.join(", ")}
+          disabledButton={!stepStatus.inProgress}
+        />
+      </div>
+      {isMentor && (
+        <div className={styles.buttonBlock}>
+          <Button
+            type="button"
+            large
+            text="Принять"
+            onClick={handleAcceptStep}
+            disabled={
+              stepStatus.notStarted ||
+              stepStatus.inProgress ||
+              // || !stepStatus.isSubmitted
+              stepStatus.isAccept
+              // || !stepStatus.timeExceeded
             }
-        }
-    }
-
-    //Взаимодействие ментора со страницей 
-
-    const handleAcceptStep = async () => {
-        if (scoreValue < 0 || scoreValue > 10 || isNaN(scoreValue) || !Number.isInteger(scoreValue)) {
-            alert("Установите баллы (от 0 до 10) в поле «Оценка», используйте целые числа");//----------
-        } else {
-            const response = await acceptStep(step.projectId, step.stepNumber, scoreValue);
-            if (response.status === 200) {
-                console.log("шаг согласован", response.data);
-                handleSwitchStatus(stepStatus.isAccept);
+          />
+          <Button
+            type="button"
+            large
+            text="Отклонить"
+            onClick={handleRejectStep}
+            addClass={styles.buttonReject}
+            violet
+            disabled={
+              stepStatus.notStarted ||
+              stepStatus.inProgress ||
+              // || !stepStatus.isSubmitted
+              stepStatus.isAccept
+              // || !stepStatus.timeExceeded
             }
-        }
-    }
-
-    const handleRejectStep = async() => {
-        if (timer <= 0 || isNaN(timer) || !Number.isInteger(timer)) {
-            alert("Установите таймер, используйте целые числа");//------------
-        } else {
-            const response = await rejectStep(step.projectId, step.stepNumber, timer);
-            if (response.status === 200) {
-                console.log("шаг отклонен", response.data);
-                handleSwitchStatus(stepStatus.notStarted);
-            }
-        }
-    }
-
-    return (
-        <div className={`contentBox ${styles.wrapper}`}>
-
-            {/* <span>{time}</span> */}
-            <div className={styles.infoWrapper}>
-                <h1 className={`titleH2 ${styles.title}`}>{stepTitle}</h1>
-                <h2 className={`titleH3 ${styles.stepTitle}`}>Шаг {step.stepNumber}</h2>
-
-                {!isMentor && 
-                <Textarea
-                    name="description"
-                    placeholder="Введите текст"
-                    maxLength={10000}
-                    value={textValue}
-                    onChange={handleChangeText}
-                    disabled={
-                        stepStatus.notStarted 
-                        || !stepStatus.inProgress 
-                        || stepStatus.isSubmitted 
-                        || stepStatus.isAccept
-                    }
-                />}
-                {isMentor && step.text &&
-                <p className={`text1 ${styles.text}`}>{JSON.parse(step.text).text}</p>
-                }
-
-                {/* {(!step.text || (step.text && textEdit)) && !isAccept && 
-                <Textarea
-                    name="description"
-                    placeholder="Введите текст"
-                    maxLength={10000}
-                    value={textValue}
-                    onChange={handleChangeText}
-                    disabled={notStarted || (isSubmitted && !isMentor)}
-                />
-                } */}
-        
-                {/* {((step.text && !textEdit) || isAccept) && (
-                    <>
-                        <p className={`text1 ${styles.text}`}>{JSON.parse(step.text).text}</p>
-                        {(
-                            // !isAccept || 
-                            !notStarted) && 
-                        <button 
-                            className={`text2 ${styles.buttonEdit}`}
-                            type="button"
-                            onClick={editContent}
-                        >
-                            Изменить текст
-                        </button>}
-                    </>
-                )} */}
-            </div>
-            <TeamRating 
-                step={step} 
-                setScoreValue={setScoreValue} 
-                setTimer={setTimer}
-                stepStatus={stepStatus}
-            />
-            <div className={styles.filesWrapper}>
-                
-                <h3 className={`titleH3 ${styles.title}`}>
-                    {!stepStatus.isAccept ? "Загрузите файлы проекта" : "Файлы проекта"}
-                </h3>
-
-                <p className="text1">Документы, презентации, картинки, видео</p>
-                {!isMentor && 
-                <label className={`${styles.inputFile} ${(
-                    stepStatus.notStarted || !stepStatus.inProgress || stepStatus.isSubmitted) 
-                    ? `${styles.disabled}` 
-                    : ""}`}>
-                    <span className={`text4 ${styles.inputFileText}`}>Выберите файл</span>
-                    <input 
-                        type="file" 
-                        name="file" 
-                        multiple 
-                        onChange={handleAddFile} 
-                        className={styles.visuallyHidden}
-                    />        
-                    <span className={`text2 ${styles.inputFileBtn}`}>Загрузить</span>
-                </label>}
-                {fileDownload &&
-                <ul className={`text2 ${styles.documentsList}`}>
-                    {fileDownload.map((item, i) => (
-                        <li key={i} className={styles.documentsItem}>
-                            <IconPaperclip />
-                            <a 
-                                className="text2" 
-                                href={item.filePath} 
-                                target="_blank" 
-                                rel="noreferrer"
-                            >
-                                {item.name}
-                            </a>
-                            {!isMentor && (!stepStatus.notStarted || stepStatus.inProgress || !stepStatus.isSubmitted || !stepStatus.isAccept) &&//--------уточнить условия отображения
-                            <button 
-                                type="button"
-                                className={styles.buttonDeleteFile}
-                                onClick={() => handleDeleteFile(i)}
-                                aria-label="Удалить файл"
-                            >
-                                <IconDelete/>
-                            </button>}
-                        </li>
-                    ))}
-                </ul>
-                }
-            </div>
-            {isMentor && 
-            <div className={styles.buttonBlock}>
-                <Button 
-                    type="button" 
-                    large 
-                    text="Принять" 
-                    onClick={handleAcceptStep}
-                    disabled={
-                        stepStatus.notStarted 
-                        || stepStatus.inProgress 
-                        || !stepStatus.isSubmitted 
-                        || stepStatus.isAccept
-                    }
-                />
-                <Button 
-                    type="button" 
-                    large 
-                    text="Отклонить" 
-                    onClick={handleRejectStep} 
-                    addClass={styles.buttonReject}
-                    violet 
-                    disabled={
-                        stepStatus.notStarted 
-                        || stepStatus.nProgress 
-                        || !stepStatus.isSubmitted 
-                        || stepStatus.isAccept
-                    }
-                />
-            </div>}
-            {!isMentor && !stepStatus.isAccept &&
-            <Button 
-                type="button" 
-                large 
-                text="Готово" 
-                onClick={handleSendDataStep}
-                disabled={
-                    stepStatus.notStarted 
-                    || !stepStatus.inProgress 
-                    || stepStatus.isSubmitted
-                } 
-            />
-            } 
+          />
         </div>
-    )
+      )}
+      {!isMentor && !stepStatus.isAccept && (
+        <Button
+          type="button"
+          large
+          text="Готово"
+          onClick={handleSendDataStep}
+          disabled={
+            stepStatus.notStarted ||
+            !stepStatus.inProgress ||
+            stepStatus.isSubmitted
+          }
+          addClass={styles.buttonComplete}
+        />
+      )}
+    </div>
+  );
 }

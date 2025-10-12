@@ -58,6 +58,10 @@ code {
   }
 }
 
+.loaderBox {
+  padding: 160px 0;
+}
+
 .titleH1 {
   margin-bottom: 40px;
   font-family: "Gotham";
@@ -166,26 +170,26 @@ code {
 @media (max-width: 1400px) {
   .container-xxl {
     max-width: 1400px !important;
-    padding: 0 90px !important;
+    padding: 0 40px !important;
   }
 }
 
 @media (max-width: 1024px) {
   .container-xxl {
     max-width: 1400px !important;
-    padding: 0 40px !important;
+    padding: 0 20px !important;
   }
 }
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .container-xxl {
     max-width: 1400px !important;
     padding: 0 20px !important;
   }
-}
+} */
 
 .container-xxl {
-  max-width: 1400px;
-  padding: 0;
+  max-width: 1520px;
+  padding: 0 60px;
 }
 
 .container-fluid {
@@ -210,4 +214,12 @@ code {
   bottom: 0;
   background-color: rgba(157, 157, 157, 0.8);
   z-index: 101;
+}
+
+
+/* Стиль только для Firefox для "худых" заголовков. Проблема чисто бутстрапа\фаерфокса а не проекта, поэтому только так */
+@-moz-document url-prefix() {
+  h3 {
+    font-weight: 600;
+  }
 }

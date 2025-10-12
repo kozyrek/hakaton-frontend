@@ -1,18 +1,17 @@
 import DeleteButton from "../../../../../ui/deleteBtn/deleteButton";
 import styles from "./UserDisplay.module.css";
 
-export default function UserDisplay({ item, onSubmit }) {
+export default function UserDisplay({ item, onSubmit, onCheckboxChange, isChecked, disabled }) {
   return (
-    <li
-      key={item.id}
-      className={`${styles.participantItem}`}
-    >
+    <li key={item.id} className={`${styles.participantItem}`}>
       <input
         type="checkbox"
         name="policy"
-        id="policy"
+        id={`policy-${item.id}`}
         className={styles.consentCheckBox}
-        // onChange={() => handleChange(!formData["policy"].value, "policy")}
+        checked={isChecked || false}
+        onChange={(e) => onCheckboxChange && onCheckboxChange(e.target.checked)}
+        disabled={disabled}
       />
       <div className={`${styles.participantInfo}`}>
         {item.lastName} &nbsp;
@@ -23,6 +22,7 @@ export default function UserDisplay({ item, onSubmit }) {
         <DeleteButton
           className={styles.removeButton}
           onClick={() => onSubmit(item)}
+          disabled={disabled}
         >
           Добавить
         </DeleteButton>

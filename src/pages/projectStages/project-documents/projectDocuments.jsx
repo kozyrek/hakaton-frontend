@@ -6,7 +6,7 @@ import styles from "./projectDocuments.module.css";
 export default function ProjectDocuments({files, projectId, isCompleteProject}) {
     const handleClick = () => {
         const response = downloadAllFiles(projectId);
-        console.log("скачать все файлы проекта", response.data);
+        console.log("скачать все файлы проекта", response);
     }
 
     return (

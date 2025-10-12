@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Pencil from "../images/Pencil";
 import Button from "../../../components/button/button";
 import styles from "./teamRating.module.css";
@@ -10,7 +12,7 @@ import { inflectWords } from "../../../utils/inflectWords";
 import setTimerStep from "../../../api/steps/setTimerStep";//----------------------------------
 
 export default function TeamRating({
-    overallRating, 
+    arr,
     step, 
     setScoreValue, 
     setTimer,
@@ -18,8 +20,20 @@ export default function TeamRating({
 }) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
     const [isEditScore, setIsEditScore] = useState(false);
-    const [isStepPage, setIsStepPage] = useState(useLocation().pathname.includes("step"));
+    const [isStepPage, setIsStepPage] = useState(
+        useLocation().pathname.includes("step")
+    );
 
+    const [startTime, setStartTime] = useState(
+        isStepPage && getSortArr(step.attempts, "startedAt")
+    );
+    const [endTime, setEndTime] = useState(
+        isStepPage && getSortArr(step.attempts, "endTimeAt")
+    );
+    const [submitTime, setSubmitTime] = useState(
+        isStepPage && getSortArr(step.attempts, "submittedAt")
+    );
+    const [time, setTime] = useState(0);
     const [minutes, setMinutes] = useState(0);
     const [seconds, setSeconds] = useState(0);
 
@@ -29,24 +43,84 @@ export default function TeamRating({
     const [isError, setIsError] = useState({ score: false, time: false});
     const [isErrorMessage, setIsErrorMessage] = useState("");
 
+    const STATUS = {
+        "Not started": "Не начато",
+        "In progress": "В процессе выполнения",
+        "Submitted for review": "Готово к проверке",
+        "Accepted": "Согласовано",
+        "Time exceeded": "Время превышено",
+    }
+
+    function getSortArr(array, field) {
+        if (step?.attempts.length) {
+            // console.log(
+            //     array.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt)),
+            //     array.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt))[0]
+            // );
+            return array.sort(
+            (a, b) => +new Date(b.startedAt) - +new Date(a.startedAt)
+        )[0][field];
+        }
+    }
+
+    useEffect(() => {
+        if (!isStepPage) return;
+
+        let timerId;
+
+        if (stepStatus.notStarted) {
+            setTime(step.timerMinutes * 60000);
+            console.log("111", time);//--
+        } else if (stepStatus.inProgress) {
+            const remaining = new Date(endTime) - new Date();
+            setTime(remaining > 0 ? remaining : 0);
+
+            if (remaining > 0) {
+                timerId = setInterval(() => {
+                    setTime(prev => {
+                        const newTime = prev - 1000;
+                        return newTime > 0 ? newTime : 0
+                    });
+                }, 1000);
+            }
+            console.log("222", time);//--
+        } else if (
+            stepStatus.isSubmitted || stepStatus.isAccept
+        ) {
+            setTime(new Date(endTime) - new Date(submitTime));
+            console.log("333", time);//--
+        } else if (stepStatus.timeExceeded) {
+            setTime(0);
+        }
+        return () => clearInterval(timerId);
+
+        // eslint-disable-next-line
+    }, [isStepPage, stepStatus, step, endTime, submitTime, startTime]);
+
+    useEffect(() => {
+        const totalSeconds = Math.floor(time / 1000);
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        
+        setMinutes(mins);
+        setSeconds(secs);
+    }, [time]);
+
     useEffect(() => {
         if (isStepPage) {
             setRatingValue(step ? step.score : 0);
         } else {
-            setRatingValue(overallRating);
-            // console.log(Number(overallRating % 10));
+            if (arr) {
+            setRatingValue(
+                arr.reduce((prev, item) => {
+                    const sum = prev + item.score;
+                    // console.log('рейтинг команды', sum)
+                    return sum;
+                }, 0));
+            }
         }
         // eslint-disable-next-line
-    }, [step])
-
-    useEffect(() => {
-        setMinutes(step ? step.timerMinutes : 30);//--------------------
-        if (isStepPage) {
-            setTimer(step ? step.timerMinutes : 30);//-----------------
-        }
-        console.log("таймер", minutes)
-        // eslint-disable-next-line
-    }, [step])
+    }, [arr, step])
 
     const handleClickEditScore = () => {
         setIsEditScore(!isEditScore);
@@ -87,6 +161,7 @@ export default function TeamRating({
     const handleChangeTime = (event) => {
         event.preventDefault();
         setMinutes(event.target.value);
+        setSeconds(0);
         setTimer(Number(event.target.value));
 
         if (!event.target.validity.valid) {
@@ -100,7 +175,15 @@ export default function TeamRating({
 
     const handleSetTimer = async () => {
         if (minutes <= 0 || !Number.isInteger(Number(minutes))) {
-            alert("Установите таймер, используйте целые числа");//---------------------------
+            toast.error("Установите таймер, используя целые числа", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            })
         } else {
             const response = await setTimerStep(step.projectId, step.stepNumber, minutes);
             if (response.status === 200) {
@@ -117,6 +200,10 @@ export default function TeamRating({
 
     return (
         <div className={styles.wrapper}>
+            {isStepPage && <div className={styles.status}>
+                {STATUS[step?.status]}
+            </div>}
+
             <div className={className}>
                 {isStepPage
                 ? <span>Оценка команды за&nbsp;шаг</span>

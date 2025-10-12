@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Button from "../../../components/button/button";
 import PaperClip from "../../profile/components/personal-info/textView/images/PaperClip";
 import Textarea from "../../../components/textarea/textarea";
+import InputFile from "../../../components/inputFile/inputFile";
 import startWorkOnStep from "../../../api/steps/startWorkOnStep";
 import addStepComment from "../../../api/steps/addStepComment";
 import downloadComments from "../../../api/steps/downloadComments";
 import { getDate } from "../../../utils/getDate";
+import { FILENAME_EXTENSION_FULL } from "../../../utils/constants";
 
 import styles from "./stepComments.module.css";
 
@@ -18,9 +22,11 @@ export default function StepProjectComment({
     handleAddNewComment,
     stepStatus,
     handleSwitchStatus,
+    handleChangeTimer
 }) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
     const [commentValue, setCommentValue] = useState('');
+    const [fileDownload, setFileDownload] = useState([]);
 
     const handleChangeTextComment = (e) => {
         e.preventDefault();
@@ -28,26 +34,42 @@ export default function StepProjectComment({
     }
 
     const handleAddComment = async () => {
-        // добавить отправку файлов-----------------------------------------
         let formData = new FormData();
         const data = {
                 text: commentValue,
             };
-        formData.append('text', JSON.stringify(data));
+        // if (formCommentData.text.value) {//поле обязательное
+            formData.append('text', JSON.stringify(data));
+        // }
+        for (let file of fileDownload) {
+            formData.append('files', file);
+        }
 
         const response = await addStepComment(step.projectId, step.stepNumber, formData);
-        if (response.status === 201) {
-            console.log("комментарий отправлен", response);
+        if (response && response.status === 201) {
+            toast.success("Ваш комментарий отправлен", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
             handleAddNewComment();
-            setCommentValue('');
+            setCommentValue("");
+            setFileDownload([]);
         }
     }
+
+    // Взаимодействие капитана со страницей
 
     const handleStartStep = async () => {
         const response = await startWorkOnStep(step.projectId, step.stepNumber);
         if (response.status === 200) {
             console.log("старт работы на шаге", response.data);
             handleSwitchStatus(stepStatus.inProgress);
+            handleChangeTimer();
         }
     }
 
@@ -75,19 +97,29 @@ export default function StepProjectComment({
                 {!stepStatus.isAccept &&
                     <>
                         <Textarea
-                            name="comment"
+                            name="text"
                             addclass={styles.texareaComment}
                             placeholder="Введите комментарий"
                             maxLength={500}
                             value={commentValue}
                             onChange={handleChangeTextComment}
-                            disabled={
-                                stepStatus.notStarted
-                                || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
-                            }
+                            onClick={() => setCommentValue("")}
+                            // disabled={
+                            //     stepStatus.notStarted
+                            //     || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
+                            // }
+                            disabled={!stepStatus.inProgress}
                         />
 
-                        <input type="file"></input>
+                        <InputFile 
+                            fileDownload={fileDownload} 
+                            setFileDownload={setFileDownload}
+                            stepStatus={stepStatus} 
+                            multiple
+                            isComment
+                            disabled={!stepStatus.inProgress}
+                            accept={FILENAME_EXTENSION_FULL.join(", ")}
+                        />
 
                         <Button 
                             type="button" 
@@ -98,7 +130,7 @@ export default function StepProjectComment({
                             disabled={
                                 stepStatus.notStarted 
                                 || (!isMentor && (!stepStatus.inProgress || stepStatus.isSubmitted))
-                                || !commentValue
+                                || !(commentValue || fileDownload?.length)
                             }
                         />
                     </>
@@ -124,7 +156,6 @@ export default function StepProjectComment({
                                                 rel="noreferrer" 
                                                 className={`text2 ${styles.documentsLink}`}
                                             >
-                                                {/* {item.filePath.split('/').at(-1)} */}
                                                 {item.name}
                                             </a>
                                         </li>
@@ -141,7 +172,8 @@ export default function StepProjectComment({
                     text="Скачать комментарии" 
                     onClick={handleDownloadComments} 
                     addClass={styles.buttonDownload}
-                    disabled={stepStatus.notStarted || !stepStatus.inProgress}
+                    // disabled={stepStatus.notStarted || !stepStatus.inProgress}
+                    disabled={stepStatus.notStarted}
                 />}
             </div>
             {!isMentor && !stepStatus.isAccept && <Button 

@@ -22,8 +22,8 @@ export default function StagesItem({item, projectId, isAcceptPrevStep}) {
         if (item) {
             setInProgress(
                 item.status === STEP_PROJECT_STATUS.IN_PROGRESS 
-                || item.status === STEP_PROJECT_STATUS.TIME_EXCEEDED //------уточнить статус
-                || item.status === STEP_PROJECT_STATUS.SUBMITTED //------уточнить статус
+                || item.status === STEP_PROJECT_STATUS.TIME_EXCEEDED
+                || item.status === STEP_PROJECT_STATUS.SUBMITTED
             );
             setIsAccept(item.status === STEP_PROJECT_STATUS.ACCEPTED);
             setNotStarted(item.status === STEP_PROJECT_STATUS.NOT_STARTED)
@@ -31,47 +31,22 @@ export default function StagesItem({item, projectId, isAcceptPrevStep}) {
     }, [item])
     
     return (
-        // <Link 
-        //     to={`/step/${item.id}`}
-        //     state={{
-        //         projectId: projectId,
-        //         stepNumber: item.stepNumber, 
-        //         stepTitle: steps.find(el => el.id === item.stepNumber).stepTitle,
-        //     }}
-        //     className={className} 
-        // >
-        //     <div className={styles.textBlock}>
-        //         <p className="text4">
-        //             Шаг&nbsp;{item.stepNumber}
-        //         </p>
-        //         <p className="text2">
-        //             {steps.find(el => el.id === item.stepNumber).stepTitle}
-        //         </p>
-        //     </div>            
-        //     <ArrowStage/>
-        // </Link>
-
         <div className={className}>
-            <div className={styles.textBlock}>
-                <p className="text4">
-                    Шаг&nbsp;{item.stepNumber}
-                </p>
-                {isAcceptPrevStep || item.stepNumber === 1
-                ? <Link to={`/step/${item.id}`}
-                    state={{
-                        projectId: projectId,
-                        stepNumber: item.stepNumber, 
-                        stepTitle: steps.find(el => el.id === item.stepNumber).stepTitle,
-                    }}
-                    className={`text2`}
-                    >
-                    {steps.find(el => el.id === item.stepNumber).stepTitle}
-                </Link>
-                : <p className="text2">
-                    {steps.find(el => el.id === item.stepNumber).stepTitle}
-                </p>}
-            </div>            
-            <ArrowStage/>
+            <Link 
+                to={(isAcceptPrevStep || item.stepNumber === 1) ? `/step/${item.id}` : ""}
+                state={{
+                    projectId: projectId,
+                    stepNumber: item.stepNumber, 
+                    stepTitle: steps.find(el => el.id === item.stepNumber).stepTitle,
+                }}
+                className={`text2 ${styles.stepLink} ${!(isAcceptPrevStep || item.stepNumber === 1) ? styles.stepText : ""}`}
+            >
+                <div className={styles.textBlock}>
+                    <span className="text4">Шаг&nbsp;{item.stepNumber}</span>
+                    <span>{steps.find(el => el.id === item.stepNumber).stepTitle}</span>
+                </div>
+                <ArrowStage/>
+            </Link>
         </div>
     )
 }

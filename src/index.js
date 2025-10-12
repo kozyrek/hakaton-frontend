@@ -13,6 +13,7 @@ import ProjectStages from "./pages/projectStages";
 import StepProjectPage from "./pages/stepPage";
 
 import PasswordRecovery from "./pages/auth/passwordRecovery";
+import PasswordReset from "./pages/auth/passwordReset";
 import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -23,6 +24,7 @@ import "./bootstrap.css";
 import UserId from "./pages/profile/user-by-id/id";
 // import TeamMembers from "./pages/profile/components/teams-profile/teamMembers/teamMembers";
 import TeamPage from "./pages/team-page";
+import { ToastContainer } from "react-toastify";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -62,6 +64,10 @@ root.render(
                 element={<PasswordRecovery />}
               />
               <Route
+                path={ROUTES.PASSWORDRESET}
+                element={<PasswordReset />}
+              />
+              <Route
                 path="*"
                 element={<ErrorPage />}
               />
@@ -80,6 +86,7 @@ root.render(
               />
             </Routes>
             <Footer />
+            <ToastContainer />
           </div>
         </BrowserRouter>
       </PersistGate>

@@ -1,9 +1,7 @@
 import styles from "./textarea.module.css";
 import SvgDelete from "../inputs/images/SvgDelete";
 
-export default function Textarea({value, maxLength, onChange, placeholder, ...other}) {
-    const handleClick = () => {
-    }
+export default function Textarea({value, maxLength, onChange, onClick, placeholder, ...other}) {
     return (
         <div className={`${styles.textareaWrapper}`}>
             <textarea
@@ -18,8 +16,10 @@ export default function Textarea({value, maxLength, onChange, placeholder, ...ot
                 {value.length || 0}/{maxLength}
             </div>
             {!other.disabled && <button
+                type="button"
                 className={styles.buttonDelete}
-                onClick={() => handleClick}
+                onClick={onClick}
+                aria-label="Удалить текст"
             >
                 <SvgDelete />
             </button>}

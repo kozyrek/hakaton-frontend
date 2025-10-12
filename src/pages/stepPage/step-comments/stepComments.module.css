@@ -1,21 +1,59 @@
 .wrapper {
   padding-bottom: 160px;
+
+  @media (max-width: 1400px) {
+    padding-bottom: 60px;
+  }
+
+  @media (max-width: 768px) {
+    padding-bottom: 40px;
+  }
 }
 
 .title {
   margin-bottom: 48px;
   color: #1a1f1f;
+
+  @media (max-width: 1400px) {
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 1024px) {
+    margin-bottom: 28px;
+  }
 }
 
 .commentBlock {
   padding: 40px 120px 40px 40px;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 12px;
   background-color: #f6edff;
   border-radius: 8px;
+
+  @media (max-width: 1400px) {
+    padding: 40px;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 28px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
 }
 
 .buttonSend {
-  margin-top: 28px;
+  margin-top: 16px;
   margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    /* max-width: 280px; */
+    max-width: 100%;
+    width: 100%;
+    justify-self: center;
+  }
 }
 
 .commentsList {
@@ -59,4 +97,12 @@
 
 .buttonStart {
   margin-top: 48px;
+
+  @media (max-width: 1400px) {
+    margin-top: 40px;
+  }
+
+  @media (max-width: 1024px) {
+    margin-top: 28px;
+  }
 }

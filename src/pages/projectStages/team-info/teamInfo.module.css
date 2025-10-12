@@ -26,21 +26,45 @@
 .textList {
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    row-gap: 40px;
     list-style-type: none;
+    /* -------- */
+    max-height: 100%;
+    height: auto;
+    overflow: visible;
+    transition: all ease 0.5s;
 
-    li {
-        position: relative;
+    /* li:not(:last-child) p { */
+    li p {
+        margin-bottom: 40px;
+    }
+    li:last-child p {
+        margin-bottom: 0;
+    }
+}
 
-        &::after {
-            position: absolute;
-            content: "";
-            bottom: -20px;
-            width: 100%;
-            height: 1px;
-            border-bottom: 1px dotted #1a1f1f;
-        }
+.isCutText {
+    /* ----------- */
+    max-height: 704px;
+    height: 100%;
+    white-space: wrap;
+
+    /* ---------- */
+    /* -webkit-line-clamp: 12; */
+
+    overflow: hidden;    
+    display: -webkit-box;
+    text-overflow: ellipsis;    
+    -webkit-box-orient: vertical;
+}
+
+.buttonMore {
+    margin-top: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    text-decoration: underline;
+
+    @media (max-width: 1400px) {
+        margin-top: 20px;
     }
 }

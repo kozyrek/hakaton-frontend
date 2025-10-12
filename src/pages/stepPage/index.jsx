@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import StepProjectInfo from "./step-info/stepInfo";
 import StepProjectComment from "./step-comments/stepComments";
+import Loader from "../../components/loader/loader";
 import getStep from "../../api/steps/getStep";
 import getStepComments from "../../api/steps/getStepComments";
 import { STEP_PROJECT_STATUS } from "../../utils/constants";
@@ -12,25 +13,27 @@ export default function StepProjectPage() {
     const stepTitle = useLocation().state.stepTitle;
     const projectId = useLocation().state.projectId;
     const [error, setError] = useState(undefined);
-    const [step, setStep] = useState({});
-    const [comments, setComments] = useState([]);
+    const [step, setStep] = useState(null);
+    const [comments, setComments] = useState(null);
     const [addComment, setAddComment] = useState(false);
     const [stepStatus, setStepStatus] = useState({
         notStarted: false,
         inProgress: false,
         isSubmitted: false,
         isAccept: false,
+        timeExceeded: false,
     })
 
-    useEffect(() => {
-        const fetchDataStep = async () => {
-            try {
-                const requestStep = await getStep(projectId, stepNumber);
-                setStep(requestStep.data);
-            } catch (e) {
-                setError(e.message);
-            }
+    const fetchDataStep = async () => {
+        try {
+            const requestStep = await getStep(projectId, stepNumber);
+            setStep(requestStep.data);
+        } catch (e) {
+            setError(e.message);
         }
+    }
+
+    useEffect(() => {
         fetchDataStep();
         // eslint-disable-next-line
     }, [])
@@ -44,6 +47,7 @@ export default function StepProjectPage() {
                 isAccept: step.status === STEP_PROJECT_STATUS.ACCEPTED,
                 timeExceeded: step.status === STEP_PROJECT_STATUS.TIME_EXCEEDED,
             });
+            handleSwitchStatus(step.status);
             console.log("текущий статус шага", stepStatus);//---
         }
         // eslint-disable-next-line
@@ -66,19 +70,44 @@ export default function StepProjectPage() {
         setAddComment(!addComment);
     }
 
+    const handleChangeTimer = async () => {
+        try {
+            const requestStep = await getStep(projectId, stepNumber);
+            if (requestStep.status === 200) {
+                setStep(requestStep.data);
+                console.lof("обновление данных шага")
+            }
+        } catch (e) {
+            setError(e.message);
+        }        
+    }
+
     const handleSwitchStatus = (status) => {
         switch (status) {
             case stepStatus.notStarted:
-                setStepStatus({isSubmitted: false, notStarted: true});
+                setStepStatus({
+                    ...stepStatus,
+                    isSubmitted: false, notStarted: true});
                 break;
             case stepStatus.inProgress:
-                setStepStatus({notStarted: false, inProgress: true})
+                setStepStatus({
+                    ...stepStatus,
+                    notStarted: false, inProgress: true})
                 break;
             case stepStatus.isSubmitted:
-                setStepStatus({inProgress: false, isSubmitted: true})
+                setStepStatus({
+                    ...stepStatus,
+                    inProgress: false, isSubmitted: true})
                 break;
             case stepStatus.isAccept:
-                setStepStatus({isSubmitted: false, isAccept: true})
+                setStepStatus({
+                    ...stepStatus,
+                    isSubmitted: false, isAccept: true})
+                break;
+            case stepStatus.timeExceeded:
+                setStepStatus({
+                    ...stepStatus,
+                    inProgress: false, timeExceeded: true})
                 break;
             default:
                 break;
@@ -88,19 +117,29 @@ export default function StepProjectPage() {
     return (
         <>
             <Container fluid="xxl">
-                <StepProjectInfo 
-                    step={step}
-                    stepTitle={stepTitle} 
-                    stepStatus={stepStatus}
-                    handleSwitchStatus={handleSwitchStatus}
-                />
-                <StepProjectComment 
-                    step={step} 
-                    comments={comments} 
-                    handleAddNewComment={handleAddNewComment} 
-                    stepStatus={stepStatus}
-                    handleSwitchStatus={handleSwitchStatus}
-                />
+                {!(step && comments)
+                ? <div className="loaderBox">
+                    <Loader />
+                </div> 
+                : (
+                    <>
+                        <StepProjectInfo 
+                            step={step}
+                            stepTitle={stepTitle} 
+                            stepStatus={stepStatus}
+                            handleSwitchStatus={handleSwitchStatus}
+                            handleChangeTimer={handleChangeTimer}
+                        />
+                        <StepProjectComment 
+                            step={step} 
+                            comments={comments} 
+                            handleAddNewComment={handleAddNewComment} 
+                            stepStatus={stepStatus}
+                            handleSwitchStatus={handleSwitchStatus}
+                            handleChangeTimer={handleChangeTimer}
+                        />
+                    </>
+                )}
             </Container>
         </>
     )

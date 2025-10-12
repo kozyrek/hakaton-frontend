@@ -1,58 +1,72 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, createRef } from "react";
 import TeamRating from "../team-rating/teamRating";
-
 import styles from "./teamInfo.module.css";
 
-export default function TeamInfo({obj, arr}) {
-    const [isCompleteText, setIsCompleteText]= useState(false);
-    const [overallRating, setOverallRating] = useState(0);
+export default function TeamInfo({ obj, arr }) {
+    const [isCompleteText, setIsCompleteText] = useState(false);
+    const [readMore, setReadMore] = useState(false);
+    const [showButton, setShowButton] = useState(false);
+    const refList = createRef();
 
     useEffect(() => {
-        if (arr) {
-            const addText = () => {
-                const arr1 = [];
-                arr.forEach((item) => {
-                    if (item.text) {
-                        arr1.push(item.text)
-                    }
-                    // console.log("текст добавлен", arr1.length > 0)
-                    setIsCompleteText(arr1.length > 0)
-                })
+        if (arr && arr.length > 0) {
+            const height = refList.current?.getBoundingClientRect().height || 0;
+            if (height > 704) {
+                setShowButton(true);
             }
-            addText();
         }
-    }, [arr])
+    }, [arr, refList]);
 
     useEffect(() => {
-        if (arr) {
-            setOverallRating(
-                arr.reduce((prev, item) => {
-                    const sum = prev + item.score;
-                    // console.log('рейтинг команды', sum)
-                    return sum;
-                }, 0)
-            );
+        if (arr && arr.length > 0) {
+            const hasText = arr.some(item => item.text);
+            setIsCompleteText(hasText);
+        } else {
+            setIsCompleteText(false);
         }
-    }, [arr])
+    }, [arr]);
+
+    // Если команда не назначена
+    if (!obj) {
+        return (
+            <div className={`contentBox ${styles.wrapper}`}>
+                <h2 className={`titleH2 ${styles.title}`}>Команда</h2>
+                <p className="text1">Команда не назначена</p>
+            </div>
+        );
+    }
 
     return (
         <div className={`contentBox ${styles.wrapper}`}>
-            {obj && <>
-                <div>
-                    <h2 className={`titleH2 ${styles.title}`}>Команда {obj.name}</h2>
-                    {isCompleteText 
-                    ? <ul className={styles.textList}>
-                        {arr.map((item) => (
-                            item.text && <li key={item.id}>
-                                <p className="text1">{JSON.parse(item.text).text}</p>
-                            </li>
+            <div>
+                <h2 className={`titleH2 ${styles.title}`}>Команда {obj.name}</h2>
+                {isCompleteText ? (
+                    <ul 
+                        ref={refList}
+                        className={`${styles.textList} ${!readMore ? styles.isCutText : ""}`}
+                    >
+                        {arr.sort((a, b) => a.stepNumber - b.stepNumber).map((item) => (
+                            item.text && (
+                                <li key={item.id}>
+                                    <p className="text1">{JSON.parse(item.text).text}</p>
+                                </li>
+                            )
                         ))}
                     </ul>
-                    : <p className="text1">Вы&nbsp;пока не&nbsp;загрузили текст</p>}
-                </div>         
-                <TeamRating overallRating={overallRating}/>
-            </>}
-            {!obj && <p className="text1">Команда ещё не назначена</p>}
+                ) : (
+                    <p className="text1">Вы пока не загрузили текст</p>
+                )}
+                
+                {showButton && (
+                    <button 
+                        className={`text2 ${styles.buttonMore}`}
+                        onClick={() => setReadMore(!readMore)}
+                    >
+                        {readMore ? "Скрыть подробности" : "Читать полностью"}
+                    </button>
+                )}
+            </div>         
+            <TeamRating arr={arr} />
         </div>
-    )
+    );
 }

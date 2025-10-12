@@ -4,10 +4,11 @@ import Button from "../../../components/button/button";
 import ModalWrapper from "../../../components/modalOverlay";
 import ModalWindow from "../../../components/modalWindow";
 import getProjects from "../../../api/projects/getProjects";
+import updateTeam from "../../../api/team/updateTeam"; // Добавляем импорт для обновления команды
 
 import styles from "./teamProject.module.css";
 
-export default function TeamProject({ project }) {
+export default function TeamProject({ project, teamId, onTeamUpdate }) {
     const [isDeleteProjectOpen, setIsDeleteProjectOpen] = useState(false);
     const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
     const [projects, setProjects] = useState(null);
@@ -17,14 +18,17 @@ export default function TeamProject({ project }) {
             try {
                 const response = await getProjects();
                 console.log("res", response);
-                //исключать проекты, которые уже назначены командам??
-                setProjects(response.data.items);
+                // Фильтруем проекты, которые еще не назначены командам
+                const availableProjects = response.data.items.filter(
+                    proj => !proj.teamId || proj.teamId === parseInt(teamId)
+                );
+                setProjects(availableProjects);
             } catch (e) {
                 console.log(e.message);
             }
         };
         fetchProjects();
-    }, []);
+    }, [teamId]);
 
     const handleOpenAddProject = () => {
         setIsAddProjectOpen(true);
@@ -34,16 +38,26 @@ export default function TeamProject({ project }) {
         setIsDeleteProjectOpen(true);
     }
 
-// дописать функцию---------------------------
-    const handleAddProject = (id) => {
-
-        setIsAddProjectOpen(false);
+    const handleAddProject = async (projectId) => {
+        try {
+            // Обновляем команду, добавляя projectId
+            const response = await updateTeam(teamId, { projectId });
+            onTeamUpdate(response.data);
+            setIsAddProjectOpen(false);
+        } catch (error) {
+            console.error("Ошибка при добавлении проекта:", error);
+        }
     }
 
-// дописать функцию---------------------------
-    const handleDeleteProject = (id) => {
-
-        setIsDeleteProjectOpen(false);
+    const handleDeleteProject = async () => {
+        try {
+            // Обновляем команду, удаляя projectId (устанавливаем null)
+            const response = await updateTeam(teamId, { projectId: null });
+            onTeamUpdate(response.data);
+            setIsDeleteProjectOpen(false);
+        } catch (error) {
+            console.error("Ошибка при удалении проекта:", error);
+        }
     }
 
     return (
@@ -66,7 +80,6 @@ export default function TeamProject({ project }) {
                     large
                     text={project ? "Удалить проект" : "Добавить проект"}
                     onClick={project ? handleOpenDeleteProject : handleOpenAddProject}
-                    // disabled
                 />
             </div>
 
@@ -103,7 +116,7 @@ export default function TeamProject({ project }) {
                         <Button
                             large
                             text="Да"
-                            onClick={() => handleDeleteProject(project.id)}
+                            onClick={handleDeleteProject}
                         />,
                         <Button
                             large

@@ -1,10 +1,26 @@
+/* Полностью перерабатываем структуру чекбоксов */
 .consent {
-  position: relative;
   width: 447px;
   display: flex;
+  flex-direction: column; /* Меняем направление на колонку */
+  gap: 4px;
+  margin-bottom: 16px; /* Добавляем отступ между чекбоксами */
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
   gap: 10px;
 }
 
+.checkboxError {
+  font-size: 14px;
+  color: red;
+  margin-left: 24px; /* Отступ для выравнивания с текстом */
+  margin-top: 2px;
+}
+
+/* Остальные существующие стили оставляем без изменений */
 .conInputs {
   width: 447px;
   position: relative;
@@ -15,6 +31,13 @@
   margin-bottom: 20px;
   font-size: 14px;
   font-weight: 500;
+}
+
+.label {
+  width: 100%;
+  padding-bottom: 2px;
+  margin-right: auto;
+  margin-left: 0;
 }
 
 .consentCheckBox {
@@ -36,6 +59,43 @@
   background-color: #b899d6;
   width: 12px;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z'/%3e%3c/svg%3e");
+}
+
+/* Контейнер выпадающего списка */
+.rq {
+  width: 447px;
+  height: auto;
+  max-height: 30vh;
+  overflow-y: auto;
+  /* margin-top: -24px; */
+  top: 62px !important;
+  left: -2px;
+  border: 2px solid #b899d6;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  background-color: white;
+
+  /* Критически важные свойства для позиционирования */
+  position: absolute; /* Абсолютное позиционирование */
+  z-index: 1000; /* Высокий z-index, чтобы был поверх других элементов */
+}
+
+/* Контейнер формы (добавить в существующие стили) */
+.form {
+  position: relative; /* Чтобы выпадающий список позиционировался относительно формы */
+}
+
+/* Адаптация под мобильные устройства */
+@media screen and (max-width: 576px) {
+  .rq {
+    width: 340px !important;
+  }
+}
+
+@media screen and (max-width: 470px) {
+  .rq {
+    width: 90% !important;
+  }
 }
 
 .requred {
@@ -76,22 +136,17 @@
 }
 
 .policy {
-  position: relative;
   padding-top: 8px;
   font-size: 14px;
-  margin-bottom: 20px;
 }
 
 .link {
   color: #6c3f99;
 }
 
+/* Убираем старый helperTextError */
 .helperTextError {
-  position: absolute;
-  font-size: 14px;
-  color: red;
-  left: 0;
-  top: 32px;
+  display: none;
 }
 
 @media screen and (max-width: 576px) {
@@ -101,7 +156,6 @@
   .consent,
   .conInputs {
     width: 340px !important;
-    position: relative;
   }
 }
 
@@ -112,6 +166,5 @@
   .consent,
   .conInputs {
     width: 90% !important;
-    position: relative;
   }
 }

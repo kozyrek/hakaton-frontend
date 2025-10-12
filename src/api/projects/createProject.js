@@ -22,13 +22,15 @@ import { ERROR_TEXT } from "../../api/utils/constants";
 
 export default async function createProject(name, description, document) {
     try {
-        const response = await HTTP.post("/projects/", {
-            data: JSON.stringify({
-                name: name,
-                description: description,
-            }),
-            document: document,
-        });
+        let formData = new FormData();
+        const data = {
+            name: name,
+            description: description,
+        };
+        formData.append('data', JSON.stringify(data))
+        formData.append('document', document)
+        
+        const response = await HTTP.post("/projects/", formData);
         return response;
     } catch (error) {
         if (!error.response) {

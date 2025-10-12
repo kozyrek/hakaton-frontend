@@ -25,6 +25,13 @@
     }
 }
 
+.iconPencil {
+    margin-left: 12px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+}
+
 .text {
     margin: 0 0 48px;
     max-width: 923px;
