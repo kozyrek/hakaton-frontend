@@ -14,7 +14,35 @@ import addUserDocument from "../../api/document-user/addUserDocument";
 import deleteUserDocument from "../../api/document-user/deleteUserDocument";
 
 const HELPER_TEXT_PASSWORD =
-  "Пароль должен содержать не менее 8 символов, используйте латиницу, спецсимволы (@#$%&*!), заглавные и прописные буквы, цифры.";
+  "Пароль должен содержать не менее 8 символов, используйте латиницу, спецсимволы (@#$%&*!), заглавные и строчные буквы, цифры.";
+
+// Функция для форматирования даты из формата сервера (YYYY-MM-DD) в формат отображения (DD.MM.YYYY)
+const formatDateForDisplay = (serverDate) => {
+  if (!serverDate) return '';
+  try {
+    const [year, month, day] = serverDate.split('-');
+    if (day && month && year) {
+      return `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
+    }
+    return serverDate;
+  } catch (e) {
+    return serverDate;
+  }
+};
+
+// Функция для преобразования даты из формата отображения (DD.MM.YYYY) в формат сервера (YYYY-MM-DD)
+const formatDateForServer = (displayDate) => {
+  if (!displayDate) return '';
+  try {
+    const [day, month, year] = displayDate.split('.');
+    if (day && month && year) {
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    return displayDate;
+  } catch (e) {
+    return displayDate;
+  }
+};
 
 export default function Inputs(props) {
   const documents = useSelector((state) => state.user?.documents);
@@ -45,6 +73,7 @@ export default function Inputs(props) {
       case "tel":
       case "email":
       case "textarea":
+      case "date":
         onChange("", name);
         break;
       default:
@@ -64,6 +93,15 @@ export default function Inputs(props) {
     onChange("", name);
     setFilesList(null);
   }
+
+  // Обработчик для даты - преобразует из формата отображения в формат сервера
+  const handleDateChange = (value) => {
+    const serverFormat = formatDateForServer(value);
+    onChange(serverFormat, name);
+  };
+
+  // Проверяем, является ли поле датой рождения
+  const isDateField = name === "birthDate" || type === "date";
 
   return (
     <div className={styles.container}>
@@ -123,6 +161,31 @@ export default function Inputs(props) {
                 }`}
                 required
                 maxLength={maxLength}
+                disabled={disabled}
+                {...other}
+              />
+              <button
+                className={`${styles.delete} ${styles.phoneDelete} ${!label && styles.notLabel}`}
+                onClick={() => handelClick(type)}
+              >
+                <SvgDelete />
+              </button>
+            </div>
+          ) : isDateField ? (
+            // Специальная обработка для поля даты рождения
+            <div className={styles.phoneInputWrapper}>
+              <IMaskInput
+                mask="00.00.0000"
+                placeholder="дд.мм.гггг"
+                lazy={!formData[name]?.value}
+                value={formatDateForDisplay(formData[name]?.value) || ""}
+                onAccept={(value) => handleDateChange(value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                className={`${styles.loginInput} ${isError && styles.errorInput} ${
+                  !formData[name]?.value && !focused ? styles.transparentInput : ''
+                }`}
+                required
                 disabled={disabled}
                 {...other}
               />

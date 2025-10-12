@@ -24,7 +24,7 @@ export const formFields = [
     id: 4,
     name: "dateBirth",
     label: "Дата рождения",
-    type: "text",
+    type: "date",
     placeholder: "Введите дату рождения",
   },
   {
@@ -132,7 +132,7 @@ export const formFieldsProfile = [
     id: 4,
     name: "dateBirth",
     label: "Дата рождения",
-    type: "text",
+    type: "date",
     placeholder: "Введите дату рождения",
   },
   {
