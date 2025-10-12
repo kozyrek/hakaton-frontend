@@ -1,10 +1,26 @@
+/* Полностью перерабатываем структуру чекбоксов */
 .consent {
-  position: relative;
   width: 447px;
   display: flex;
+  flex-direction: column; /* Меняем направление на колонку */
+  gap: 4px;
+  margin-bottom: 16px; /* Добавляем отступ между чекбоксами */
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
   gap: 10px;
 }
 
+.checkboxError {
+  font-size: 14px;
+  color: red;
+  margin-left: 24px; /* Отступ для выравнивания с текстом */
+  margin-top: 2px;
+}
+
+/* Остальные существующие стили оставляем без изменений */
 .conInputs {
   width: 447px;
   position: relative;
@@ -120,22 +136,17 @@
 }
 
 .policy {
-  position: relative;
   padding-top: 8px;
   font-size: 14px;
-  margin-bottom: 20px;
 }
 
 .link {
   color: #6c3f99;
 }
 
+/* Убираем старый helperTextError */
 .helperTextError {
-  position: absolute;
-  font-size: 14px;
-  color: red;
-  left: 0;
-  top: 32px;
+  display: none;
 }
 
 @media screen and (max-width: 576px) {
@@ -145,7 +156,6 @@
   .consent,
   .conInputs {
     width: 340px !important;
-    position: relative;
   }
 }
 
@@ -156,6 +166,5 @@
   .consent,
   .conInputs {
     width: 90% !important;
-    position: relative;
   }
 }

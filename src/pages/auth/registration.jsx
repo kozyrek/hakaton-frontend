@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LayoutLogin from "./layoutLogin";
 import Inputs from "../../components/inputs/inputs";
 import ModalWindow from "../../components/modalWindow";
-import ModalWrapper from "../../components/modalOverlay"; // Добавляем импорт ModalWrapper
+import ModalWrapper from "../../components/modalOverlay";
 import { formFields } from "./utils/utils";
 import {
   passwordMatchValidation,
@@ -48,7 +48,7 @@ export default function Registration() {
 
   const [formData, setFormData] = useState(initialFormData);
   const [regions, setRegions] = useState([]);
-  const [errorModal, setErrorModal] = useState({ isOpen: false, messages: [] }); // Теперь храним массив сообщений
+  const [errorModal, setErrorModal] = useState({ isOpen: false, messages: [] });
   const timerRef = useRef(null);
   
   // Инициализируем ошибки для всех полей
@@ -102,6 +102,31 @@ export default function Registration() {
     timerRef.current = setTimeout(() => {
       validateField(processedValue, formData[name].type, name, setFormError);
     }, 1500);
+  };
+
+  // Функция для проверки чекбоксов
+  const validateCheckboxes = () => {
+    const errors = {};
+    let hasErrors = false;
+
+    if (!formData.policy.value) {
+      errors.policy = "Необходимо подтвердить согласие с политикой";
+      hasErrors = true;
+    }
+
+    if (!formData.regulations.value) {
+      errors.regulations = "Необходимо подтвердить ознакомление с положением";
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      setFormError(prev => ({
+        ...prev,
+        ...errors
+      }));
+    }
+
+    return hasErrors;
   };
 
 const formatErrorMessage = (errorMessage) => {
@@ -324,6 +349,13 @@ const getErrorMessage = (error) => {
 };
 
 const handleSubmit = async () => {
+  // Сначала проверяем чекбоксы
+  const checkboxErrors = validateCheckboxes();
+  if (checkboxErrors) {
+    return;
+  }
+
+  // Затем проверяем остальную валидацию формы
   const errors = validateForm(formData, formError, setFormError);
   if (!passwordMatchValidation(formData)) {
     const name = "retryPassword";
@@ -512,61 +544,74 @@ const handleSubmit = async () => {
               ) : null;
             })}
 
-            <div className={stylesReg.consent}>
-              <span>
-                <input
-                  type="checkbox"
-                  name="policy"
-                  id="policy"
-                  className={stylesReg.consentCheckBox}
-                  onChange={() =>
-                    handleChange(!formData["policy"].value, "policy")
-                  }
-                />
-              </span>
-              <span className={stylesReg.policy}>
-                Я подтверждаю ознакомление с 
-              <a 
-  href="/Положение_о_научном_хакатоне_23_10_23.pdf" 
-  target="_blank" 
-  rel="noopener noreferrer"
-  className={stylesReg.link}
->
-  Политикой
-</a>
-                 и даю согласие на обработку персональных данных в порядке
-                и на условиях, указанных в Политике.
-              </span>
-            </div>
+<div className={stylesReg.consent}>
+  <div className={stylesReg.checkboxRow}>
+    <span>
+      <input
+        type="checkbox"
+        name="policy"
+        id="policy"
+        className={stylesReg.consentCheckBox}
+        onChange={() =>
+          handleChange(!formData["policy"].value, "policy")
+        }
+      />
+    </span>
+    <span className={stylesReg.policy}>
+      Я подтверждаю ознакомление с 
+      <span style={{marginRight: "4px", marginLeft: "4px"}}>
+      <a 
+         href="/Положение_о_научном_хакатоне_23_10_23.pdf" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className={stylesReg.link}
+      >
+        Политикой
+      </a>
+      </span>
 
-            <div className={stylesReg.consent}>
-              <span>
-                <input
-                  type="checkbox"
-                  name="regulations"
-                  id="regulations"
-                  className={stylesReg.consentCheckBox}
-                  onChange={() =>
-                    handleChange(!formData["regulations"].value, "regulations")
-                  }
-                />
-              </span>
-              <span className={stylesReg.policy}>
-                Ознакомлен с{" "}
-              <a 
-  href="/Положение_о_научном_хакатоне_23_10_23.pdf" 
-  target="_blank" 
-  rel="noopener noreferrer"
-  className={stylesReg.link}
->
-  Положением о проведении Хакатона
-</a>
-              </span>
+       и даю согласие на обработку персональных данных в порядке
+      и на условиях, указанных в Политике.
+    </span>
+  </div>
+  {formError.policy && (
+    <div className={stylesReg.checkboxError}>
+      {formError.policy}
+    </div>
+  )}
+</div>
 
-              <div className={stylesReg.helperTextError}>
-                {formError["policy"]}
-              </div>
-            </div>
+<div className={stylesReg.consent}>
+  <div className={stylesReg.checkboxRow}>
+    <span>
+      <input
+        type="checkbox"
+        name="regulations"
+        id="regulations"
+        className={stylesReg.consentCheckBox}
+        onChange={() =>
+          handleChange(!formData["regulations"].value, "regulations")
+        }
+      />
+    </span>
+    <span className={stylesReg.policy}>
+      Ознакомлен с{" "}
+      <a 
+        href="/Положение_о_научном_хакатоне_23_10_23.pdf" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className={stylesReg.link}
+      >
+        Положением о проведении Хакатона
+      </a>
+    </span>
+  </div>
+  {formError.regulations && (
+    <div className={stylesReg.checkboxError}>
+      {formError.regulations}
+    </div>
+  )}
+</div>
 
             <div>
               <button
