@@ -78,6 +78,12 @@
   top: 66px;
 }
 
+.helherTextPassword {
+  font-size: 14px;
+  color: #9D9D9D;
+}
+
+
 .fileUploadContainer{
   margin-top: 20px;
   display: flex;

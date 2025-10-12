@@ -5,6 +5,7 @@ export const ROUTES = {
   PROFILE: "/profile",
   TEAM_BY_ID: "/team/:teamId",
   RECOVERY: "/recovery",
+  PASSWORDRESET: "/reset",
   PROJECT_ID: "/project/:projectId",
   STEP_ID: "/step/:stepId",
   USER_ID: "/profile/:userId",

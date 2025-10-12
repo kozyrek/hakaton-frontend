@@ -1,11 +1,19 @@
 import { HTTP } from "./http";
 
 export default async function userRegistration(data) {
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  try {
     const [day, month, year] = dateString.split(".");
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  };
+    if (day && month && year) {
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    return "";
+  } catch (e) {
+    console.error("Date formatting error:", e);
+    return "";
+  }
+};
 
   // Очищаем номер телефона от всех нецифровых символов и преобразуем к формату сервера
   const cleanPhoneNumber = (phone) => {
@@ -24,7 +32,7 @@ export default async function userRegistration(data) {
     firstName: data.firstName?.value || "",
     lastName: data.lastName?.value || "",
     patronymic: data.patronymic?.value || "",
-    birthDate: formatDate(data.dateBirth?.value),
+    birthDate: formatDate(data.birthDate?.value),
     phoneNumber: cleanPhoneNumber(data.phoneNumber?.value),
     eduOrganization: data.eduOrganization?.value || "",
     email: data.email?.value || "",

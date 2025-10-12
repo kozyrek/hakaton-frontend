@@ -33,21 +33,29 @@ export default function Header() {
 
   useEffect(() => {
     const setUser = async () => {
-
       if (token) {
         const user = await getUser();
         if (user) {
           dispatch(set_user(user));
         }
       } else {
-        if (location.pathname !== ROUTES.MAIN) {
+        // Разрешаем доступ к главной странице и страницам аутентификации без токена
+        const allowedPathsWithoutAuth = [
+          ROUTES.MAIN,
+          ROUTES.LOGIN,
+          ROUTES.REGISTRATION,
+          ROUTES.RECOVERY,
+          ROUTES.PASSWORDRESET
+        ];
+        
+        if (!allowedPathsWithoutAuth.includes(location.pathname)) {
           navigate(ROUTES.LOGIN);
         }
       }
     };
     setUser();
     // eslint-disable-next-line
-  }, []);
+  }, [location.pathname]); // Добавим location.pathname в зависимости
   
   if (Object.keys(user).length !== 0) {
     isLogIn = true;
@@ -79,8 +87,7 @@ export default function Header() {
   const lastHash = useRef("");
   const width = useResize();
   const navbarHeight = width > 1024 ? "80" : "70";
-  // listen to location change using useEffect with location as dependency
-  // https://jasonwatmore.com/react-router-v6-listen-to-location-route-change-without-history-listen
+  
   useEffect(() => {
     if (location.hash) {
       lastHash.current = location.hash.slice(1);

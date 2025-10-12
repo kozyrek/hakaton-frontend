@@ -25,75 +25,54 @@ export function validateForm(formData, formError, setFormError) {
   return errors;
 }
 
-export function validateField(value, type, name, setFormError) {
-  if (name === "regionId") return true;
+export function validateField(value, type, name, setFormError = null) {
+  let errorMessage = "";
+
+  if (name === "regionId") {
+    if (setFormError) {
+      setFormError((prevError) => ({ ...prevError, [name]: errorMessage }));
+    }
+    return errorMessage;
+  }
 
   if (type === "checkbox") {
     if (!value) {
-      setFormError((prevError) => ({ ...prevError, [name]: APPROVAL }));
+      errorMessage = APPROVAL;
     }
-    return true;
-  }
-
-  if (!value.trim()) {
-    setFormError((prevError) => ({ ...prevError, [name]: REQUIRED }));
-    return false;
-  }
-
-  if (value.length < 2 && name !== "phoneNumber") {
-    setFormError((prevError) => ({ ...prevError, [name]: LENGHT_ERROR }));
-    return false;
-  }
-
-  if (type === "email") {
-    if (!EMAIL_REGEX.test(value)) {
-      setFormError((prevError) => ({ ...prevError, [name]: EMAIL_ERROR }));
-      return false;
-    }
-  }
-
-  if (type === "tel") {
+  } else if (!value.trim()) {
+    errorMessage = REQUIRED;
+  } else if (value.length < 2 && name !== "phoneNumber") {
+    errorMessage = LENGHT_ERROR;
+  } else if (type === "email" && !EMAIL_REGEX.test(value)) {
+    errorMessage = EMAIL_ERROR;
+  } else if (type === "tel") {
     // Удаляем все нецифровые символы, кроме + в начале
     const phoneDigits = value.replace(/[^\d]/g, '');
     
     // Проверяем, что номер начинается с 7 или 8 и имеет 11 цифр
     if (!/^[78]\d{10}$/.test(phoneDigits)) {
-      setFormError((prevError) => ({ ...prevError, [name]: PHONE_ERROR }));
-      return false;
+      errorMessage = PHONE_ERROR;
     }
-  }
-
-  if (type === "text") {
-    if (FORBIDEN_CHARS.test(value)) {
-      setFormError((prevError) => ({ ...prevError, [name]: FORBIDEN_ERROR }));
-      return false;
-    }
-  }
-
-  if (name === "dateBirth") {
+  } else if (type === "text" && FORBIDEN_CHARS.test(value)) {
+    errorMessage = FORBIDEN_ERROR;
+  } else if (name === "dateBirth") {
     const validateResult = validateBirthDate(value);
     if (!validateResult.isValid) {
-      setFormError((prevError) => ({
-        ...prevError,
-        [name]: validateResult.message,
-      }));
-      return false;
+      errorMessage = validateResult.message;
     }
-  }
-
-  if (type === "password") {
+  } else if (type === "password") {
     const validPassword = validatePassword(value);
     if (!validPassword.isValid) {
-      setFormError((prevError) => ({
-        ...prevError,
-        [name]: validPassword.message,
-      }));
-      return false;
+      errorMessage = validPassword.message;
     }
   }
 
-  setFormError((prevError) => ({ ...prevError, [name]: "" }));
-  return true;
+  // Если передан setFormError, обновляем состояние
+  if (setFormError) {
+    setFormError((prevError) => ({ ...prevError, [name]: errorMessage }));
+  }
+
+  return errorMessage;
 }
 
 function validateBirthDate(dateString) {
