@@ -526,12 +526,14 @@ const handleSubmit = async () => {
               </span>
               <span className={stylesReg.policy}>
                 Я подтверждаю ознакомление с 
-                <Link
-                  to="/"
-                  className={stylesReg.link}
-                >
-                  Политикой
-                </Link>
+              <a 
+  href="/Положение_о_научном_хакатоне_23_10_23.pdf" 
+  target="_blank" 
+  rel="noopener noreferrer"
+  className={stylesReg.link}
+>
+  Политикой
+</a>
                  и даю согласие на обработку персональных данных в порядке
                 и на условиях, указанных в Политике.
               </span>
@@ -551,12 +553,14 @@ const handleSubmit = async () => {
               </span>
               <span className={stylesReg.policy}>
                 Ознакомлен с{" "}
-                <Link
-                  to="/"
-                  className={stylesReg.link}
-                >
-                  Положением о проведении Хакатона
-                </Link>
+              <a 
+  href="/Положение_о_научном_хакатоне_23_10_23.pdf" 
+  target="_blank" 
+  rel="noopener noreferrer"
+  className={stylesReg.link}
+>
+  Положением о проведении Хакатона
+</a>
               </span>
 
               <div className={stylesReg.helperTextError}>
