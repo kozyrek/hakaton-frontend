@@ -77,7 +77,7 @@ export default function InputFile({
                         >
                             {item.name}
                         </a>
-                        {(!isMentor || isComment) && (!stepStatus.notStarted || stepStatus.inProgress || !stepStatus.isSubmitted || !stepStatus.isAccept) &&//--------уточнить условия отображения 
+                        {(!isMentor && stepStatus.inProgress) &&
                         <button 
                             type="button"
                             className={styles.buttonDeleteFile}
