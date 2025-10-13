@@ -32,7 +32,9 @@ export const navLinks = [
     {
         id: 7,
         title: "Положение о\u00A0хакатоне",
-        path: '/*',
+        path: '/Положение_о_научном_хакатоне_23_10_23.pdf',
         isFooter: true,
+        target: "_blank",
+        rel: "noopener noreferrer",
     },
 ]
