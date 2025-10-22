@@ -21,6 +21,7 @@ const ProjectsProfile = ({ user }) => {
   const [isCreateProject, setIsCreateProject] = useState(false);
   const [isDeleteProject, setIsDeleteProject] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorModal, setErrorModal] = useState({ isOpen: false, messages: [] });
 
   const isMentor = user?.isMentor;
   const isAdmin = user?.mentor?.isAdmin;
@@ -90,6 +91,79 @@ const ProjectsProfile = ({ user }) => {
     fetchData();
   }, [userTeamId, isMentor, isAdmin]);
 
+  // Функция получения сообщения об ошибке
+  const getProjectErrorMessage = (error) => {
+    console.log("Project creation error:", error);
+    
+    let errorMessage = "";
+    
+    if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (error.message) {
+      errorMessage = error.message;
+    } else if (error.response?.data?.detail) {
+      errorMessage = error.response.data.detail;
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    }
+    
+    console.log("Extracted error message:", errorMessage);
+    
+    // Обрабатываем конкретные сообщения об ошибках создания проекта
+    if (errorMessage.includes("empty") || errorMessage.includes("пустой")) {
+      return ["Файл не должен быть пустым", "Пожалуйста, загрузите файл с содержимым."];
+    }
+    
+    if (errorMessage.includes("txt") || errorMessage.includes("text")) {
+      return ["Ошибка загрузки текстового файла", "Убедитесь, что файл имеет корректное содержимое."];
+    }
+    
+    if (errorMessage.includes("size") || errorMessage.includes("размер")) {
+      return ["Файл слишком большой", "Пожалуйста, выберите файл меньшего размера."];
+    }
+    
+    if (errorMessage.includes("format") || errorMessage.includes("формат")) {
+      return ["Неверный формат файла", "Поддерживаются только файлы с расширениями: " + FILENAME_EXTENSION.join(", ")];
+    }
+    
+    if (errorMessage.includes("Invalid file") || errorMessage.includes("Неверный файл")) {
+      return ["Неверный файл", "Пожалуйста, проверьте корректность загружаемого файла."];
+    }
+    
+    // Если ошибка - объект Axios error
+    if (error.response) {
+      const status = error.response.status;
+      
+      if (status === 400) {
+        return ["Ошибка в данных", "Проверьте правильность введенных данных и загружаемого файла."];
+      }
+      
+      if (status === 413) {
+        return ["Файл слишком большой", "Пожалуйста, выберите файл меньшего размера."];
+      }
+      
+      if (status === 415) {
+        return ["Неподдерживаемый тип файла", "Пожалуйста, выберите файл другого формата."];
+      }
+      
+      if (status === 500) {
+        return ["Внутренняя ошибка сервера", "Попробуйте позже или обратитесь в поддержку."];
+      }
+    }
+    
+    // Сетевая ошибка
+    if (errorMessage.includes("Network Error")) {
+      return ["Проблемы с подключением", "Проверьте интернет-соединение и попробуйте снова."];
+    }
+    
+    // Общая ошибка
+    return ["Ошибка создания проекта", "Проверьте данные и попробуйте еще раз, или обратитесь в поддержку."];
+  };
+
+  const closeErrorModal = () => {
+    setErrorModal({ isOpen: false, messages: [] });
+  };
+
   // Функция валидации формы
   const validateForm = () => {
     const errors = {};
@@ -133,10 +207,17 @@ const ProjectsProfile = ({ user }) => {
           description: { value: "", type: "text" },
           document: { value: null, type: "file" },
         });
-        setFormError({}); // Сбрасываем ошибки после успешного создания
+        setFormError({});
       }
     } catch (error) {
       console.error("Ошибка при создании проекта:", error);
+      
+      const errorMessages = getProjectErrorMessage(error);
+      
+      setErrorModal({
+        isOpen: true,
+        messages: errorMessages
+      });
     }
   };
 
@@ -153,6 +234,13 @@ const ProjectsProfile = ({ user }) => {
       }
     } catch (error) {
       console.error("Ошибка при удалении проекта:", error);
+      
+      const errorMessages = getProjectErrorMessage(error);
+      
+      setErrorModal({
+        isOpen: true,
+        messages: errorMessages
+      });
     }
   };
 
@@ -342,6 +430,40 @@ const ProjectsProfile = ({ user }) => {
           </ModalWrapper>
         </>
       )}
+
+      {/* Модальное окно для ошибок создания/удаления проекта */}
+      <ModalWrapper
+        isOpen={errorModal.isOpen}
+        onClose={closeErrorModal}
+      >
+        <ModalWindow
+          title="Ошибка"
+          setIsShow={closeErrorModal}
+          buttonArea={[
+            <Button
+              key="close"
+              text="Ок"
+              onClick={closeErrorModal}
+            />
+          ]}
+        >
+          <div style={{ whiteSpace: 'pre-line', textAlign: 'center' }}>
+            {errorModal.messages.map((message, index) => (
+              <div 
+                key={index} 
+                style={{ 
+                  marginBottom: index < errorModal.messages.length - 1 ? '10px' : '0',
+                  padding: '0 10px',
+                  fontWeight: index === 0 ? 'bold' : 'normal',
+                  color: index === 0 ? '#333' : '#666'
+                }}
+              >
+                {message}
+              </div>
+            ))}
+          </div>
+        </ModalWindow>
+      </ModalWrapper>
     </>
   );
 };
