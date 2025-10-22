@@ -3,14 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Card from "../../ui/card/Card";
 import ModalWrapper from "../../../../components/modalOverlay";
 import ModalWindow from "../../../../components/modalWindow";
-import Inputs from "../../../../components/inputs/inputs";
 import Button from "../../../../components/button/button";
 import getProjects from "../../../../api/projects/getProjects";
 import getTeamById from "../../../../api/team/getTeamById";
 import createProject from "../../../../api/projects/createProject";
 import deleteProject from "../../../../api/projects/deleteProject";
 import Loader from "../../../../components/loader/loader";
-import { FILENAME_EXTENSION } from "../../../../utils/constants";
+import ProjectForm from "../profile-form/ProfileForm";
 
 import styles from "./projectsProfile.module.css";
 
@@ -21,18 +20,10 @@ const ProjectsProfile = ({ user }) => {
   const [isCreateProject, setIsCreateProject] = useState(false);
   const [isDeleteProject, setIsDeleteProject] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [errorModal, setErrorModal] = useState({ isOpen: false, messages: [] });
 
   const isMentor = user?.isMentor;
   const isAdmin = user?.mentor?.isAdmin;
   const userTeamId = user?.teamId;
-
-  const [formData, setFormData] = useState({
-    name: { value: "", type: "text" },
-    description: { value: "", type: "text" },
-    document: { value: null, type: "file" },
-  });
-  const [formError, setFormError] = useState({});
 
   const fetchAllProjects = async () => {
     try {
@@ -52,13 +43,9 @@ const ProjectsProfile = ({ user }) => {
     }
 
     try {
-      // Получаем команду пользователя
       const team = await getTeamById(userTeamId);
       
-      // Если у команды есть проект, получаем его
       if (team.projectId) {
-        // Здесь нужно получить проект по ID - возможно, потребуется новый API метод
-        // Пока используем фильтрацию всех проектов
         const allProjectsResponse = await getProjects();
         const userProj = allProjectsResponse.data?.items?.find(
           project => project.id === team.projectId
@@ -78,10 +65,8 @@ const ProjectsProfile = ({ user }) => {
       setIsLoading(true);
       
       if (isMentor || isAdmin) {
-        // Для ментора/админа загружаем все проекты
         await fetchAllProjects();
       } else {
-        // Для участника загружаем только его проект
         await fetchUserProject();
       }
       
@@ -91,134 +76,19 @@ const ProjectsProfile = ({ user }) => {
     fetchData();
   }, [userTeamId, isMentor, isAdmin]);
 
-  // Функция получения сообщения об ошибке
-  const getProjectErrorMessage = (error) => {
-    console.log("Project creation error:", error);
+  const handleCreateProject = async (projectData) => {
+    const response = await createProject(
+      projectData.name,
+      projectData.description,
+      projectData.document
+    );
     
-    let errorMessage = "";
-    
-    if (typeof error === 'string') {
-      errorMessage = error;
-    } else if (error.message) {
-      errorMessage = error.message;
-    } else if (error.response?.data?.detail) {
-      errorMessage = error.response.data.detail;
-    } else if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
+    if (response.status === 201) {
+      await fetchAllProjects();
+      setIsCreateProject(false);
+      return response;
     }
-    
-    console.log("Extracted error message:", errorMessage);
-    
-    // Обрабатываем конкретные сообщения об ошибках создания проекта
-    if (errorMessage.includes("empty") || errorMessage.includes("пустой")) {
-      return ["Файл не должен быть пустым", "Пожалуйста, загрузите файл с содержимым."];
-    }
-    
-    if (errorMessage.includes("txt") || errorMessage.includes("text")) {
-      return ["Ошибка загрузки текстового файла", "Убедитесь, что файл имеет корректное содержимое."];
-    }
-    
-    if (errorMessage.includes("size") || errorMessage.includes("размер")) {
-      return ["Файл слишком большой", "Пожалуйста, выберите файл меньшего размера."];
-    }
-    
-    if (errorMessage.includes("format") || errorMessage.includes("формат")) {
-      return ["Неверный формат файла", "Поддерживаются только файлы с расширениями: " + FILENAME_EXTENSION.join(", ")];
-    }
-    
-    if (errorMessage.includes("Invalid file") || errorMessage.includes("Неверный файл")) {
-      return ["Неверный файл", "Пожалуйста, проверьте корректность загружаемого файла."];
-    }
-    
-    // Если ошибка - объект Axios error
-    if (error.response) {
-      const status = error.response.status;
-      
-      if (status === 400) {
-        return ["Ошибка в данных", "Проверьте правильность введенных данных и загружаемого файла."];
-      }
-      
-      if (status === 413) {
-        return ["Файл слишком большой", "Пожалуйста, выберите файл меньшего размера."];
-      }
-      
-      if (status === 415) {
-        return ["Неподдерживаемый тип файла", "Пожалуйста, выберите файл другого формата."];
-      }
-      
-      if (status === 500) {
-        return ["Внутренняя ошибка сервера", "Попробуйте позже или обратитесь в поддержку."];
-      }
-    }
-    
-    // Сетевая ошибка
-    if (errorMessage.includes("Network Error")) {
-      return ["Проблемы с подключением", "Проверьте интернет-соединение и попробуйте снова."];
-    }
-    
-    // Общая ошибка
-    return ["Ошибка создания проекта", "Проверьте данные и попробуйте еще раз, или обратитесь в поддержку."];
-  };
-
-  const closeErrorModal = () => {
-    setErrorModal({ isOpen: false, messages: [] });
-  };
-
-  // Функция валидации формы
-  const validateForm = () => {
-    const errors = {};
-    
-    // Проверка названия проекта
-    if (!formData.name.value.trim()) {
-      errors.name = "Название проекта обязательно для заполнения";
-    }
-    
-    // Проверка описания проекта
-    if (!formData.description.value.trim()) {
-      errors.description = "Описание проекта обязательно для заполнения";
-    }
-    
-    // Проверка документа проекта
-    if (!formData.document.value) {
-      errors.document = "Документ проекта обязателен для загрузки";
-    }
-    
-    setFormError(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleCreateProject = async () => {
-    // Проверяем валидность формы перед созданием
-    if (!validateForm()) {
-      return;
-    }
-
-    try {
-      const response = await createProject(
-        formData.name.value,
-        formData.description.value,
-        formData.document.value
-      );
-      if (response.status === 201) {
-        await fetchAllProjects();
-        setIsCreateProject(false);
-        setFormData({
-          name: { value: "", type: "text" },
-          description: { value: "", type: "text" },
-          document: { value: null, type: "file" },
-        });
-        setFormError({});
-      }
-    } catch (error) {
-      console.error("Ошибка при создании проекта:", error);
-      
-      const errorMessages = getProjectErrorMessage(error);
-      
-      setErrorModal({
-        isOpen: true,
-        messages: errorMessages
-      });
-    }
+    throw new Error("Не удалось создать проект");
   };
 
   const handleDeleteProject = async (projectId) => {
@@ -234,28 +104,6 @@ const ProjectsProfile = ({ user }) => {
       }
     } catch (error) {
       console.error("Ошибка при удалении проекта:", error);
-      
-      const errorMessages = getProjectErrorMessage(error);
-      
-      setErrorModal({
-        isOpen: true,
-        messages: errorMessages
-      });
-    }
-  };
-
-  const handleChange = (value, name) => {
-    setFormData({
-      ...formData,
-      [name]: { value: value, type: formData[name]?.type || "text" },
-    });
-    
-    // Очищаем ошибку при вводе в поле
-    if (formError[name]) {
-      setFormError({
-        ...formError,
-        [name]: null,
-      });
     }
   };
 
@@ -271,14 +119,6 @@ const ProjectsProfile = ({ user }) => {
     }
   };
 
-  // Сброс ошибок при закрытии модального окна
-  useEffect(() => {
-    if (!isCreateProject) {
-      setFormError({});
-    }
-  }, [isCreateProject]);
-
-  // Рендер для участника (не ментора)
   const renderParticipantView = () => {
     if (isLoading) {
       return <Loader />;
@@ -306,7 +146,6 @@ const ProjectsProfile = ({ user }) => {
     }
   };
 
-  // Рендер для ментора/админа
   const renderMentorView = () => {
     if (isLoading) {
       return <Loader />;
@@ -352,116 +191,36 @@ const ProjectsProfile = ({ user }) => {
       
       {isMentor || isAdmin ? renderMentorView() : renderParticipantView()}
 
-      {/* Модальные окна показываем только менторам/админам */}
-      {(isMentor || isAdmin) && (
-        <>
-          <ModalWrapper
-            isOpen={isCreateProject}
-            onClose={() => setIsCreateProject(false)}
-          >
-            <ModalWindow
-              title="Создание нового проекта"
-              buttonArea={[
-                <Button
-                  text="Создать"
-                  onClick={handleCreateProject}
-                />,
-                <Button
-                  violet
-                  text="Отменить"
-                  onClick={() => {
-                    setIsCreateProject(false);
-                  }}
-                />,
-              ]}
-            >
-              <Inputs
-                name="name"
-                type="text"
-                formData={formData}
-                formError={formError}
-                placeholder="Название кейса"
-                onChange={handleChange}
-                maxLength={50}
-              />
-              <Inputs
-                name="description"
-                type="textarea"
-                formData={formData}
-                formError={formError}
-                placeholder="Описание кейса"
-                onChange={handleChange}
-              />
-              <Inputs
-                name="document"
-                type="download"
-                formData={formData}
-                formError={formError}
-                placeholder="Загрузите документ кейса"
-                notUser
-                onChange={handleChange}
-                accept={FILENAME_EXTENSION.join(", ")}
-              />
-            </ModalWindow>
-          </ModalWrapper>
+      {/* Используем общий компонент формы */}
+      <ProjectForm
+        mode="create"
+        isOpen={isCreateProject}
+        onClose={() => setIsCreateProject(false)}
+        onSubmit={handleCreateProject}
+      />
 
-          <ModalWrapper
-            isOpen={isDeleteProject}
-            onClose={() => setIsDeleteProject(false)}
-          >
-            <ModalWindow
-              title="Действительно хотите удалить данный проект?"
-              buttonArea={[
-                <Button
-                  text="Да"
-                  onClick={() => handleDeleteProject(isDeleteProject.id)}
-                />,
-                <Button
-                  violet
-                  text="Нет"
-                  onClick={() => setIsDeleteProject(false)}
-                />,
-              ]}
-            >
-              <p className="text4">
-                «{getProjectToDelete()?.name}»
-              </p>
-            </ModalWindow>
-          </ModalWrapper>
-        </>
-      )}
-
-      {/* Модальное окно для ошибок создания/удаления проекта */}
+      {/* Модальное окно удаления проекта */}
       <ModalWrapper
-        isOpen={errorModal.isOpen}
-        onClose={closeErrorModal}
+        isOpen={isDeleteProject}
+        onClose={() => setIsDeleteProject(false)}
       >
         <ModalWindow
-          title="Ошибка"
-          setIsShow={closeErrorModal}
+          title="Действительно хотите удалить данный проект?"
           buttonArea={[
             <Button
-              key="close"
-              text="Ок"
-              onClick={closeErrorModal}
-            />
+              text="Да"
+              onClick={() => handleDeleteProject(isDeleteProject.id)}
+            />,
+            <Button
+              violet
+              text="Нет"
+              onClick={() => setIsDeleteProject(false)}
+            />,
           ]}
         >
-          <div style={{ whiteSpace: 'pre-line', textAlign: 'center' }}>
-            {errorModal.messages.map((message, index) => (
-              <div 
-                key={index} 
-                style={{ 
-                  marginBottom: index < errorModal.messages.length - 1 ? '10px' : '0',
-                  padding: '0 10px',
-                  fontWeight: index === 0 ? 'bold' : 'normal',
-                  color: index === 0 ? '#333' : '#666'
-                }}
-              >
-                {message}
-              </div>
-            ))}
-          </div>
+          <p className="text4">
+            «{getProjectToDelete()?.name}»
+          </p>
         </ModalWindow>
       </ModalWrapper>
     </>
