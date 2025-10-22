@@ -126,12 +126,14 @@
   font-size: 14px;
   color: red;
   display: block;
+  text-align: left;
 }
 
 .helherTextPassword {
   font-size: 14px;
   color: #9D9D9D;
   display: block;
+  text-align: left;
 }
 
 .fileUploadContainer{
