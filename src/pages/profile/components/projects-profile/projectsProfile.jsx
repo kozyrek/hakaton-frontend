@@ -90,7 +90,35 @@ const ProjectsProfile = ({ user }) => {
     fetchData();
   }, [userTeamId, isMentor, isAdmin]);
 
+  // Функция валидации формы
+  const validateForm = () => {
+    const errors = {};
+    
+    // Проверка названия проекта
+    if (!formData.name.value.trim()) {
+      errors.name = "Название проекта обязательно для заполнения";
+    }
+    
+    // Проверка описания проекта
+    if (!formData.description.value.trim()) {
+      errors.description = "Описание проекта обязательно для заполнения";
+    }
+    
+    // Проверка документа проекта
+    if (!formData.document.value) {
+      errors.document = "Документ проекта обязателен для загрузки";
+    }
+    
+    setFormError(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleCreateProject = async () => {
+    // Проверяем валидность формы перед созданием
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       const response = await createProject(
         formData.name.value,
@@ -105,6 +133,7 @@ const ProjectsProfile = ({ user }) => {
           description: { value: "", type: "text" },
           document: { value: null, type: "file" },
         });
+        setFormError({}); // Сбрасываем ошибки после успешного создания
       }
     } catch (error) {
       console.error("Ошибка при создании проекта:", error);
@@ -132,6 +161,14 @@ const ProjectsProfile = ({ user }) => {
       ...formData,
       [name]: { value: value, type: formData[name]?.type || "text" },
     });
+    
+    // Очищаем ошибку при вводе в поле
+    if (formError[name]) {
+      setFormError({
+        ...formError,
+        [name]: null,
+      });
+    }
   };
 
   const handleCardClick = (projectId) => {
@@ -145,6 +182,13 @@ const ProjectsProfile = ({ user }) => {
       return userProject?.id === isDeleteProject.id ? userProject : null;
     }
   };
+
+  // Сброс ошибок при закрытии модального окна
+  useEffect(() => {
+    if (!isCreateProject) {
+      setFormError({});
+    }
+  }, [isCreateProject]);
 
   // Рендер для участника (не ментора)
   const renderParticipantView = () => {
