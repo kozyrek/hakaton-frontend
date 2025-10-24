@@ -26,32 +26,31 @@ export default function TeamInfo({ obj, arr }) {
         }
     }, [arr]);
 
-    // Если команда не назначена
-    if (!obj) {
-        return (
-            <div className={`contentBox ${styles.wrapper}`}>
-                <h2 className={`titleH2 ${styles.title}`}>Команда</h2>
-                <p className="text1">Команда не назначена</p>
-            </div>
-        );
-    }
-
     return (
         <div className={`contentBox ${styles.wrapper}`}>
             <div>
-                <h2 className={`titleH2 ${styles.title}`}>Команда {obj.name}</h2>
+                <h2 className={`titleH2 ${styles.title}`}>
+                    {obj ? `Команда ${obj.name}` : "Команда не назначена"}
+                </h2>
+                
+                {/* Всегда показываем текст шагов, даже если команда не назначена */}
                 {isCompleteText ? (
                     <ul 
                         ref={refList}
                         className={`${styles.textList} ${!readMore ? styles.isCutText : ""}`}
                     >
-                        {arr.sort((a, b) => a.stepNumber - b.stepNumber).map((item) => (
-                            item.text && (
-                                <li key={item.id}>
-                                    <p className="text1">{JSON.parse(item.text).text}</p>
-                                </li>
-                            )
-                        ))}
+                        {arr
+                            .sort((a, b) => a.stepNumber - b.stepNumber)
+                            .map((item) => (
+                                item.text && (
+                                    <li key={item.id}>
+                                        <p className="text1">
+                                            {JSON.parse(item.text).text}
+                                        </p>
+                                    </li>
+                                )
+                            ))
+                        }
                     </ul>
                 ) : (
                     <p className="text1">Вы пока не загрузили текст</p>

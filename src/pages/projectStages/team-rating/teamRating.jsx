@@ -9,7 +9,7 @@ import styles from "./teamRating.module.css";
 import cn from "classnames";
 import { POINTS, MINUTES, SECONDS } from "../../../utils/constants";
 import { inflectWords } from "../../../utils/inflectWords";
-import setTimerStep from "../../../api/steps/setTimerStep";//----------------------------------
+import setTimerStep from "../../../api/steps/setTimerStep";
 
 export default function TeamRating({
     arr,
@@ -56,10 +56,6 @@ export default function TeamRating({
 
     function getSortArr(array, field) {
         if (step?.attempts.length) {
-            // console.log(
-            //     array.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt)),
-            //     array.sort((a, b) => +new Date(b.startedAt) - +new Date(a.startedAt))[0]
-            // );
             return array.sort(
             (a, b) => +new Date(b.startedAt) - +new Date(a.startedAt)
         )[0][field];
@@ -99,8 +95,6 @@ export default function TeamRating({
             setTime(0);
         }
         return () => clearInterval(timerId);
-
-        // eslint-disable-next-line
     }, [isStepPage, stepStatus, step, endTime, submitTime, startTime]);
 
     useEffect(() => {
@@ -129,12 +123,10 @@ export default function TeamRating({
             setRatingValue(
                 arr.reduce((prev, item) => {
                     const sum = prev + item.score;
-                    // console.log('рейтинг команды', sum)
                     return sum;
                 }, 0));
             }
         }
-        // eslint-disable-next-line
     }, [arr, step])
 
     const handleClickEditScore = () => {
@@ -164,7 +156,6 @@ export default function TeamRating({
         setRatingValue(event.target.value);
         setScoreValue(Number(event.target.value));
 
-        // console.log(event.target.validity);
         if (!event.target.validity.valid) {
             setIsError({...isError, score: true});
             printErrorMessage(event);
@@ -220,42 +211,73 @@ export default function TeamRating({
             </div>}
 
             <div className={className}>
-                {isStepPage
-                ? <span>Оценка команды за&nbsp;шаг</span>
-                : <span>Общая оценка команды</span>}
-                
-                <div className={styles.value}>
-                    {isEditScore ?
-                    <input 
-                        type="number" 
-                        name="rating"
-                        min={0}
-                        max={10}
-                        step={1}
-                        className={styles.inputValue}
-                        value={ratingValue}
-                        onChange={e => handleChangeScore(e)} 
-                        autoFocus 
-                        disabled={stepStatus.isAccept}
-                    /> :
-                    <span className={styles.rating}>
-                        {ratingValue || 0}
-                    </span>}
+                {isStepPage ? (
+                    // Для страницы шага - старый вариант
+                    <>
+                        <span>Оценка команды за&nbsp;шаг</span>
+                        <div className={styles.value}>
+                            {isEditScore ?
+                            <input 
+                                type="number" 
+                                name="rating"
+                                min={0}
+                                max={10}
+                                step={1}
+                                className={styles.inputValue}
+                                value={ratingValue}
+                                onChange={e => handleChangeScore(e)} 
+                                autoFocus 
+                                disabled={stepStatus.isAccept}
+                            /> :
+                            <span className={styles.rating}>
+                                {ratingValue || 0}
+                            </span>}
 
-                    {isMentor 
-                    && isStepPage 
-                    && (stepStatus.isSubmitted || stepStatus.timeExceeded) &&
-                    <button 
-                        type="button" 
-                        aria-label="Редактировать баллы"
-                        onClick={handleClickEditScore} 
-                        className={styles.buttonEdit}
-                        disabled={isError.score}
-                    >
-                        <Pencil />
-                    </button>}
-                </div>
-                <span>{inflectWords(ratingValue, POINTS)}</span>
+                            {isMentor 
+                            && isStepPage 
+                            && (stepStatus.isSubmitted || stepStatus.timeExceeded) &&
+                            <button 
+                                type="button" 
+                                aria-label="Редактировать баллы"
+                                onClick={handleClickEditScore} 
+                                className={styles.buttonEdit}
+                                disabled={isError.score}
+                            >
+                                <Pencil />
+                            </button>}
+                        </div>
+                        <span>{inflectWords(ratingValue, POINTS)}</span>
+                    </>
+                ) : (
+                    // Для общей оценки - новый вариант с круговым текстом
+                    <div className={styles.circleContainer}>
+                        <div className={styles.circleText}>
+                            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <path id="circlePath" d="M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0" />
+                                </defs>
+                                <text className={styles.circleTextTop}>
+                                    <textPath href="#circlePath" startOffset="0%">
+                                        Общая оценка команды
+                                    </textPath>
+                                </text>
+                                <text className={styles.circleTextBottom}>
+                                    <textPath href="#circlePath" startOffset="50%">
+                                        Общая оценка команды
+                                    </textPath>
+                                </text>
+                            </svg>
+                        </div>
+                        <div className={styles.centerContent}>
+                            <div className={styles.value}>
+                                <span className={styles.rating}>
+                                    {ratingValue || 0}
+                                </span>
+                            </div>
+                            <span className={styles.pointsText}>{inflectWords(ratingValue, POINTS)}</span>
+                        </div>
+                    </div>
+                )}
 
                 {isError.score &&
                 <div className={`text4 ${styles.errorBlock}`}>
