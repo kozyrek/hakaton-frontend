@@ -48,6 +48,59 @@
     }
 }
 
+/* Контейнер для кругового текста */
+.circleContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.circleText {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.circleText svg {
+    width: 100%;
+    height: 100%;
+}
+
+.circleTextTop text {
+    font-family: "Open Sans Regular", sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    fill: #1a1f1f;
+    letter-spacing: 0.5px;
+}
+
+.circleTextBottom text {
+    font-family: "Open Sans Regular", sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    fill: #1a1f1f;
+    letter-spacing: 0.5px;
+}
+
+.centerContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.pointsText {
+    margin-top: 4px;
+    font-size: 14px;
+    color: #1a1f1f;
+}
+
 .rating {
     color: #be1b86;
     font-size: 46px;
@@ -158,4 +211,3 @@
     color: #2b306c;
     text-align: center;
 }
-
