@@ -3,14 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Card from "../../ui/card/Card";
 import ModalWrapper from "../../../../components/modalOverlay";
 import ModalWindow from "../../../../components/modalWindow";
-import Inputs from "../../../../components/inputs/inputs";
 import Button from "../../../../components/button/button";
 import getProjects from "../../../../api/projects/getProjects";
 import getTeamById from "../../../../api/team/getTeamById";
 import createProject from "../../../../api/projects/createProject";
 import deleteProject from "../../../../api/projects/deleteProject";
 import Loader from "../../../../components/loader/loader";
-import { FILENAME_EXTENSION } from "../../../../utils/constants";
+import ProjectForm from "../profile-form/ProfileForm";
 
 import styles from "./projectsProfile.module.css";
 
@@ -25,13 +24,6 @@ const ProjectsProfile = ({ user }) => {
   const isMentor = user?.isMentor;
   const isAdmin = user?.mentor?.isAdmin;
   const userTeamId = user?.teamId;
-
-  const [formData, setFormData] = useState({
-    name: { value: "", type: "text" },
-    description: { value: "", type: "text" },
-    document: { value: null, type: "file" },
-  });
-  const [formError, setFormError] = useState({});
 
   const fetchAllProjects = async () => {
     try {
@@ -51,13 +43,9 @@ const ProjectsProfile = ({ user }) => {
     }
 
     try {
-      // Получаем команду пользователя
       const team = await getTeamById(userTeamId);
       
-      // Если у команды есть проект, получаем его
       if (team.projectId) {
-        // Здесь нужно получить проект по ID - возможно, потребуется новый API метод
-        // Пока используем фильтрацию всех проектов
         const allProjectsResponse = await getProjects();
         const userProj = allProjectsResponse.data?.items?.find(
           project => project.id === team.projectId
@@ -77,10 +65,8 @@ const ProjectsProfile = ({ user }) => {
       setIsLoading(true);
       
       if (isMentor || isAdmin) {
-        // Для ментора/админа загружаем все проекты
         await fetchAllProjects();
       } else {
-        // Для участника загружаем только его проект
         await fetchUserProject();
       }
       
@@ -90,25 +76,19 @@ const ProjectsProfile = ({ user }) => {
     fetchData();
   }, [userTeamId, isMentor, isAdmin]);
 
-  const handleCreateProject = async () => {
-    try {
-      const response = await createProject(
-        formData.name.value,
-        formData.description.value,
-        formData.document.value
-      );
-      if (response.status === 201) {
-        await fetchAllProjects();
-        setIsCreateProject(false);
-        setFormData({
-          name: { value: "", type: "text" },
-          description: { value: "", type: "text" },
-          document: { value: null, type: "file" },
-        });
-      }
-    } catch (error) {
-      console.error("Ошибка при создании проекта:", error);
+  const handleCreateProject = async (projectData) => {
+    const response = await createProject(
+      projectData.name,
+      projectData.description,
+      projectData.document
+    );
+    
+    if (response.status === 201) {
+      await fetchAllProjects();
+      setIsCreateProject(false);
+      return response;
     }
+    throw new Error("Не удалось создать проект");
   };
 
   const handleDeleteProject = async (projectId) => {
@@ -127,13 +107,6 @@ const ProjectsProfile = ({ user }) => {
     }
   };
 
-  const handleChange = (value, name) => {
-    setFormData({
-      ...formData,
-      [name]: { value: value, type: formData[name]?.type || "text" },
-    });
-  };
-
   const handleCardClick = (projectId) => {
     navigate(`/project/${projectId}`);
   };
@@ -146,7 +119,6 @@ const ProjectsProfile = ({ user }) => {
     }
   };
 
-  // Рендер для участника (не ментора)
   const renderParticipantView = () => {
     if (isLoading) {
       return <Loader />;
@@ -174,7 +146,6 @@ const ProjectsProfile = ({ user }) => {
     }
   };
 
-  // Рендер для ментора/админа
   const renderMentorView = () => {
     if (isLoading) {
       return <Loader />;
@@ -220,84 +191,38 @@ const ProjectsProfile = ({ user }) => {
       
       {isMentor || isAdmin ? renderMentorView() : renderParticipantView()}
 
-      {/* Модальные окна показываем только менторам/админам */}
-      {(isMentor || isAdmin) && (
-        <>
-          <ModalWrapper
-            isOpen={isCreateProject}
-            onClose={() => setIsCreateProject(false)}
-          >
-            <ModalWindow
-              title="Создание нового проекта"
-              buttonArea={[
-                <Button
-                  text="Создать"
-                  onClick={handleCreateProject}
-                />,
-                <Button
-                  violet
-                  text="Отменить"
-                  onClick={() => {
-                    setIsCreateProject(false);
-                  }}
-                />,
-              ]}
-            >
-              <Inputs
-                name="name"
-                type="text"
-                formData={formData}
-                formError={formError}
-                placeholder="Название кейса"
-                onChange={handleChange}
-                maxLength={50}
-              />
-              <Inputs
-                name="description"
-                type="textarea"
-                formData={formData}
-                formError={formError}
-                placeholder="Описание кейса"
-                onChange={handleChange}
-              />
-              <Inputs
-                name="document"
-                type="download"
-                formData={formData}
-                formError={formError}
-                placeholder="Загрузите документ кейса"
-                notUser
-                onChange={handleChange}
-                accept={FILENAME_EXTENSION.join(", ")}
-              />
-            </ModalWindow>
-          </ModalWrapper>
+      {/* Используем общий компонент формы */}
+      <ProjectForm
+        mode="create"
+        isOpen={isCreateProject}
+        onClose={() => setIsCreateProject(false)}
+        onSubmit={handleCreateProject}
+      />
 
-          <ModalWrapper
-            isOpen={isDeleteProject}
-            onClose={() => setIsDeleteProject(false)}
-          >
-            <ModalWindow
-              title="Действительно хотите удалить данный проект?"
-              buttonArea={[
-                <Button
-                  text="Да"
-                  onClick={() => handleDeleteProject(isDeleteProject.id)}
-                />,
-                <Button
-                  violet
-                  text="Нет"
-                  onClick={() => setIsDeleteProject(false)}
-                />,
-              ]}
-            >
-              <p className="text4">
-                «{getProjectToDelete()?.name}»
-              </p>
-            </ModalWindow>
-          </ModalWrapper>
-        </>
-      )}
+      {/* Модальное окно удаления проекта */}
+      <ModalWrapper
+        isOpen={isDeleteProject}
+        onClose={() => setIsDeleteProject(false)}
+      >
+        <ModalWindow
+          title="Действительно хотите удалить данный проект?"
+          buttonArea={[
+            <Button
+              text="Да"
+              onClick={() => handleDeleteProject(isDeleteProject.id)}
+            />,
+            <Button
+              violet
+              text="Нет"
+              onClick={() => setIsDeleteProject(false)}
+            />,
+          ]}
+        >
+          <p className="text4">
+            «{getProjectToDelete()?.name}»
+          </p>
+        </ModalWindow>
+      </ModalWrapper>
     </>
   );
 };

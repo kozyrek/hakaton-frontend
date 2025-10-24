@@ -1,16 +1,16 @@
 .main {
-  min-height: calc(100vh - 80px - 1px);
+  min-height: calc(100vh - 80px + 2px);
   background: linear-gradient(90deg, #be1b86, #2b306c);
   position: relative;
   overflow: hidden !important;
   margin-top: 80px;
 
   @media (max-width: 1024px) {
-    margin-top: 69px;/*по макету 70 - появляется белая линия*/
+    margin-top: 68px;/*по макету 70 - появляется белая линия*/
   }
 
   @media (max-width: 768px) {
-    margin-top: 59px;/*по макету 60 - появляется белая линия*/
+    margin-top: 58px;/*по макету 60 - появляется белая линия*/
   }
 }
 
