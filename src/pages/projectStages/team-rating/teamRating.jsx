@@ -51,6 +51,9 @@ export default function TeamRating({
         "Time exceeded": "Время превышено",
     }
 
+    const timeLag = 103*1000;
+    // const timeLag = 0;
+
     function getSortArr(array, field) {
         if (step?.attempts.length) {
             return array.sort(
@@ -65,10 +68,13 @@ export default function TeamRating({
         let timerId;
 
         if (stepStatus.notStarted) {
-            setTime(step.timerMinutes * 60000);
+            const newTime = step.timerMinutes * 60000;
+            setTime(newTime);
+            // console.log("111", newTime, step.timerMinutes);//
         } else if (stepStatus.inProgress) {
             const remaining = new Date(endTime) - new Date();
-            setTime(remaining > 0 ? remaining : 0);
+            const newRemaining = remaining > 0 ? remaining : 0
+            setTime(newRemaining + timeLag);
 
             if (remaining > 0) {
                 timerId = setInterval(() => {
@@ -78,15 +84,27 @@ export default function TeamRating({
                     });
                 }, 1000);
             }
+            // console.log("222", endTime, remaining, newRemaining);//--
         } else if (
             stepStatus.isSubmitted || stepStatus.isAccept
         ) {
-            setTime(new Date(endTime) - new Date(submitTime));
+            const newTime = new Date(submitTime) - new Date(startTime)
+            setTime(newTime);
+            // console.log("333", newTime, Number(new Date(submitTime)), Number(new Date(startTime)));//--
         } else if (stepStatus.timeExceeded) {
             setTime(0);
         }
         return () => clearInterval(timerId);
     }, [isStepPage, stepStatus, step, endTime, submitTime, startTime]);
+
+    useEffect(() => {
+        if (!step) return;
+
+        setStartTime(isStepPage && getSortArr(step.attempts, "startedAt"));
+        setEndTime(isStepPage && getSortArr(step.attempts, "endTimeAt"));
+        setSubmitTime(isStepPage && getSortArr(step.attempts, "submittedAt"));
+        // eslint-disable-next-line
+    }, [step])
 
     useEffect(() => {
         const totalSeconds = Math.floor(time / 1000);

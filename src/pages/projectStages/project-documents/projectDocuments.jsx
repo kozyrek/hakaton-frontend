@@ -36,7 +36,6 @@ export default function ProjectDocuments({files, projectId, isCompleteProject}) 
                 text='Скачать проект' 
                 addClass={styles.buttonTop}
                 onClick={handleClick}
-                // disabled={!files}
                 disabled={!isCompleteProject}
             ></Button>
         </div>

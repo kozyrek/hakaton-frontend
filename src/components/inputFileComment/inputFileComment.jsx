@@ -3,15 +3,11 @@ import { useSelector } from "react-redux";
 import IconDelete from "../../assests/images/icon/icon-delete";
 import IconPaperclip from "../../assests/images/icon/icon-paperclip";
 
-import styles from "./inputFile.module.css";
+import styles from "../inputFile/inputFile.module.css";
 
-export default function InputFile({
-    files,
-    setFiles,
+export default function InputFileComment({
     fileDownload, 
     setFileDownload, 
-    fileDelete,
-    setFileDelete,
     stepStatus, 
     multiple, 
     accept, 
@@ -19,13 +15,20 @@ export default function InputFile({
     disabledButton
 }) {
     const [isMentor, setIsMentor] = useState(useSelector((state)=>state.user.user.isMentor));
+    const [files, setFiles] = useState([]);
+
+    useEffect(() => {
+        setFiles(fileDownload);
+        console.log("файлы в компоненте", files)
+        // eslint-disable-next-line
+    }, [fileDownload])
 
     const handleAddFile = (e) => {
         //добавить валидацию файла--------------------------------------
         e.preventDefault();
         if (files?.length) {
             setFiles([...files, ...Array.from(e.target.files)]);
-            setFileDownload([...fileDownload, ...Array.from(e.target.files)])
+            setFileDownload([...files, ...Array.from(e.target.files)])
         } else {
             setFiles(Array.from(e.target.files));
             setFileDownload(Array.from(e.target.files));
@@ -33,20 +36,15 @@ export default function InputFile({
     }
 
     const handleDeleteFile = (i) => {
-        if (files[i] instanceof File) {
-            setFileDownload(fileDownload => fileDownload.filter(el => el.name !== files[i].name));
-        } else {
-            fileDelete.push(files[i].id);
-            setFileDelete(fileDelete);
-        }
         setFiles(files => files.filter(el => el !== files[i]));
+        setFileDownload(files => files.filter(el => el !== files[i]));
     }
 
     return (
         <div className={files?.length && styles.inputWrapper}>
             {(!isMentor || isComment) && <label className={`${styles.inputFile} ${(
                 // (stepStatus.notStarted || !stepStatus.inProgress || stepStatus.isSubmitted) && !isComment)
-                !stepStatus.inProgress) 
+                !(stepStatus.inProgress || stepStatus.isSubmitted || stepStatus.timeExceeded)) 
                 ? `${styles.disabled}` 
                 : ""} ${isComment ? styles.inputFileMobile : ""}`}>
                 <span className={`text4 ${styles.inputFileText} ${!isComment ? styles.inputWidth : ""}`}>Выберите файл</span>
@@ -77,7 +75,7 @@ export default function InputFile({
                         >
                             {item.name}
                         </a>
-                        {(!isMentor && stepStatus.inProgress) &&
+                        {(!isMentor || isComment) && (!stepStatus.notStarted || stepStatus.inProgress || !stepStatus.isSubmitted || !stepStatus.isAccept) &&//--------уточнить условия отображения 
                         <button 
                             type="button"
                             className={styles.buttonDeleteFile}

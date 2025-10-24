@@ -11,7 +11,7 @@ export default function TeamInfo({ obj, arr }) {
     useEffect(() => {
         if (arr && arr.length > 0) {
             const height = refList.current?.getBoundingClientRect().height || 0;
-            if (height > 704) {
+            if (height >= 704) {
                 setShowButton(true);
             }
         }
