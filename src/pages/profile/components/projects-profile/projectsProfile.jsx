@@ -9,7 +9,7 @@ import getTeamById from "../../../../api/team/getTeamById";
 import createProject from "../../../../api/projects/createProject";
 import deleteProject from "../../../../api/projects/deleteProject";
 import Loader from "../../../../components/loader/loader";
-import ProjectForm from "../profile-form/ProfileForm";
+import ProjectForm from "../projectForm/ProjectForm";
 
 import styles from "./projectsProfile.module.css";
 
