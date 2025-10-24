@@ -4,6 +4,7 @@ import ModalWindow from "../../components/../../../components/modalWindow";
 import Inputs from "../../../../components/inputs/inputs";
 import Button from "../../../../components/button/button";
 import { FILENAME_EXTENSION } from "../../../../utils/constants";
+
 const ProjectForm = ({ 
   mode = "create", // 'create' | 'edit'
   isOpen, 
@@ -20,8 +21,10 @@ const ProjectForm = ({
   const [formError, setFormError] = useState({});
   const [errorModal, setErrorModal] = useState({ isOpen: false, messages: [] });
 
-  // Инициализация формы начальными данными при редактировании
+  // Инициализация формы только при открытии модального окна
   useEffect(() => {
+    if (!isOpen) return;
+
     if (mode === "edit" && initialData) {
       setFormData({
         name: { value: initialData.name || "", type: "text" },
@@ -29,7 +32,6 @@ const ProjectForm = ({
         document: { 
           value: initialData.documentPath || null, 
           type: "file",
-          // Сохраняем информацию о текущем файле
           currentFile: initialData.documentPath ? {
             name: initialData.documentPath.split('/').pop(),
             path: initialData.documentPath
@@ -44,7 +46,7 @@ const ProjectForm = ({
         document: { value: null, type: "file" },
       });
     }
-  }, [mode, initialData, isOpen]);
+  }, [isOpen, mode]); // Только isOpen и mode как зависимости
 
   // Функция валидации формы
   const validateForm = () => {
