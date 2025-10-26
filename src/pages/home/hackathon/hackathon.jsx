@@ -1,7 +1,8 @@
-import Button from "../../../components/button/button";
+import { Link } from "react-router-dom";
 import { forWhom, advantages } from "../utils/utils";
 
 import styles from "./hackathon.module.css";
+import stylesButton from "../../../components/button/button.module.css";
 import image from "./images/image.png";
 
 export default function Hackathon() {
@@ -31,7 +32,17 @@ export default function Hackathon() {
                     </ul>
                 </li>
             </ul>
-            <Button large path="test" addClass={styles.buttonTop} text="Положение о хакатоне"></Button>
+            <Link 
+                to="/Положение_о_научном_хакатоне_23_10_23.pdf"
+                className={`${stylesButton.button} 
+                ${stylesButton.buttonBlue} 
+                ${stylesButton.buttonLarge} 
+                ${styles.buttonTop}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Положение о хакатоне
+            </Link>
         </section>
     )
 }
