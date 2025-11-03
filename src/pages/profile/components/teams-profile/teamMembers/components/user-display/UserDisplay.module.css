@@ -16,6 +16,7 @@
 }
 
 .consentCheckBox {
+  aspect-ratio: 1;
   /* margin-top: 8px; */
   border: 2px solid #b899d6 !important;
   outline: none;
