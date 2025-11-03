@@ -20,6 +20,34 @@ import { changePassword } from "../../../../api/auth/changePassword";
 import ModalWrapper from "../../../../components/modalOverlay";
 import ModalWindow from "../../../../components/modalWindow";
 
+// Функция для форматирования даты из формата сервера (YYYY-MM-DD) в формат отображения (DD.MM.YYYY)
+const formatDateForDisplay = (serverDate) => {
+  if (!serverDate) return '';
+  try {
+    const [year, month, day] = serverDate.split('-');
+    if (day && month && year) {
+      return `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
+    }
+    return serverDate;
+  } catch (e) {
+    return serverDate;
+  }
+};
+
+// Функция для преобразования даты из формата отображения (DD.MM.YYYY) в формат сервера (YYYY-MM-DD)
+const formatDateForServer = (displayDate) => {
+  if (!displayDate) return '';
+  try {
+    const [day, month, year] = displayDate.split('.');
+    if (day && month && year) {
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    return displayDate;
+  } catch (e) {
+    return displayDate;
+  }
+};
+
 const ProfileForm = ({
   initialData,
   handlePhotoChange,
@@ -186,6 +214,11 @@ const ProfileForm = ({
             value = formatPhoneNumber(value);
           }
           
+          // Форматируем дату при инициализации
+          if (field === 'birthDate' && value) {
+            value = formatDateForDisplay(value);
+          }
+          
           applicableFields[field] = {
             value: value,
             type: field === 'birthDate' ? 'date' : 'text'
@@ -209,10 +242,10 @@ const ProfileForm = ({
     
     if (name === "phoneNumber") {
       // Для телефона сохраняем отформатированное значение для отображения
-      // Окончательная очистка будет в prepareFormDataForSubmit
       processedValue = value;
     }
     
+    // Для даты не нужно дополнительное форматирование - Inputs уже отображает в правильном формате
     setFormData({
       ...formData,
       [name]: { value: processedValue, type: formData[name].type },
@@ -223,8 +256,13 @@ const ProfileForm = ({
     }
 
     timerRef.current = setTimeout(() => {
-      // Для валидации передаем очищенный номер телефона
-      const validationValue = name === "phoneNumber" ? cleanPhoneNumber(value) : value;
+      // Для валидации передаем очищенный номер телефона или дату в серверном формате
+      let validationValue = value;
+      if (name === "phoneNumber") {
+        validationValue = cleanPhoneNumber(value);
+      } else if (name === "birthDate") {
+        validationValue = formatDateForServer(value);
+      }
       validateField(validationValue, formData[name].type, name, setFormError);
     }, 1500);
   };
@@ -282,6 +320,12 @@ const ProfileForm = ({
       phoneNumberValue = cleanPhoneNumber(data.phoneNumber);
     }
 
+    // Преобразуем дату в формат сервера
+    let birthDateValue = "";
+    if (data.birthDate) {
+      birthDateValue = formatDateForServer(data.birthDate);
+    }
+
     // Базовые поля пользователя - передаем ТОЛЬКО заполненные поля
     let apiData = {};
 
@@ -289,7 +333,7 @@ const ProfileForm = ({
     if (data.firstName) apiData.firstName = data.firstName;
     if (data.lastName) apiData.lastName = data.lastName;
     if (data.patronymic) apiData.patronymic = data.patronymic;
-    if (data.birthDate || data.dateBirth) apiData.birthDate = data.birthDate || data.dateBirth;
+    if (birthDateValue) apiData.birthDate = birthDateValue;
     
     // ВАЖНО: Всегда добавляем phoneNumber, даже если он пустой, но только если он был изменен
     // или если у пользователя уже был номер телефона
@@ -337,6 +381,8 @@ const ProfileForm = ({
     console.log('Подготовленные данные для отправки:', apiData);
     console.log('Исходный телефон:', data.phoneNumber);
     console.log('Очищенный телефон:', phoneNumberValue);
+    console.log('Исходная дата:', data.birthDate);
+    console.log('Преобразованная дата:', birthDateValue);
     console.log('Был ли телефон у пользователя:', initialData?.phoneNumber);
     
     return apiData;
@@ -548,7 +594,6 @@ const ProfileForm = ({
           {/* Блок с ошибкой */}
           {passwordChangeError && (
             <div className={styles.errorMessage}>
-              {/* <div className={styles.errorIcon}>⚠️</div> */}
               <div className={styles.errorText}>{passwordChangeError}</div>
             </div>
           )}
