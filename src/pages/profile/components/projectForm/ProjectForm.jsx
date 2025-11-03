@@ -301,6 +301,19 @@ const ProjectForm = ({
             </div>
           )}
           
+          {/* ДОБАВЛЕНО: Указание что файл обязателен для создания проекта */}
+          {mode === 'create' && (
+            <div style={{ 
+              marginBottom: '8px', 
+              fontSize: '14px', 
+              color: '#dc3545',
+              fontWeight: '500',
+              textAlign: 'left'
+            }}>
+              * Файл обязателен для загрузки
+            </div>
+          )}
+          
           <Inputs
             name="document"
             type="download"
@@ -312,6 +325,17 @@ const ProjectForm = ({
             accept={FILENAME_EXTENSION.join(", ")}
             disabled={loading}
           />
+
+          {/* ДОБАВЛЕНО: Информация о поддерживаемых форматах */}
+          <div style={{ 
+            marginTop: '8px', 
+            fontSize: '12px', 
+            color: '#6c757d',
+            fontStyle: 'italic',
+              textAlign: 'left'
+          }}>
+            Поддерживаемые форматы: {FILENAME_EXTENSION.join(', ')}
+          </div>
         </ModalWindow>
       </ModalWrapper>
 
