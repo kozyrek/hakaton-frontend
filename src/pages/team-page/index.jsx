@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container } from "react-bootstrap";
-import LayoutLogin from "../auth/layoutLogin";
+import LayoutSmall from "../auth/layoutSmall";
 import getTeamById from "../../api/team/getTeamById";
 import getProjectById from "../../api/projects/getProjectById";
 import HeadTeam from "../team-page/head-team/headTeam";
@@ -81,7 +81,7 @@ const handleTeamUpdate = async () => {
     // ДОБАВЛЕНО: Обработка случая, когда данные не найдены
     if (error) {
         return (
-            <LayoutLogin>
+            <LayoutSmall>
                 <Container fluid="xxl">
                     <div style={{ 
                         padding: '2rem', 
@@ -119,17 +119,17 @@ const handleTeamUpdate = async () => {
                         </button>
                     </div>
                 </Container>
-            </LayoutLogin>
+            </LayoutSmall>
         );
     }
 
     return (
         <>
-            <LayoutLogin>
+            <LayoutSmall>
                 <Container fluid="xxl">
                     <HeadTeam team={team} onTeamUpdate={handleTeamUpdate}/>     
                 </Container>      
-            </LayoutLogin>
+            </LayoutSmall>
 
             <Container fluid="xxl">
                 <TeamMembers 
