@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container } from "react-bootstrap";
-import LayoutLogin from "../auth/layoutLogin";
+import LayoutSmall from "../auth/layoutSmall";
 import HeadStages from "./head-stages/headStages";
 import TeamInfo from "./team-info/teamInfo";
 import ProjectDocuments from "./project-documents/projectDocuments";
@@ -115,7 +115,7 @@ export default function ProjectStages() {
     // Обработка ошибки загрузки
     if (error) {
         return (
-            <LayoutLogin>
+            <LayoutSmall>
                 <Container fluid="xxl">
                     <div style={{ 
                         padding: '2rem', 
@@ -155,7 +155,7 @@ export default function ProjectStages() {
                         </button>
                     </div>
                 </Container>
-            </LayoutLogin>
+            </LayoutSmall>
         );
     }
 
@@ -171,14 +171,14 @@ export default function ProjectStages() {
     // Основной рендеринг
     return (        
         <>
-            <LayoutLogin>
+            <LayoutSmall>
                 <Container fluid="xxl">
                     <HeadStages 
                         obj={project}
                         setProject={setProject}
                     />     
                 </Container>      
-            </LayoutLogin>
+            </LayoutSmall>
             <Container fluid="xxl">
                 <TeamInfo 
                     obj={teamInfo} 
