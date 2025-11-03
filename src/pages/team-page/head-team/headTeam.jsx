@@ -5,25 +5,50 @@ import Input from "../../../components/inputs/inputs";
 import Button from "../../../components/button/button";
 import Pencil from "../../profile/components/personal-info/images/Pencil";
 import { useResize } from "../../../hooks/useResize";
-import updateTeam from "../../../api/team/updateTeam"; // ДОБАВЛЕНО: импорт функции обновления команды
+import updateTeam from "../../../api/team/updateTeam";
+import { getMentor } from "../../../api/getMentor";
+import profilePhotoAvatar from "../../../assests/images/photo/profilePhotoAvatar.svg"; // ДОБАВЛЕНО: импорт заглушки
 
 import styles from "./headTeam.module.css";
 
-export default function HeadTeam({ team, onTeamUpdate }) { // ДОБАВЛЕНО: пропс onTeamUpdate для обновления данных после изменения
+export default function HeadTeam({ team, onTeamUpdate }) {
     const [isOpenChangeTeam, setIsOpenChangeTeam] = useState(false);
-    const [mentor, setMentor] = useState("");
+    const [mentor, setMentor] = useState(null);
     const [formData, setFormData] = useState({
         teamName: { value: "", type: "text" },
     });
     const [formError, setFormError] = useState({
         teamName: "",
     });
-    const [isLoading, setIsLoading] = useState(false); // ДОБАВЛЕНО: состояние загрузки
-    const [errorMessage, setErrorMessage] = useState(""); // ДОБАВЛЕНО: сообщение об ошибке
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isMentorLoading, setIsMentorLoading] = useState(false);
 
     const width = useResize();
 
-    // ДОБАВЛЕНО: установка начального значения названия команды
+    // Эффект для загрузки данных ментора
+    useEffect(() => {
+        const fetchMentor = async () => {
+            if (team && team.mentorId) {
+                setIsMentorLoading(true);
+                try {
+                    const mentorData = await getMentor(team.mentorId);
+                    setMentor(mentorData);
+                } catch (error) {
+                    console.error("Ошибка при загрузке данных ментора:", error);
+                    setMentor(null);
+                } finally {
+                    setIsMentorLoading(false);
+                }
+            } else {
+                setMentor(null);
+            }
+        };
+
+        fetchMentor();
+    }, [team?.mentorId]);
+
+    // Установка начального значения названия команды
     useEffect(() => {
         if (team && team.name) {
             setFormData({
@@ -32,7 +57,6 @@ export default function HeadTeam({ team, onTeamUpdate }) { // ДОБАВЛЕНО
         }
     }, [team]);
 
-    // ДОБАВЛЕНО: функция изменения названия команды
     const handleChangeTeam = async () => {
         const newName = formData.teamName.value.trim();
         
@@ -94,7 +118,7 @@ export default function HeadTeam({ team, onTeamUpdate }) { // ДОБАВЛЕНО
         setErrorMessage(""); // Очищаем общее сообщение об ошибке
     };
 
-    // ДОБАВЛЕНО: функция для закрытия модального окна с сбросом ошибок
+    // Функция для закрытия модального окна с сбросом ошибок
     const handleCloseModal = () => {
         setIsOpenChangeTeam(false);
         setFormError({ teamName: "" });
@@ -125,13 +149,28 @@ export default function HeadTeam({ team, onTeamUpdate }) { // ДОБАВЛЕНО
 
             <div className={styles.mentorBlock}>
                 <div className={styles.imgWrapper}>
-                    {mentor.photoPath && 
-                    <img src={mentor.photoPath} alt="Фотография ментора"></img>}
+                    {/* ИЗМЕНЕНО: используем заглушку если нет фото ментора */}
+                    <img 
+                        src={mentor?.photoPath || profilePhotoAvatar} 
+                        alt="Фотография ментора"
+                        onError={(e) => {
+                            // Если фото не загружается, используем заглушку
+                            e.target.src = profilePhotoAvatar;
+                        }}
+                    />
                 </div>
                 <div className={styles.nameWrapper}>
                     <span className="text3">Ментор команды</span>
                     <br></br>
-                    <span className="text1">{mentor.lastName} {mentor.firstName} TEST TEST</span>
+                    {isMentorLoading ? (
+                        <span className="text1">Загрузка...</span>
+                    ) : mentor ? (
+                        <span className="text1">
+                            {mentor.last_name} {mentor.first_name} {mentor.patronymic || ''}
+                        </span>
+                    ) : (
+                        <span className="text1">Ментор не назначен</span>
+                    )}
                 </div>
             </div>
             
@@ -157,7 +196,7 @@ export default function HeadTeam({ team, onTeamUpdate }) { // ДОБАВЛЕНО
                         />,
                     ]}
                 >
-                    {/* ДОБАВЛЕНО: отображение ошибок */}
+                    {/* Отображение ошибок */}
                     {errorMessage && (
                         <div className={styles.errorMessage}>
                             {errorMessage}

@@ -50,7 +50,7 @@
 .imgWrapper {
     width: 208px;
     height: 180px;
-    background-color: #f6edff;
+    /* background-color: #f6edff; */
     border-radius: 8px;
 
     img {
