@@ -15,7 +15,7 @@ export const LABELS = {
   interests: "Интересы",
   olympics: "Олимпиады",
   achievements: "Достижения",
-  download: "",
+  download: "Документы",
   articles: "Статьи",
   scientificInterests: "Круг научных интересов",
   taughtSubjects: "Преподаваемые предметы",
@@ -39,6 +39,8 @@ export default function PersonalInfo({ isViewied = false }) {
   const userState = useSelector((state) => state.user ?? {});
   const width = useResize();
   const [data, setData] = useState();
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Получаем ID из JWT токена
   const token = userState.token?.accessToken;
@@ -49,16 +51,37 @@ export default function PersonalInfo({ isViewied = false }) {
   const userData = userState.user;
   const isMentor = userData?.isMentor;
 
-  console.log('Authenticated user ID from token:', authenticatedUserId);
-  console.log('User data from Redux:', userData);
-  console.log('Is mentor:', isMentor);
-
   // Используем ID из токена для API запросов
   const userId = authenticatedUserId;
 
+  // Загрузка документов пользователя
+  const loadUserDocuments = async () => {
+    if (!userId) {
+      console.warn('User ID не найден для загрузки документов');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const docs = await getUserDocuments(userId);
+      const documentsArray = Array.isArray(docs) ? docs : [];
+      
+      dispatch(set_user_files(documentsArray));
+      setDocuments(documentsArray);
+      
+      return documentsArray;
+    } catch (error) {
+      console.error('Ошибка при загрузке документов:', error);
+      dispatch(set_user_files([]));
+      setDocuments([]);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (userData && Object.keys(userData).length !== 0) {
-      console.log('Setting data from userData:', userData);
       setData(
         isMentor
           ? {
@@ -66,53 +89,30 @@ export default function PersonalInfo({ isViewied = false }) {
               scientificInterests: userData.mentor?.scientificInterests || "",
               taughtSubjects: userData.mentor?.taughtSubjects || "",
               researchTopics: userData.mentor?.researchTopics || "",
-              documents: userState.documents || [],
             }
           : {
               interests: userData.participant?.interests || "",
               olympics: userData.participant?.olympics || "",
               achievements: userData.participant?.achievements || "",
-              documents: userState.documents || [],
             }
       );
     }
-  }, [userData, isMentor, userState.documents]);
+  }, [userData, isMentor]);
 
   useEffect(() => {
-    const getDocuments = async () => {
-      console.log('Attempting to load documents for user ID:', userId);
-      
-      if (userId) {
-        try {
-          const docs = await getUserDocuments(userId);
-          console.log('Loaded documents:', docs);
-          dispatch(set_user_files(docs));
-          
-          // Обновляем данные с документами
-          setData(prevData => ({
-            ...prevData,
-            documents: docs
-          }));
-        } catch (error) {
-          console.error('Ошибка при загрузке документов:', error);
-        }
-      } else {
-        console.warn('User ID не найден для загрузки документов');
-      }
-    };
-    
-    if (userId) {
-      getDocuments();
+    loadUserDocuments();
+  }, [userId]);
+
+  useEffect(() => {
+    // Обновляем documents из Redux store
+    if (userState.documents && Array.isArray(userState.documents)) {
+      setDocuments(userState.documents);
     }
-  }, [userId, dispatch]);
+  }, [userState.documents]);
 
   if (!data) {
-    console.log('Data is not ready, showing loading...');
-    return <>Loading...</>;
+    return <div>Loading...</div>;
   }
-
-  console.log('Rendering with data:', data);
-  console.log('Current user ID for TextEdit:', userId);
 
   return (
     <Container fluid className="p-0">
@@ -138,34 +138,45 @@ export default function PersonalInfo({ isViewied = false }) {
         userId ? (
           <TextEdit
             personalInfo={data}
+            documents={documents}
             onClick={setIsEdit}
             id={userId}
             isMentor={isMentor}
+            onDocumentsUpdate={loadUserDocuments}
           />
         ) : (
           <div className="text-danger">
             Ошибка: ID пользователя не найден. Невозможно сохранить изменения.
-            <br />
-            <small>User ID: {userId}</small>
           </div>
         )
       ) : (
-        Object.entries(data)
-          .filter(([key, value]) => {
-            // Показываем только непустые поля и документы
-            if (key === 'documents') return value && value.length > 0;
-            return value && value.toString().trim() !== '';
-          })
-          .map(([key, value]) => (
-            <Row className={styles.textViewContainer} key={key}>
+        <>
+          {/* Отображение текстовых полей */}
+          {Object.entries(data)
+            .filter(([key, value]) => value && value.toString().trim() !== '')
+            .map(([key, value]) => (
+              <Row className={styles.textViewContainer} key={key}>
+                <Col>
+                  <TextView
+                    title={LABELS[key]}
+                    text={value}
+                  />
+                </Col>
+              </Row>
+            ))}
+          
+          {/* Отдельное отображение документов */}
+          {documents.length > 0 && (
+            <Row className={styles.textViewContainer}>
               <Col>
                 <TextView
-                  title={LABELS[key]}
-                  text={value}
+                  title={LABELS.download}
+                  documents={documents}
                 />
               </Col>
             </Row>
-          ))
+          )}
+        </>
       )}
     </Container>
   );

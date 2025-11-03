@@ -33,3 +33,4 @@ export const SECONDS = ["секунда", "секунды", "секунд"];
 export const FILENAME_EXTENSION = [".pdf", ".txt", ".doc", ".docx"]
 
 export const FILENAME_EXTENSION_FULL = [".jpeg", ".jpg", ".png", ".bmp", ".pdf", ".rtf", ".odt", ".txt", ".doc", ".docx", ".xls", ".xlsx", ".ods", ".csv", ".ppt", ".pptx", ".mp4", ".mp3", ".avi", ".mov", ".wmv", ".wav", ".mpeg", ".flv", ".aac", ".au", ".7z", ".rar", ".zip", ".psd", ".cdr", ".ai", ".stl", ".eps"]
+export const FILENAME_EXTENSION_FULL_NO_ZIPORRAR = [".jpeg", ".jpg", ".png", ".bmp", ".pdf", ".rtf", ".odt", ".txt", ".doc", ".docx", ".xls", ".xlsx", ".ods", ".csv", ".ppt", ".pptx", ".mp4", ".mp3", ".avi", ".mov", ".wmv", ".wav", ".mpeg", ".flv", ".aac", ".au", ".7z", ".psd", ".cdr", ".ai", ".stl", ".eps"]

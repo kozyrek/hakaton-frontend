@@ -9,7 +9,7 @@ import TeamRating from "../../projectStages/team-rating/teamRating";
 import sendDataStepProject from "../../../api/projects/sendDataStepProject";
 import acceptStep from "../../../api/steps/acceptStep";
 import rejectStep from "../../../api/steps/rejectStep";
-import { FILENAME_EXTENSION_FULL, ROUTES } from "../../../utils/constants";
+import { FILENAME_EXTENSION_FULL, FILENAME_EXTENSION_FULL_NO_ZIPORRAR, ROUTES } from "../../../utils/constants";
 import { useNavigate } from "react-router-dom";
 
 
@@ -228,6 +228,19 @@ export default function StepProjectInfo({
         </h3>
         <p className="text1">Документы, презентации, картинки, видео</p>
 
+        {/* ДОБАВЛЕНО: Указание что файлы обязательны для отправки шага */}
+        {!isMentor && stepStatus.inProgress && (
+          <div style={{ 
+            marginBottom: '8px', 
+            fontSize: '14px', 
+            color: '#dc3545',
+            fontWeight: '500',
+            textAlign: 'left'
+          }}>
+            * Для отправки шага необходимо добавить текст или файлы
+          </div>
+        )}
+
         <InputFile
           files={files}
           setFiles={setFiles}
@@ -237,9 +250,20 @@ export default function StepProjectInfo({
           setFileDelete={setFileDelete}
           stepStatus={stepStatus}
           multiple
-          accept={FILENAME_EXTENSION_FULL.join(", ")}
+          accept={FILENAME_EXTENSION_FULL_NO_ZIPORRAR.join(", ")}
           disabledButton={!stepStatus.inProgress}
         />
+
+        {/* ДОБАВЛЕНО: Информация о поддерживаемых форматах */}
+        <div style={{ 
+          marginTop: '8px', 
+          fontSize: '12px', 
+          color: '#6c757d',
+          fontStyle: 'italic',
+              textAlign: 'left'
+        }}>
+          Поддерживаемые форматы: {FILENAME_EXTENSION_FULL_NO_ZIPORRAR.join(', ')}
+        </div>
       </div>
       {isMentor && (
         <div className={styles.buttonBlock}>
