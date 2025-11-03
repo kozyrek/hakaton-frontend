@@ -6,9 +6,11 @@ import { Row, Col } from "react-bootstrap";
 import updateUserInterest from "../../../../../api/updateUserInterest";
 import addUserDocument from "../../../../../api/document-user/addUserDocument";
 import deleteUserDocument from "../../../../../api/document-user/deleteUserDocument";
+import ModalWrapper from "../../../../../components/modalOverlay";
+import ModalWindow from "../../../../../components/modalWindow";
+import Button from "../../../../../components/button/button";
 
 import styles from "../index.module.css";
-import Button from "../../../../../components/button/button";
 import { useDispatch } from "react-redux";
 import { set_user } from "../../../../../store/user/userSlice";
 
@@ -29,6 +31,8 @@ export default function TextEdit({ personalInfo, documents, onClick, id, isMento
   const [newFiles, setNewFiles] = useState([]);
   const [filesToDelete, setFilesToDelete] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [errorModal, setErrorModal] = useState({ isOpen: false, messages: [] });
+  const [successModal, setSuccessModal] = useState({ isOpen: false, message: "" });
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -53,18 +57,18 @@ export default function TextEdit({ personalInfo, documents, onClick, id, isMento
     const totalFilesCount = existingDocuments.length - filesToDelete.length + newFiles.length;
     
     if (totalFilesCount + selectedFiles.length > MAX_FILES) {
-      alert(`Можно загрузить не более ${MAX_FILES} файлов. У вас уже ${totalFilesCount} файлов.`);
+      showErrorModal(["Можно загрузить не более 5 файлов"]);
       return;
     }
 
     // Проверка типов и размеров файлов
     const validFiles = selectedFiles.filter(file => {
       if (!ALLOWED_TYPES.includes(file.type)) {
-        alert(`Файл "${file.name}" имеет недопустимый формат. Разрешены: PDF, DOC, DOCX, TXT`);
+        showErrorModal([`Файл "${file.name}" имеет недопустимый формат. Разрешены: PDF, DOC, DOCX, TXT`]);
         return false;
       }
       if (file.size > MAX_FILE_SIZE) {
-        alert(`Файл "${file.name}" превышает максимальный размер 10MB`);
+        showErrorModal([`Файл "${file.name}" превышает максимальный размер 10MB`]);
         return false;
       }
       return true;
@@ -86,9 +90,132 @@ export default function TextEdit({ personalInfo, documents, onClick, id, isMento
     setFilesToDelete(prev => prev.filter(id => id !== docId));
   };
 
+  // Функции для работы с модальными окнами
+  const showErrorModal = (messages) => {
+    setErrorModal({
+      isOpen: true,
+      messages: Array.isArray(messages) ? messages : [messages]
+    });
+  };
+
+  const closeErrorModal = () => {
+    setErrorModal({ isOpen: false, messages: [] });
+  };
+
+  const showSuccessModal = (message) => {
+    setSuccessModal({
+      isOpen: true,
+      message: message
+    });
+  };
+
+  const closeSuccessModal = () => {
+    setSuccessModal({ isOpen: false, message: "" });
+    onClick(false);
+  };
+
+  // Функция для форматирования сообщений об ошибках (аналогично регистрации)
+  const formatErrorMessage = (error) => {
+    console.log("Error response data:", error);
+    
+    // Если error.detail - это строка, возвращаем её
+    if (typeof error?.detail === 'string') {
+      return [error.detail];
+    }
+    
+    // Если error.detail - это массив (как в Pydantic validation errors)
+    if (Array.isArray(error?.detail)) {
+      return error.detail.map(err => {
+        if (err.loc && err.msg) {
+          const field = err.loc[err.loc.length - 1];
+          const fieldNames = {
+            'articles': 'Статьи',
+            'scientificInterests': 'Круг научных интересов', 
+            'taughtSubjects': 'Преподаваемые предметы',
+            'researchTopics': 'Тематика научных и исследовательских работ',
+            'interests': 'Интересы',
+            'olympics': 'Олимпиады',
+            'achievements': 'Достижения'
+          };
+          const russianField = fieldNames[field] || field;
+          return `${russianField}: ${err.msg}`;
+        }
+        return err.msg || JSON.stringify(err);
+      });
+    }
+    
+    // Если error.detail - это объект
+    if (typeof error?.detail === 'object') {
+      return Object.entries(error.detail)
+        .map(([key, value]) => {
+          const fieldNames = {
+            'articles': 'Статьи',
+            'scientificInterests': 'Круг научных интересов', 
+            'taughtSubjects': 'Преподаваемые предметы',
+            'researchTopics': 'Тематика научных и исследовательских работ',
+            'interests': 'Интересы',
+            'olympics': 'Олимпиады',
+            'achievements': 'Достижения'
+          };
+          const russianField = fieldNames[key] || key;
+          return `${russianField}: ${value}`;
+        });
+    }
+    
+    // Если есть прямые поля с ошибками в response.data
+    if (error && typeof error === 'object') {
+      const messages = [];
+      for (const [key, value] of Object.entries(error)) {
+        if (key !== 'detail' && value) {
+          if (Array.isArray(value)) {
+            messages.push(...value.map(v => {
+              const fieldNames = {
+                'articles': 'Статьи',
+                'scientificInterests': 'Круг научных интересов', 
+                'taughtSubjects': 'Преподаваемые предметы',
+                'researchTopics': 'Тематика научных и исследовательских работ',
+                'interests': 'Интересы',
+                'olympics': 'Олимпиады',
+                'achievements': 'Достижения'
+              };
+              const russianField = fieldNames[key] || key;
+              return `${russianField}: ${v}`;
+            }));
+          } else {
+            const fieldNames = {
+              'articles': 'Статьи',
+              'scientificInterests': 'Круг научных интересов', 
+              'taughtSubjects': 'Преподаваемые предметы',
+              'researchTopics': 'Тематика научных и исследовательских работ',
+              'interests': 'Интересы',
+              'olympics': 'Олимпиады',
+              'achievements': 'Достижения'
+            };
+            const russianField = fieldNames[key] || key;
+            messages.push(`${russianField}: ${value}`);
+          }
+        }
+      }
+      if (messages.length > 0) return messages;
+    }
+    
+    // Если это просто строка в response.data
+    if (typeof error === 'string') {
+      return [error];
+    }
+    
+    // Если пришел сам объект ошибки
+    if (error?.msg || error?.message) {
+      return [error.msg || error.message];
+    }
+    
+    // По умолчанию
+    return ["Произошла неизвестная ошибка при сохранении данных"];
+  };
+
   const handleSubmit = async () => {
     if (!id) {
-      alert('Ошибка: ID пользователя не найден');
+      showErrorModal(["Ошибка: ID пользователя не найден"]);
       return;
     }
 
@@ -116,11 +243,37 @@ export default function TextEdit({ personalInfo, documents, onClick, id, isMento
         await onDocumentsUpdate();
       }
 
-      onClick(false);
-      alert('Данные успешно сохранены!');
+      showSuccessModal("Данные успешно сохранены!");
+      
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
-      alert('Произошла ошибка при сохранении данных');
+      
+      let errorMessages = ["Произошла неизвестная ошибка при сохранении данных"];
+
+      if (error.response?.status === 409) {
+        const errorDetail = error.response.data.detail || error.response.data;
+        if (typeof errorDetail === 'string' && errorDetail.includes("already exists")) {
+          errorMessages = ["Файл с таким именем уже существует"];
+        } else {
+          errorMessages = formatErrorMessage(error.response.data);
+        }
+      } else if (error.response?.status === 413) {
+        errorMessages = ["Размер файла превышает ограничение 10MB"];
+      } else if (error.response?.status === 415) {
+        errorMessages = ["Недопустимый формат файла"];
+      } else if (error.response?.status === 422) {
+        errorMessages = formatErrorMessage(error.response.data) || ["Ошибка валидации данных. Проверьте правильность заполнения полей."];
+      } else if (error.response?.status === 400) {
+        errorMessages = formatErrorMessage(error.response.data) || ["Неверные данные. Проверьте введенную информацию."];
+      } else if (error.response?.status === 500) {
+        errorMessages = ["Внутренняя ошибка сервера. Попробуйте позже."];
+      } else if (error.response?.data) {
+        errorMessages = formatErrorMessage(error.response.data);
+      } else if (error.message) {
+        errorMessages = [error.message];
+      }
+
+      showErrorModal(errorMessages);
     } finally {
       setLoading(false);
     }
@@ -169,9 +322,9 @@ export default function TextEdit({ personalInfo, documents, onClick, id, isMento
             <div key={doc.id} className="d-flex align-items-center justify-content-between mb-2 p-3 border rounded">
               <div className="d-flex align-items-center">
                 <span className="fw-medium">{doc.name}</span>
-                {/* <span className="text-muted ms-2 small">
+                <span className="text-muted ms-2 small">
                   ({(doc.size / 1024 / 1024).toFixed(2)} MB)
-                </span> */}
+                </span>
               </div>
               <button
                 type="button"
@@ -191,9 +344,9 @@ export default function TextEdit({ personalInfo, documents, onClick, id, isMento
               <div key={docId} className="d-flex align-items-center justify-content-between mb-2 p-3 border rounded bg-light">
                 <div className="d-flex align-items-center">
                   <span className="fw-medium text-decoration-line-through text-muted">{doc.name}</span>
-                  {/* <span className="text-muted ms-2 small">
+                  <span className="text-muted ms-2 small">
                     ({(doc.size / 1024 / 1024).toFixed(2)} MB)
-                  </span> */}
+                  </span>
                 </div>
                 <button
                   type="button"
@@ -212,9 +365,9 @@ export default function TextEdit({ personalInfo, documents, onClick, id, isMento
             <div key={index} className="d-flex align-items-center justify-content-between mb-2 p-3 border rounded bg-light">
               <div className="d-flex align-items-center">
                 <span className="fw-medium text-success">{file.name}</span>
-                {/* <span className="text-muted ms-2 small">
+                <span className="text-muted ms-2 small">
                   ({(file.size / 1024 / 1024).toFixed(2)} MB) - новый
-                </span> */}
+                </span>
               </div>
               <button
                 type="button"
@@ -264,6 +417,64 @@ export default function TextEdit({ personalInfo, documents, onClick, id, isMento
           </div>
         </Col>
       </Row>
+
+      {/* Модальное окно для ошибок */}
+      <ModalWrapper
+        isOpen={errorModal.isOpen}
+        onClose={closeErrorModal}
+      >
+        <ModalWindow
+          title="Ошибка сохранения"
+          setIsShow={closeErrorModal}
+          buttonArea={[
+            <Button
+              key="close"
+              text="Ок"
+              onClick={closeErrorModal}
+            />
+          ]}
+        >
+          <div style={{ whiteSpace: 'pre-line' }}>
+            {errorModal.messages.map((message, index) => {
+              const textAlign = message.length < 40 ? 'center' : 'left';
+              return (
+                <div 
+                  key={index} 
+                  style={{ 
+                    marginBottom: index < errorModal.messages.length - 1 ? '10px' : '0',
+                    textAlign: textAlign,
+                    padding: '0 10px'
+                  }}
+                >
+                  {message}
+                </div>
+              );
+            })}
+          </div>
+        </ModalWindow>
+      </ModalWrapper>
+
+      {/* Модальное окно для успешного сохранения */}
+      <ModalWrapper
+        isOpen={successModal.isOpen}
+        onClose={closeSuccessModal}
+      >
+        <ModalWindow
+          title="Успех"
+          setIsShow={closeSuccessModal}
+          buttonArea={[
+            <Button
+              key="close"
+              text="Ок"
+              onClick={closeSuccessModal}
+            />
+          ]}
+        >
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            {successModal.message}
+          </div>
+        </ModalWindow>
+      </ModalWrapper>
     </div>
   );
 }
