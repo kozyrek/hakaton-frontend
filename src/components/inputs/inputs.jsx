@@ -94,12 +94,6 @@ export default function Inputs(props) {
     setFilesList(null);
   }
 
-  // Обработчик для даты - преобразует из формата отображения в формат сервера
-  const handleDateChange = (value) => {
-    const serverFormat = formatDateForServer(value);
-    onChange(serverFormat, name);
-  };
-
   // Проверяем, является ли поле датой рождения
   const isDateField = name === "birthDate" || type === "date";
 

@@ -517,7 +517,7 @@ const handleSubmit = async () => {
                     </div>
                   ) : (
                     <div
-                      className={`${stylesReg.conInputs} mb-4`}
+                      className={`${stylesReg.conInputs} `}
                       key={e.id}
                     >
                       <Inputs
@@ -531,7 +531,7 @@ const handleSubmit = async () => {
                 )
               ) : item.label ? (
                 <div
-                  className={`${stylesReg.conInputs} mb-4`}
+                  className={`${stylesReg.conInputs}`}
                   key={item.id}
                 >
                   <Inputs
