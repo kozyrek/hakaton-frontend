@@ -261,7 +261,7 @@ export default function StepProjectInfo({
           color: '#6c757d',
           fontStyle: 'italic',
           textAlign: 'left',
-          maxWidth: '340px'
+          maxWidth: '360px'
         }}>
           Поддерживаемые форматы: {FILENAME_EXTENSION_FULL_NO_ZIPORRAR.join(', ')}
         </div>
