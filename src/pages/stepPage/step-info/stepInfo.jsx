@@ -228,19 +228,6 @@ export default function StepProjectInfo({
         </h3>
         <p className="text1">Документы, презентации, картинки, видео</p>
 
-        {/* ДОБАВЛЕНО: Указание что файлы обязательны для отправки шага */}
-        {!isMentor && stepStatus.inProgress && (
-          <div style={{ 
-            marginBottom: '8px', 
-            fontSize: '14px', 
-            color: '#dc3545',
-            fontWeight: '500',
-            textAlign: 'left'
-          }}>
-            * Для отправки шага необходимо добавить текст или файлы
-          </div>
-        )}
-
         <InputFile
           files={files}
           setFiles={setFiles}
