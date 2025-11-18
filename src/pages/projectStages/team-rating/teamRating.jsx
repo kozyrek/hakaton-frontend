@@ -51,9 +51,6 @@ export default function TeamRating({
         "Time exceeded": "Время превышено",
     }
 
-    const timeLag = 103*1000;
-    // const timeLag = 0;
-
     function getSortArr(array, field) {
         if (step?.attempts.length) {
             return array.sort(
@@ -72,9 +69,10 @@ export default function TeamRating({
             setTime(newTime);
             // console.log("111", newTime, step.timerMinutes);//
         } else if (stepStatus.inProgress) {
-            const remaining = new Date(endTime) - new Date();
+            // const remaining = new Date(endTime) - new Date(); // данный код работает с временным лагом
+            const remaining = minutes * 60 * 1000;
             const newRemaining = remaining > 0 ? remaining : 0
-            setTime(newRemaining + timeLag);
+            setTime(newRemaining);
 
             if (remaining > 0) {
                 timerId = setInterval(() => {

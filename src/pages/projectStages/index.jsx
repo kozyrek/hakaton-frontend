@@ -31,12 +31,12 @@ export default function ProjectStages() {
                 setIsLoading(true);
                 setError(undefined);
                 
-                console.log('Fetching project with ID:', projectId);
+                // console.log('Fetching project with ID:', projectId);
                 
                 // Загружаем проект
                 const projectResponse = await getProjectById(projectId);
                 const projectData = projectResponse.data;
-                console.log('Received project data:', projectData);
+                // console.log('Received project data:', projectData);
                 
                 setProject(projectData);
 
@@ -45,22 +45,22 @@ export default function ProjectStages() {
                     const filesResponse = await getProjectFiles(projectId);
                     setFiles(filesResponse.data || []);
                 } catch (fileError) {
-                    console.error('Error fetching project files:', fileError.message);
+                    // console.error('Error fetching project files:', fileError.message);
                     setFiles([]);
                 }
 
                 // Загружаем информацию о команде, если она есть
                 if (projectData.teamId) {
                     try {
-                        console.log('Fetching team info for teamId:', projectData.teamId);
+                        // console.log('Fetching team info for teamId:', projectData.teamId);
                         const teamResponse = await getTeamById(projectData.teamId);
                         setTeamInfo(teamResponse);
                     } catch (teamError) {
-                        console.error('Error fetching team info:', teamError.message);
+                        // console.error('Error fetching team info:', teamError.message);
                         setTeamInfo(null);
                     }
                 } else {
-                    console.log('No teamId found in project data');
+                    // console.log('No teamId found in project data');
                     setTeamInfo(null);
                 }
 
@@ -73,7 +73,7 @@ export default function ProjectStages() {
                 }
 
             } catch (e) {
-                console.error('Error fetching project data:', e.message);
+                // console.error('Error fetching project data:', e.message);
                 setError(e.message);
             } finally {
                 setIsLoading(false);
